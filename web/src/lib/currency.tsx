@@ -1,0 +1,114 @@
+"use client";
+// EUR is primary (incl. VAT). USD prices are set explicitly per product (priceUSD) and currently equal
+// the EUR number (€39 / $39). Preference persists in localStorage.
+// TODO: Stripe — create one Price per currency per product and pick by `currency` at checkout.
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+
+export type Currency = "EUR" | "USD";
+const STORAGE_KEY = "sg_currency";
+
+interface CurrencyCtx {
+  currency: Currency;
+  setCurrency: (c: Currency) => void;
+  /** Format a catalog price. `usd` overrides the USD amount (defaults to the same number). */
+  format: (eur: number, opts?: { usd?: number; vat?: boolean; interval?: "month" }) => string;
+  vatNote: string;
+}
+
+const Ctx = createContext<CurrencyCtx | null>(null);
+
+export function CurrencyProvider({ children }: { children: ReactNode }) {
+  const [currency, setCurrencyState] = useState<Currency>("EUR");
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (saved === "USD" || saved === "EUR") setCurrencyState(saved);
+    } catch {
+      /* storage blocked */
+    }
+  }, []);
+
+  const setCurrency = useCallback((c: Currency) => {
+    setCurrencyState(c);
+    try {
+      localStorage.setItem(STORAGE_KEY, c);
+    } catch {
+      /* storage blocked */
+    }
+  }, []);
+
+  const value = useMemo<CurrencyCtx>(() => {
+    const nf = new Intl.NumberFormat(currency === "EUR" ? "en-IE" : "en-US", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+    return {
+      currency,
+      setCurrency,
+      vatNote: currency === "EUR" ? "Prices incl. VAT" : "USD prices · taxes calculated at checkout",
+      format: (eur, opts) => {
+        if (eur === 0) return "Free";
+        const amount = currency === "EUR" ? eur : opts?.usd ?? eur;
+        let s = nf.format(amount);
+        if (opts?.interval) s += "/mo";
+        if (opts?.vat && currency === "EUR") s += " incl. VAT";
+        return s;
+      },
+    };
+  }, [currency, setCurrency]);
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+}
+
+export function useCurrency() {
+  const ctx = useContext(Ctx);
+  if (!ctx) throw new Error("useCurrency must be used inside CurrencyProvider");
+  return ctx;
+}
+
+/** Client price text. */
+export function Price({
+  eur,
+  usd,
+  vat = false,
+  interval,
+  className,
+}: {
+  eur: number;
+  usd?: number;
+  vat?: boolean;
+  interval?: "month";
+  className?: string;
+}) {
+  const { format } = useCurrency();
+  return <span className={className}>{format(eur, { usd, vat, interval })}</span>;
+}
+
+export function CurrencyToggle({ className = "" }: { className?: string }) {
+  const { currency, setCurrency } = useCurrency();
+  return (
+    <div
+      role="group"
+      aria-label="Currency"
+      className={`relative inline-flex h-9 items-center [@media(pointer:coarse)]:h-12 rounded-full border border-line bg-bone/[0.03] p-1 font-mono text-[11px] ${className}`}
+    >
+      {(["EUR", "USD"] as const).map((c) => (
+        <button
+          key={c}
+          type="button"
+          aria-pressed={currency === c}
+          onClick={() => setCurrency(c)}
+          className={`h-7 whitespace-nowrap rounded-full px-2.5 [@media(pointer:coarse)]:h-10 [@media(pointer:coarse)]:px-3.5 tracking-wider transition-colors ${
+            currency === c ? "bg-bone text-ink" : "text-mute hover:text-bone"
+          }`}
+        >
+          {c === "EUR" ? "€ EUR" : "$ USD"}
+        </button>
+      ))}
+    </div>
+  );
+}

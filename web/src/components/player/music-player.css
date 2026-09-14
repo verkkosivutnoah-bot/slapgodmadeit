@@ -1,0 +1,704 @@
+/* ==========================================================================
+   SLAPGOD MusicPlayer styles
+   Class contract from docs/specs/MusicPlayer.tsx. Only transform/opacity animate.
+   ========================================================================== */
+
+.card {
+  /* per-track accent (from cover art) with ember fallback */
+  --accent: var(--track-accent, var(--color-ember));
+  --disc: 248px;
+  --pad: 24px;
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--disc) minmax(0, 1fr);
+  align-items: center;
+  gap: 32px;
+  padding: var(--pad);
+  border-radius: 28px;
+  color: var(--color-bone);
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
+    radial-gradient(90% 90% at 100% 100%, rgb(var(--oxblood-rgb) / 0.35), transparent 60%),
+    linear-gradient(160deg, var(--color-raised) 0%, var(--color-ink) 100%);
+  border: 1px solid rgb(var(--bone-rgb) / 0.09);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 40px 90px -40px rgb(0 0 0 / 0.9);
+  isolation: isolate;
+  container-type: inline-size;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ambient glow that breathes in when playing */
+.card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: calc(var(--pad) + var(--disc) / 2);
+  top: 50%;
+  width: calc(var(--disc) * 1.5);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 40%, transparent), rgb(var(--oxblood-rgb) / 0.3) 45%, transparent 70%);
+  opacity: 0.25;
+  scale: 0.85;
+  transition: opacity 0.8s ease, scale 0.8s ease;
+  pointer-events: none;
+}
+.card.is-playing::before {
+  opacity: 0.9;
+  scale: 1;
+}
+
+/* ------------------------------------------------------------------ disc */
+
+.mask {
+  position: relative;
+  width: var(--disc);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  clip-path: circle(50% at 50% 50%);
+  cursor: zoom-in;
+  background: var(--color-surface);
+  transform: translateZ(0) scale(1);
+  transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.2, 1), filter 0.4s;
+  z-index: 2;
+  outline: none;
+}
+.mask:focus-visible {
+  clip-path: none;
+  box-shadow: 0 0 0 3px var(--color-ember);
+}
+/* static light sheen over the spinning vinyl */
+.mask::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    conic-gradient(from 210deg, transparent 0deg, rgb(255 255 255 / 0.16) 30deg, transparent 70deg, transparent 180deg, rgb(255 255 255 / 0.1) 215deg, transparent 250deg),
+    radial-gradient(circle, transparent 60%, rgb(0 0 0 / 0.45) 100%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.mask.is-zoomed {
+  cursor: zoom-out;
+}
+.card.is-zoomed .mask {
+  transform: translateZ(0) scale(1.22);
+}
+
+.spin {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+/* vinyl grooves */
+.spin::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, rgb(0 0 0 / 0) 0 2px, rgb(0 0 0 / 0.16) 2px 3px);
+  mask-image: radial-gradient(circle, transparent 23%, #000 24%, #000 70%, transparent 71%);
+  -webkit-mask-image: radial-gradient(circle, transparent 23%, #000 24%, #000 70%, transparent 71%);
+  pointer-events: none;
+}
+
+.cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.cover-enter {
+  animation: sg-cover-in 0.72s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+.cover-exit {
+  animation: sg-cover-out 0.72s ease both;
+}
+@keyframes sg-cover-in {
+  from {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes sg-cover-out {
+  to {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+.hole {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 24%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-surface) 0%, var(--color-ink) 70%);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent) 85%, transparent),
+    0 0 0 6px rgb(var(--ink-rgb) / 0.7),
+    0 0 24px color-mix(in srgb, var(--accent) 30%, transparent);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 1;
+}
+.hole-inner {
+  width: 26%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-bone);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.6);
+}
+
+/* ------------------------------------------------------------------ info */
+
+.info {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+.card.is-zoomed .info {
+  opacity: 0.3;
+  transform: translateX(28px);
+}
+
+.scales {
+  position: absolute;
+  top: -4px;
+  right: 0;
+  width: 58px;
+  height: auto;
+  overflow: visible;
+  opacity: 0.5;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+.card.is-playing .scales {
+  opacity: 1;
+}
+.scales circle {
+  fill: var(--accent);
+  will-change: transform;
+}
+.scales > g:nth-of-type(1) circle,
+.scales > g:nth-of-type(2) circle { fill: color-mix(in srgb, var(--accent) 70%, var(--color-gold)); }
+.scales > g:nth-of-type(3) circle,
+.scales > g:nth-of-type(4) circle { fill: color-mix(in srgb, var(--accent) 70%, var(--color-gold)); }
+.scales > g:nth-of-type(5) circle,
+.scales > g:nth-of-type(6) circle { fill: color-mix(in srgb, var(--accent) 55%, var(--color-bone)); }
+
+.track-info {
+  position: relative;
+  min-height: 68px;
+  padding-right: 76px;
+}
+.ti-layer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ti-abs {
+  position: absolute;
+  inset: 0 76px 0 0;
+  pointer-events: none;
+}
+.artist {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+.track {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 5.4cqi, 2.4rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+.ti-enter {
+  animation: sg-ti-in 0.6s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+.track.ti-enter {
+  animation-delay: 0.06s;
+}
+.ti-exit {
+  animation: sg-ti-out 0.42s ease both;
+}
+@keyframes sg-ti-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--dx, 14px));
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+@keyframes sg-ti-out {
+  to {
+    opacity: 0;
+    transform: translateX(var(--dx, -14px));
+  }
+}
+
+/* ------------------------------------------------------------ progress */
+
+.bar {
+  position: relative;
+  height: 6px;
+  border-radius: 99px;
+  background: rgb(var(--bone-rgb) / 0.12);
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+}
+.bar::before {
+  /* larger hit area */
+  content: "";
+  position: absolute;
+  inset: -10px 0;
+}
+.bar:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-ink), 0 0 0 4px var(--color-ember);
+}
+.bar-fill {
+  position: relative;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 45%, var(--color-oxblood)), var(--accent));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 50%, transparent);
+  transition: width 0.25s linear;
+}
+.bar-fill::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: var(--color-bone);
+  box-shadow: 0 0 0 3px rgb(var(--ember-rgb) / 0.35);
+  scale: 0;
+  transition: scale 0.25s ease;
+}
+.bar:hover .bar-fill::after,
+.bar:focus-visible .bar-fill::after,
+.card.is-playing .bar-fill::after {
+  scale: 1;
+}
+
+.time {
+  display: flex;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-mute);
+  font-variant-numeric: tabular-nums;
+  margin-top: -6px;
+}
+.time .sep {
+  opacity: 0.5;
+}
+
+/* ------------------------------------------------------------ controls */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ctrl {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgb(var(--bone-rgb) / 0.12);
+  background: rgb(var(--bone-rgb) / 0.03);
+  color: var(--color-bone);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.3s ease;
+}
+.ctrl:hover {
+  background: rgb(var(--bone-rgb) / 0.1);
+}
+.ctrl:active {
+  transform: scale(0.9);
+}
+.ctrl:focus-visible {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 2px;
+}
+.ctrl-play {
+  width: 56px;
+  height: 56px;
+  border: none;
+  background: var(--color-ember);
+  color: var(--color-ink);
+  margin: 0 4px;
+}
+.ctrl-play:hover {
+  background: color-mix(in srgb, var(--color-ember), white 14%);
+}
+.card.is-playing .ctrl-play {
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 14%, transparent), 0 0 36px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.ctrl-toggle {
+  color: var(--color-mute);
+}
+.ctrl-toggle.is-active {
+  color: var(--color-ember);
+  border-color: rgb(var(--ember-rgb) / 0.45);
+  background: rgb(var(--ember-rgb) / 0.08);
+}
+.ctrl-loop .loop-one {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 13px;
+  height: 13px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-ember);
+  color: var(--color-ink);
+  font: 700 8px/1 var(--font-mono);
+  scale: 0;
+  transition: scale 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.ctrl-loop.mode-one .loop-one {
+  scale: 1;
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 720px) {
+  .card {
+    --disc: min(64vw, 240px);
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 24px;
+    --pad: 20px;
+  }
+  .card::before {
+    left: 50%;
+    top: calc(var(--pad) + var(--disc) / 2);
+  }
+  .info {
+    width: 100%;
+  }
+  .card.is-zoomed .info {
+    transform: translateY(24px);
+  }
+  .controls {
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   Global dock variants (same instance, class swap)
+   ========================================================================== */
+
+.dock {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 60;
+  transform: translateY(calc(100% + 24px));
+  transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
+  pointer-events: none;
+}
+.dock.is-visible {
+  transform: none;
+}
+.dock.is-visible .card {
+  pointer-events: auto;
+}
+
+.dock-expand {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  translate: 0 -50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--color-bone);
+  background: rgb(var(--bone-rgb) / 0.06);
+  border: 1px solid rgb(var(--bone-rgb) / 0.12);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.dock-expand:hover {
+  background: rgb(var(--bone-rgb) / 0.14);
+}
+.dock-expand:focus-visible {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 2px;
+}
+
+/* --- mini bar --- */
+.card.card--dock {
+  --disc: 52px;
+  --pad: 10px;
+  max-width: 1120px;
+  margin: 0 auto;
+  grid-template-columns: var(--disc) minmax(0, 1fr);
+  justify-items: stretch;
+  gap: 14px;
+  padding: 10px 60px 10px 10px;
+  border-radius: 22px;
+  background: rgb(var(--surface-rgb) / 0.86);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 20px 60px -20px rgb(0 0 0 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+.card--dock::before {
+  width: 160px;
+  left: 36px;
+}
+.card--dock .mask {
+  cursor: pointer;
+}
+.card--dock.is-zoomed .mask {
+  transform: scale(1.12);
+}
+.card--dock .hole {
+  box-shadow: 0 0 0 1px rgb(var(--ember-rgb) / 0.85);
+}
+.card--dock .info {
+  width: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(100px, 2fr) auto auto;
+  grid-template-areas: "ti bar time ctrls";
+  align-items: center;
+  gap: 18px;
+}
+.card--dock.is-zoomed .info {
+  opacity: 1;
+  transform: none;
+}
+.card--dock .scales {
+  display: none;
+}
+.card--dock .track-info {
+  grid-area: ti;
+  min-height: 38px;
+  padding-right: 0;
+}
+.card--dock .ti-abs {
+  inset: 0;
+}
+.card--dock .ti-layer {
+  gap: 2px;
+}
+.card--dock .artist {
+  font-size: 10px;
+}
+.card--dock .track {
+  font-size: 1.15rem;
+}
+.card--dock .bar {
+  grid-area: bar;
+}
+.card--dock .time {
+  grid-area: time;
+  margin: 0;
+}
+.card--dock .controls {
+  grid-area: ctrls;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.card--dock .ctrl {
+  width: 34px;
+  height: 34px;
+}
+.card--dock .ctrl-play {
+  width: 44px;
+  height: 44px;
+}
+
+@media (max-width: 860px) {
+  .card--dock .info {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "ti ctrls" "bar bar";
+    row-gap: 8px;
+  }
+  .card--dock .time,
+  .card--dock .controls .ctrl:nth-child(1),
+  .card--dock .controls .ctrl:nth-child(5) {
+    display: none;
+  }
+  .card--dock .bar {
+    height: 4px;
+  }
+}
+@media (max-width: 480px) {
+  .card--dock .controls .ctrl:nth-child(2) {
+    display: none;
+  }
+}
+
+/* --- expanded card --- */
+.card.card--expanded {
+  --disc: 230px;
+  --pad: 22px;
+  max-width: 360px;
+  margin-left: auto;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 22px;
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
+    linear-gradient(160deg, rgb(var(--raised-rgb) / 0.96) 0%, rgb(var(--ink-rgb) / 0.97) 100%);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  animation: sg-pop 0.5s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+.card--expanded::before {
+  left: 50%;
+  top: calc(var(--pad) + var(--disc) / 2);
+}
+.card--expanded .info {
+  width: 100%;
+}
+.card--expanded.is-zoomed .info {
+  transform: translateY(24px);
+}
+.card--expanded .controls {
+  justify-content: center;
+}
+.card--expanded .dock-expand {
+  top: 14px;
+  translate: none;
+  right: 14px;
+  z-index: 3;
+}
+@keyframes sg-pop {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+}
+
+/* --- touch targets --- */
+@media (pointer: coarse) {
+  .ctrl,
+  .card--dock .ctrl {
+    width: 44px;
+    height: 44px;
+  }
+  .card--dock .ctrl-play {
+    width: 48px;
+    height: 48px;
+  }
+  .dock-expand {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* --- sheet handle (mobile expanded player) --- */
+.dock-handle {
+  display: none;
+}
+
+/* --- mobile: expanded player = full-screen sheet --- */
+@media (max-width: 767px) {
+  .dock.is-expanded {
+    pointer-events: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+    background: rgb(var(--ink-rgb) / 0.92);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    display: flex;
+    align-items: stretch;
+    touch-action: none;
+  }
+  .dock.is-expanded .card.card--expanded {
+    --disc: min(72vw, 42svh, 320px);
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    align-content: center;
+    border-radius: 28px;
+    padding-top: 44px;
+  }
+  .dock.is-expanded .dock-handle {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 44px;
+    cursor: grab;
+    touch-action: none;
+  }
+  .dock.is-expanded .dock-handle::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 14px;
+    width: 44px;
+    height: 5px;
+    translate: -50% 0;
+    border-radius: 99px;
+    background: rgb(var(--bone-rgb) / 0.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover-enter,
+  .cover-exit,
+  .ti-enter,
+  .ti-exit,
+  .card--expanded {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+  }
+  .mask,
+  .info,
+  .dock {
+    transition-duration: 0.01ms !important;
+  }
+}
