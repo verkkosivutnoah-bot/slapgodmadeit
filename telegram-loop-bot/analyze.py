@@ -58,7 +58,7 @@ PROFILES = {
 SR = 22050
 HOP = 2048
 MINOR_PRIOR = 0.02  # beat/loop market is mostly minor
-RELATIVE_MARGIN = 0.1
+RELATIVE_MARGIN = 0.3
 
 
 @dataclass
@@ -141,16 +141,22 @@ def _detect_key(y: np.ndarray, sr: int) -> tuple[int, str, float, list[str]]:
     # tonic, and what's sounding in the first ~1.5 s (loops start on "home").
     best = int(np.argmax(scores))
     rel = (best % 12 + 9) % 12 + 12 if best < 12 else (best % 12 + 3) % 12
-    if scores[best] - scores[rel] < RELATIVE_MARGIN:
+    rel_gap = float(scores[best] - scores[rel])
+    if rel_gap < RELATIVE_MARGIN:
         head = max(1, int(1.5 * sr / HOP))
-        tonic_cue = bass @ weights + 0.5 * chroma[:, :head].mean(axis=1) + 0.5 * bass[:, :head].mean(axis=1)
+        tonic_cue = (chroma[:, :head].mean(axis=1) + bass[:, :head].mean(axis=1)
+                     + 0.5 * (bass @ weights))
         if tonic_cue[rel % 12] > tonic_cue[best % 12]:
-            best = rel
+            best, rel = rel, best
 
-    order = [best] + [int(i) for i in np.argsort(scores)[::-1] if i != best]
-    gap = float(scores[best] - max(scores[i] for i in order[1:]))
-    # Strong fit (r~0.8) with a clear gap -> high confidence.
-    confidence = float(np.clip((scores[best] - 0.4) / 0.4, 0, 1) * np.clip(0.5 + gap / 0.15, 0, 1))
+    others = [int(i) for i in np.argsort(scores)[::-1] if i not in (best, rel)]
+    fit = float(max(scores[best], scores[rel]))
+    gap = fit - float(scores[others[0]])
+    # Strong profile fit (r~0.8) with a clear gap to non-relative keys -> high.
+    confidence = float(np.clip((fit - 0.4) / 0.4, 0, 1) * np.clip(0.5 + gap / 0.15, 0, 1))
+    if abs(rel_gap) < 0.15:  # relative major/minor was a close call
+        confidence = min(confidence, 0.6)
+    order = [best, rel] + others
 
     def name(idx: int) -> str:
         return f"{NOTES[idx % 12]} {'major' if idx < 12 else 'minor'}"
@@ -175,14 +181,17 @@ def _detect_bpm(y: np.ndarray, sr: int, duration: float) -> int | None:
 
     # Loops are usually cut to a whole number of 4/4 bars. If the duration
     # implies a tempo close to the estimate, trust the (exact) bar math.
+    # Also allow the classic 3:2 tracker error (e.g. 174 heard as 116),
+    # with a penalty so a direct match always wins.
     best = None
-    for bars in (1, 2, 4, 8, 16, 32):
-        implied = 240.0 * bars / duration
-        for cand in (implied, implied * 2, implied / 2):
-            if 60 <= cand <= 200:
-                err = abs(cand - tempo) / tempo
-                if err < 0.04 and (best is None or err < best[0]):
-                    best = (err, cand)
+    for bars in (1, 2, 3, 4, 6, 8, 12, 16, 32):
+        cand = 240.0 * bars / duration
+        if not 60 <= cand <= 200:
+            continue
+        for ratio, penalty in ((1.0, 0.0), (1.5, 0.02), (2 / 3, 0.02)):
+            err = abs(cand - tempo * ratio) / (tempo * ratio)
+            if err < 0.03 and (best is None or err + penalty < best[0]):
+                best = (err + penalty, cand)
     if best:
         tempo = best[1]
     return int(round(tempo))

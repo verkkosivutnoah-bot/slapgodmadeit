@@ -68,8 +68,8 @@ def loop_title(filename: str, caption: str) -> str:
         return first_line
     stem = Path(filename).stem
     stem = re.sub(r"(?i)\d{2,3}\s*-?\s*bpm", "", stem)  # drop "140bpm"
-    stem = re.sub(r"(?i)(?:^|[\s_\-])[A-G](?:#|b)?\s*-?(?:maj(?:or)?|min(?:or)?|m)(?=$|[\s_\-])", " ", stem)
-    stem = re.sub(r"[_\-]+", " ", stem)
+    stem = re.sub(r"(?i)(?:^|[\s_\-\[\(])[A-G](?:#|b)?\s*-?(?:maj(?:or)?|min(?:or)?|m)(?=$|[\s_\-\]\)])", " ", stem)
+    stem = re.sub(r"[_\-\[\]\(\)]+", " ", stem)
     return re.sub(r"\s+", " ", stem).strip().title() or "New Loop"
 
 

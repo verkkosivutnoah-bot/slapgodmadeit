@@ -60,48 +60,6 @@ function useRafLoop(cb: (now: number, dt: number) => void) {
   }, []);
 }
 
-/* -------------------------------------------------- useTransitionSound */
-
-function useTransitionSound() {
-  const ctxRef = useRef<AudioContext | null>(null);
-  useEffect(() => {
-    return () => {
-      ctxRef.current?.close().catch(() => {});
-      ctxRef.current = null;
-    };
-  }, []);
-  return useCallback((bassEnergy = 0.5) => {
-    try {
-      if (!ctxRef.current) {
-        const Ctor: AudioCtor =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: AudioCtor })
-            .webkitAudioContext;
-        if (!Ctor) return;
-        ctxRef.current = new Ctor();
-      }
-      const ctx = ctxRef.current;
-      if (ctx.state === 'suspended') ctx.resume();
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      const startFreq = 440 + bassEnergy * 440;
-      const endFreq = startFreq * (2 / 3);
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(startFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.09);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.06, now + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.18);
-    } catch {
-      /* Web Audio unavailable */
-    }
-  }, []);
-}
-
 /* --------------------------------------------------- useAudioAnalyser */
 
 const FFT_SIZE = 256;
@@ -273,21 +231,18 @@ function useAudioPlayer(
     direction: null,
   });
 
-  const { getFrequencyData, getBandEnergy } = useAudioAnalyser(audioRef);
-  const playTransitionSound = useTransitionSound();
+  const { getFrequencyData } = useAudioAnalyser(audioRef);
 
   const loadTrack = useCallback(
     (index: number, autoplay: boolean, direction: Direction) => {
       const audio = audioRef.current;
       if (!audio) return;
-      const bassEnergy = getBandEnergy(0, 4);
-      playTransitionSound(bassEnergy);
       dispatch({ type: 'SET_TRACK', index, direction });
       audio.src = tracks[index].src;
       audio.load();
       if (autoplay) audio.play().catch(() => {});
     },
-    [tracks, playTransitionSound, getBandEnergy]
+    [tracks]
   );
 
   const toggle = useCallback(() => {
@@ -385,7 +340,6 @@ function useAudioPlayer(
     const index = Math.min(Math.max(0, startIndex), tracks.length - 1);
     const isInitial = !loadedOnce.current;
     loadedOnce.current = true;
-    if (!isInitial) playTransitionSound(getBandEnergy(0, 4));
     dispatch({
       type: 'RESET_QUEUE',
       index,
