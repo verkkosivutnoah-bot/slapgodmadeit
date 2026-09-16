@@ -67,7 +67,7 @@ export function Header() {
       >
         <div
           className={`transition-[background-color,border-color,backdrop-filter] duration-500 ${
-            scrolled || open ? "border-b border-line bg-ink/70 backdrop-blur-xl" : "border-b border-transparent"
+            scrolled || open ? "border-b border-line bg-ink/95" : "border-b border-transparent"
           }`}
         >
           <div className="container-sg flex h-16 items-center justify-between gap-6 md:h-20">
@@ -146,7 +146,7 @@ export function Header() {
             role="dialog"
             aria-modal="true"
             aria-label="Menu"
-            className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-ink/95 px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-24 backdrop-blur-xl lg:hidden"
+            className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-ink/95 px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-24 lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

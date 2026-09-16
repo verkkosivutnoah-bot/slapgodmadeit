@@ -37,7 +37,7 @@ export function CartView() {
       <div className="container-sg">
         <div className="panel mx-auto max-w-2xl p-10 text-center sm:p-16">
           <p className="display text-5xl">Cart&apos;s empty</p>
-          <p className="mt-3 text-mute">Grab a beat lease or a pack — or start with 5 free guitar loops.</p>
+          <p className="mt-3 text-mute">Grab a beat lease or a pack — or start with 10 free guitar loops.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/beats" className="btn btn-primary">
               Browse beats

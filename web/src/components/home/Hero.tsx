@@ -1,126 +1,48 @@
 "use client";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import { Magnetic } from "@/components/ui/motion";
 import { ArrowIcon, Sticker } from "@/components/ui/Icons";
-import { drawVaultScene, type SceneLayout } from "@/components/hero/vaultScene";
+import { drawVaultScene } from "@/components/hero/vaultScene";
 
-const sceneWide = () => drawVaultScene("wide");
-const sceneTall = () => drawVaultScene("tall");
-
-// Heavy canvas layers: client-only, loaded after first paint (the HTML wordmark is the LCP).
+// Heavy canvas layer: client-only, loaded after first paint (the HTML wordmark is the LCP).
 const AsciiStars = dynamic(() => import("@/components/hero/AsciiStars").then((m) => m.AsciiStars), { ssr: false });
-const DustMotes = dynamic(() => import("@/components/hero/DustMotes").then((m) => m.DustMotes), { ssr: false });
-const GuitarStrings = dynamic(() => import("@/components/hero/GuitarStrings").then((m) => m.GuitarStrings), { ssr: false });
 
 const WORD = "SLAPGOD".split("");
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-/** pointer-driven depth layer (x/y follow the eased pointer × depth px) */
-function Depth({ px, py, depth, className, children }: { px: MotionValue<number>; py: MotionValue<number>; depth: number; className?: string; children: ReactNode }) {
-  const x = useTransform(px, (v) => v * depth);
-  const y = useTransform(py, (v) => v * depth);
-  return (
-    <motion.div className={className} style={{ x, y }}>
-      {children}
-    </motion.div>
-  );
-}
-
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const [finePointer, setFinePointer] = useState(false);
-  const [layout, setLayout] = useState<SceneLayout>("wide");
 
-  useEffect(() => {
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 768px)");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setFinePointer(mq.matches);
-    const tall = window.matchMedia("(max-aspect-ratio: 1/1)");
-    setLayout(tall.matches ? "tall" : "wide");
-    const on = () => setFinePointer(mq.matches);
-    const onTall = () => setLayout(tall.matches ? "tall" : "wide");
-    mq.addEventListener("change", on);
-    tall.addEventListener("change", onTall);
-    return () => {
-      mq.removeEventListener("change", on);
-      tall.removeEventListener("change", onTall);
-    };
-  }, []);
-
-  // scroll parallax
+  // scroll parallax (transform/opacity only)
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const subjectScale = useTransform(scrollYProgress, [0, 1], [1, finePointer ? 1.16 : 1.06]);
-  const subjectY = useTransform(scrollYProgress, [0, 1], ["0%", finePointer ? "10%" : "4%"]);
+  const subjectScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
   const subjectFade = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
-  const skyY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
-  const wordY = useTransform(scrollYProgress, [0, 1], ["0%", finePointer ? "-30%" : "-12%"]);
+  const wordY = useTransform(scrollYProgress, [0, 1], ["0%", "-20%"]);
   const contentFade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-
-  // pointer parallax (desktop only)
-  const rawX = useMotionValue(0);
-  const rawY = useMotionValue(0);
-  const px = useSpring(rawX, { stiffness: 60, damping: 18, mass: 0.6 });
-  const py = useSpring(rawY, { stiffness: 60, damping: 18, mass: 0.6 });
-  const enablePointer = finePointer && !reduce;
-
-  const scroll = reduce ? undefined : { y: subjectY, scale: subjectScale, opacity: subjectFade };
 
   return (
     <section
       ref={ref}
       className="relative isolate flex h-[100svh] min-h-[560px] flex-col overflow-hidden [overflow:clip]"
       aria-labelledby="hero-title"
-      onPointerMove={(e) => {
-        if (!enablePointer) return;
-        const r = e.currentTarget.getBoundingClientRect();
-        rawX.set(((e.clientX - r.left) / r.width - 0.5) * 2);
-        rawY.set(((e.clientY - r.top) / r.height - 0.5) * 2);
-      }}
-      onPointerLeave={() => {
-        rawX.set(0);
-        rawY.set(0);
-      }}
     >
-      {/* L0 — sky / eclipse glow */}
-      <motion.div className="absolute inset-[-6%] -z-30" style={reduce ? undefined : { y: skyY }}>
-        <Depth px={px} py={py} depth={-8} className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(55%_60%_at_50%_45%,rgb(var(--ember-rgb)/0.28),rgb(var(--oxblood-rgb)/0.35)_45%,transparent_75%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(35%_40%_at_78%_22%,rgb(var(--violet-rgb)/0.14),transparent_70%)]" />
-          <div className="sky-breathe absolute left-1/2 top-[44%] h-[70vmin] w-[70vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(var(--gold-rgb)/0.22),transparent)]" />
-        </Depth>
+      {/* L0 — static sky glow */}
+      <div className="absolute inset-0 -z-30" aria-hidden>
+        <div className="absolute inset-0 bg-[radial-gradient(55%_60%_at_50%_45%,rgb(var(--ember-rgb)/0.28),rgb(var(--oxblood-rgb)/0.35)_45%,transparent_75%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(35%_40%_at_78%_22%,rgb(var(--violet-rgb)/0.14),transparent_70%)]" />
+      </div>
+
+      {/* L1 — stars-rendered sun + arch */}
+      <motion.div
+        className="absolute inset-0 -z-20 origin-[50%_45%]"
+        style={reduce ? undefined : { scale: subjectScale, opacity: subjectFade }}
+      >
+        <AsciiStars scene={drawVaultScene} originX={0.5} originY={0.42} />
       </motion.div>
-
-      {/* L1 — stars-rendered subject (guitar + sun + arch) + live strings */}
-      <motion.div className="absolute inset-0 -z-20 origin-[50%_45%]" style={scroll}>
-        <Depth px={px} py={py} depth={-18} className="absolute inset-[-3%]">
-          <AsciiStars scene={layout === "tall" ? sceneTall : sceneWide} originX={0.5} originY={0.42} />
-          <GuitarStrings layout={layout} />
-        </Depth>
-      </motion.div>
-
-      {/* L2 — haze / smoke */}
-      <Depth px={px} py={py} depth={-34} className="pointer-events-none absolute inset-[-8%] -z-10">
-        <div className="haze haze-a" />
-        <div className="haze haze-b" />
-        <div className="haze haze-c" />
-      </Depth>
-
-      {/* L3 — dust motes */}
-      <Depth px={px} py={py} depth={-56} className="pointer-events-none absolute inset-[-4%] -z-10">
-        <DustMotes />
-      </Depth>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-ink via-ink/75 to-transparent" />
 
@@ -135,9 +57,6 @@ export function Hero() {
           >
             <span className="text-ember">●</span> Beats · Live guitar loops · Sample packs
           </motion.p>
-          <p className="hidden font-mono text-[11px] uppercase tracking-[0.18em] text-mute md:block [@media(hover:none)]:hidden">
-            ✦ Run your cursor across the strings
-          </p>
         </div>
 
         <motion.h1
@@ -187,7 +106,7 @@ export function Hero() {
             </Magnetic>
             <Magnetic>
               <Link href="/free" className="btn btn-ghost h-14 px-7">
-                5 free loops
+                10 free loops
               </Link>
             </Magnetic>
           </motion.div>

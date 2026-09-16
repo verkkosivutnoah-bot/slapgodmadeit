@@ -24,8 +24,8 @@ export function CoverShowcase({ src, title, children }: { src: string; title: st
   return (
     <motion.div ref={ref} className="relative mx-auto w-full max-w-[520px]" style={reduce ? undefined : { y }}>
       <div
-        className="absolute inset-[8%] -z-10 rounded-full opacity-70 blur-[70px]"
-        style={{ background: "var(--track-accent, var(--color-ember))" }}
+        className="absolute inset-[-12%] -z-10 opacity-70"
+        style={{ background: "radial-gradient(closest-side, color-mix(in srgb, var(--track-accent, var(--color-ember)) 70%, transparent), transparent)" }}
         aria-hidden
       />
       <Tilt className="group rounded-[28px] sm:rounded-[32px]" max={7}>

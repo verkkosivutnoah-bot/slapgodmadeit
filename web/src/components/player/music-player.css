@@ -483,9 +483,7 @@
   gap: 14px;
   padding: 10px 60px 10px 10px;
   border-radius: 22px;
-  background: rgb(var(--surface-rgb) / 0.86);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
+  background: rgb(var(--surface-rgb) / 0.97);
   box-shadow: 0 20px 60px -20px rgb(0 0 0 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.06);
 }
 .card--dock::before {
@@ -587,8 +585,6 @@
   background:
     radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
     linear-gradient(160deg, rgb(var(--raised-rgb) / 0.96) 0%, rgb(var(--ink-rgb) / 0.97) 100%);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
   animation: sg-pop 0.5s cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 .card--expanded::before {
@@ -648,9 +644,7 @@
     top: 0;
     bottom: 0;
     padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
-    background: rgb(var(--ink-rgb) / 0.92);
-    -webkit-backdrop-filter: blur(18px);
-    backdrop-filter: blur(18px);
+    background: rgb(var(--ink-rgb) / 0.98);
     display: flex;
     align-items: stretch;
     touch-action: none;

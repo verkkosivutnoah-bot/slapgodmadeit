@@ -57,7 +57,7 @@ export function BeatCatalog() {
       </div>
 
       {/* filters */}
-      <div className="panel mb-8 space-y-4 p-3 backdrop-blur-xl sm:p-5 md:sticky md:top-24 md:z-30" role="search" aria-label="Filter beats">
+      <div className="panel mb-8 space-y-4 p-3 sm:p-5 md:sticky md:top-24 md:z-30" role="search" aria-label="Filter beats">
         <div className="flex gap-2 md:hidden">
           <label htmlFor="beat-search-m" className="sr-only">
             Search beats

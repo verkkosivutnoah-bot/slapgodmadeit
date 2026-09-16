@@ -15,10 +15,10 @@ export function FlagshipVault() {
 
   return (
     <section className="relative overflow-hidden py-24 md:py-36" aria-labelledby="vault-title">
-      <Parallax offset={120} className="pointer-events-none absolute -right-40 top-10 -z-10 h-[520px] w-[520px] rounded-full bg-gold/20 blur-[120px]">
+      <Parallax offset={120} className="pointer-events-none absolute -right-40 top-10 -z-10 h-[520px] w-[520px] rounded-full bg-[radial-gradient(closest-side,rgb(var(--gold-rgb)/0.2),transparent)]">
         <span />
       </Parallax>
-      <Parallax offset={-80} className="pointer-events-none absolute -left-32 bottom-0 -z-10 h-[420px] w-[420px] rounded-full bg-violet/15 blur-[110px]">
+      <Parallax offset={-80} className="pointer-events-none absolute -left-32 bottom-0 -z-10 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgb(var(--violet-rgb)/0.15),transparent)]">
         <span />
       </Parallax>
 

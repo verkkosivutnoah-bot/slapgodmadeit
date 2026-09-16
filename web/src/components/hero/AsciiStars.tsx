@@ -44,7 +44,7 @@ export function AsciiStars({
   bloom = 25,
   animSpeed = 100,
   animIntensity = 60,
-  maxCells = 38000,
+  maxCells = 16000,
   originX = 0.5,
   originY = 0.42,
   className = "",
@@ -63,14 +63,13 @@ export function AsciiStars({
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const bloomCanvas = document.createElement("canvas");
     const bctx = bloomCanvas.getContext("2d")!;
-    const supportsFilter = typeof bctx.filter === "string";
 
     let img: CanvasImageSource | null = null;
     let iw = 0;
     let ih = 0;
     // lighter render on small / touch screens
     const small = window.matchMedia("(max-width: 767px), (hover: none)").matches;
-    const cellCap = small ? Math.round(maxCells * 0.45) : maxCells;
+    const cellCap = small ? Math.round(maxCells * 0.5) : maxCells;
     let w = 0;
     let h = 0;
     let cell = cellSize;
@@ -269,9 +268,7 @@ export function AsciiStars({
       // bloom (blurred additive pass)
       if (bloom > 0) {
         bctx.clearRect(0, 0, bloomCanvas.width, bloomCanvas.height);
-        if (supportsFilter) bctx.filter = "blur(2px)";
-        bctx.drawImage(canvas!, 0, 0, bloomCanvas.width, bloomCanvas.height);
-        if (supportsFilter) bctx.filter = "none";
+                bctx.drawImage(canvas!, 0, 0, bloomCanvas.width, bloomCanvas.height);
         ctx!.globalCompositeOperation = "lighter";
         ctx!.globalAlpha = Math.min(1, (bloom / 100) * 2.4);
         ctx!.imageSmoothingEnabled = true;
@@ -290,9 +287,9 @@ export function AsciiStars({
       if (!reduce && running) {
         const ms = performance.now() - t0;
         sampleFrames++;
-        if (ms > 14) slowFrames++;
-        if (sampleFrames >= 40) {
-          if (slowFrames > 20 && cell < 10) {
+        if (ms > 12) slowFrames++;
+        if (sampleFrames >= 20) {
+          if (slowFrames > 10 && cell < 10) {
             cell += 1;
             sample();
           }
@@ -302,8 +299,13 @@ export function AsciiStars({
       }
     }
 
+    // 30fps is plenty for the slow pulse and halves CPU cost
+    let lastDraw = 0;
     const loop = (now: number) => {
-      draw(now);
+      if (now - lastDraw >= 32) {
+        lastDraw = now;
+        draw(now);
+      }
       raf = requestAnimationFrame(loop);
     };
     const start = () => {
@@ -351,12 +353,15 @@ export function AsciiStars({
       { threshold: 0 }
     );
     io.observe(wrap);
+    const onVis = () => (document.hidden ? stop() : visible && start());
+    document.addEventListener("visibilitychange", onVis);
 
     return () => {
       disposed = true;
       stop();
       ro.disconnect();
       io.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
     };
   }, [src, scene, cellSize, contrast, brightness, vignette, bloom, animSpeed, animIntensity, maxCells, originX, originY]);
 

@@ -25,12 +25,12 @@ export function FreeTeaser() {
               <Reveal>
                 <p className="eyebrow text-ember">Free samples</p>
                 <h2 id="free-title" className="display mt-4 text-[14vw] sm:text-8xl">
-                  5 loops.
+                  10 free
                   <br />
-                  <span className="text-ember">Zero euros.</span>
+                  <span className="text-ember">loops.</span>
                 </h2>
                 <p className="mt-5 max-w-lg text-lg text-bone/85">
-                  Get <strong className="text-bone">Guitar Vault Lite</strong> — five live guitar loops straight from the Vault. Drop your email, confirm the double
+                  Get <strong className="text-bone">Guitar Vault Lite</strong> — ten live guitar loops straight from the Vault. Drop your email, confirm the double
                   opt-in and they&apos;re yours.
                 </p>
               </Reveal>

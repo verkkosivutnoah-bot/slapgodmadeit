@@ -1,0 +1,4 @@
+python-telegram-bot>=21,<23
+librosa>=0.10
+soundfile>=0.12
+python-dotenv>=1.0

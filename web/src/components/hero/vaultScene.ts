@@ -1,7 +1,6 @@
 // "The Vault" — original hero source artwork, drawn procedurally on an offscreen canvas.
-// A Spanish guitar floating at an angle in front of a setting sun, framed by an Andalusian
-// horseshoe arch. High contrast on black so the AsciiStars renderer reads it well.
-// Geometry is exported so the SVG string overlay can line up exactly (same 1600×1000 space).
+// A huge banded setting sun framed by an Andalusian horseshoe arch.
+// High contrast on black so the AsciiStars renderer reads it well.
 
 export const SCENE_W = 1600;
 export const SCENE_H = 1000;
@@ -9,39 +8,8 @@ export const SCENE_H = 1000;
 export const SUN = { x: 800, y: 390, r: 270 };
 export const ARCH = { x: 800, y: 370, r: 410, spread: 24 }; // spread = degrees below horizontal
 
-export type SceneLayout = "wide" | "tall";
-/** guitar placement per layout: local origin = waist. "tall" keeps the guitar centred for portrait crops. */
-export const GUITARS: Record<SceneLayout, { x: number; y: number; angle: number; scale: number }> = {
-  wide: { x: 1080, y: 420, angle: -46, scale: 0.66 },
-  tall: { x: 800, y: 350, angle: -14, scale: 0.4 },
-};
-let GUITAR = GUITARS.wide;
-
-const NUT_Y = -560;
-const SADDLE_Y = 212;
-
-/** local → scene coords */
-export function toScene(x: number, y: number): [number, number] {
-  const a = (GUITAR.angle * Math.PI) / 180;
-  const s = GUITAR.scale;
-  return [GUITAR.x + s * (x * Math.cos(a) - y * Math.sin(a)), GUITAR.y + s * (x * Math.sin(a) + y * Math.cos(a))];
-}
-
-/** 6 strings as [x1, y1, x2, y2] in scene coords (saddle → nut) */
-export function stringLines(layout: SceneLayout = "wide"): [number, number, number, number][] {
-  GUITAR = GUITARS[layout];
-  return Array.from({ length: 6 }, (_, i) => {
-    const t = i / 5 - 0.5;
-    const [x1, y1] = toScene(t * 36, SADDLE_Y);
-    const [x2, y2] = toScene(t * 26, NUT_Y);
-    return [x1, y1, x2, y2];
-  });
-}
-
 function horseshoePath(ctx: CanvasRenderingContext2D | Path2D, r: number) {
   const sp = (ARCH.spread * Math.PI) / 180;
-  const a0 = Math.PI - -sp; // left, slightly below centre
-  const a1 = Math.PI * 2 + -sp + Math.PI * 0; // right
   const lx = ARCH.x + r * Math.cos(Math.PI + sp);
   const ly = ARCH.y - r * Math.sin(Math.PI + sp);
   ctx.moveTo(lx, SCENE_H + 10);
@@ -49,12 +17,9 @@ function horseshoePath(ctx: CanvasRenderingContext2D | Path2D, r: number) {
   ctx.arc(ARCH.x, ARCH.y, r, Math.PI - sp, Math.PI * 2 + sp, false);
   const rx = ARCH.x + r * Math.cos(sp);
   ctx.lineTo(rx, SCENE_H + 10);
-  void a0;
-  void a1;
 }
 
-export function drawVaultScene(layout: SceneLayout = "wide"): HTMLCanvasElement {
-  GUITAR = GUITARS[layout];
+export function drawVaultScene(): HTMLCanvasElement {
   const c = document.createElement("canvas");
   c.width = SCENE_W;
   c.height = SCENE_H;
@@ -154,160 +119,5 @@ export function drawVaultScene(layout: SceneLayout = "wide"): HTMLCanvasElement 
   g.lineWidth = 10;
   g.stroke();
 
-  /* ---------------- guitar */
-  g.save();
-  g.translate(GUITAR.x, GUITAR.y);
-  g.rotate((GUITAR.angle * Math.PI) / 180);
-  g.scale(GUITAR.scale, GUITAR.scale);
-
-  // drop shadow
-  g.save();
-  g.translate(40, 60);
-  g.fillStyle = "rgba(0,0,0,.65)";
-  bodyPath(g);
-  g.fill();
-  g.restore();
-
-  // neck
-  const neck = g.createLinearGradient(-30, 0, 30, 0);
-  neck.addColorStop(0, "#f2b544");
-  neck.addColorStop(0.25, "#7a3418");
-  neck.addColorStop(1, "#3a130c");
-  g.fillStyle = neck;
-  g.beginPath();
-  g.moveTo(-30, -60);
-  g.lineTo(-23, NUT_Y);
-  g.lineTo(23, NUT_Y);
-  g.lineTo(30, -60);
-  g.closePath();
-  g.fill();
-  // frets
-  g.strokeStyle = "rgba(255,227,160,.8)";
-  g.lineWidth = 3;
-  for (let i = 0; i < 12; i++) {
-    const y = NUT_Y + 30 + i * (34 - i * 0.9);
-    const w = 23 + ((y - NUT_Y) / (-60 - NUT_Y)) * 7;
-    g.beginPath();
-    g.moveTo(-w, y);
-    g.lineTo(w, y);
-    g.stroke();
-  }
-
-  // headstock (slotted classical)
-  const head = g.createLinearGradient(-45, 0, 45, 0);
-  head.addColorStop(0, "#F2B544");
-  head.addColorStop(0.3, "#8a3a1a");
-  head.addColorStop(1, "#2a0d08");
-  g.fillStyle = head;
-  g.beginPath();
-  g.moveTo(-25, NUT_Y);
-  g.lineTo(-44, NUT_Y - 170);
-  g.quadraticCurveTo(0, NUT_Y - 200, 44, NUT_Y - 170);
-  g.lineTo(25, NUT_Y);
-  g.closePath();
-  g.fill();
-  g.fillStyle = "#050203";
-  for (const sx of [-14, 14]) g.fillRect(sx - 7, NUT_Y - 150, 14, 120);
-  // tuning pegs
-  for (let i = 0; i < 3; i++) {
-    const y = NUT_Y - 130 + i * 40;
-    for (const side of [-1, 1]) {
-      g.fillStyle = "#FFE3A0";
-      g.fillRect(side * 44 - (side < 0 ? 26 : 0), y - 5, 26, 10);
-      g.beginPath();
-      g.ellipse(side * 78, y, 12, 17, 0, 0, Math.PI * 2);
-      g.fillStyle = side < 0 ? "#F2B544" : "#b0703a";
-      g.fill();
-    }
-  }
-  // nut
-  g.fillStyle = "#F3EBDD";
-  g.fillRect(-25, NUT_Y - 6, 50, 10);
-
-  // body
-  const wood = g.createRadialGradient(-60, -40, 20, 0, 60, 320);
-  wood.addColorStop(0, "#ff8a4c");
-  wood.addColorStop(0.35, "#b8401c");
-  wood.addColorStop(0.75, "#6e1a16");
-  wood.addColorStop(1, "#5C0F1C");
-  g.fillStyle = wood;
-  bodyPath(g);
-  g.fill();
-  // binding / rim light
-  g.lineWidth = 14;
-  const bind = g.createLinearGradient(-200, 0, 200, 0);
-  bind.addColorStop(0, "#FFE9B8");
-  bind.addColorStop(0.6, "#FF4B2B");
-  bind.addColorStop(1, "#8C6CFF");
-  g.strokeStyle = bind;
-  bodyPath(g);
-  g.stroke();
-  // shade on right side
-  const shade = g.createLinearGradient(-200, 0, 220, 0);
-  shade.addColorStop(0, "rgba(0,0,0,0)");
-  shade.addColorStop(0.6, "rgba(0,0,0,0)");
-  shade.addColorStop(1, "rgba(30,6,12,.7)");
-  g.fillStyle = shade;
-  bodyPath(g);
-  g.fill();
-
-  // fingerboard over body
-  g.fillStyle = "#3a130c";
-  g.beginPath();
-  g.moveTo(-30, -60);
-  g.lineTo(-31, 5);
-  g.lineTo(31, 5);
-  g.lineTo(30, -60);
-  g.fill();
-
-  // rosette + soundhole
-  const hole = { x: 0, y: 60, r: 58 };
-  for (let ring = 0; ring < 4; ring++) {
-    const rr = hole.r + 12 + ring * 11;
-    const n = 36 + ring * 8;
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2;
-      g.beginPath();
-      g.arc(hole.x + Math.cos(a) * rr, hole.y + Math.sin(a) * rr, 3.4 - ring * 0.4, 0, Math.PI * 2);
-      g.fillStyle = ["#FFE3A0", "#FF4B2B", "#F3EBDD", "#8C6CFF"][(i + ring) % 4];
-      g.fill();
-    }
-  }
-  g.beginPath();
-  g.arc(hole.x, hole.y, hole.r, 0, Math.PI * 2);
-  g.fillStyle = "#000";
-  g.fill();
-
-  // bridge
-  g.fillStyle = "#2a0d08";
-  g.fillRect(-70, SADDLE_Y - 14, 140, 34);
-  g.fillStyle = "#F3EBDD";
-  g.fillRect(-24, SADDLE_Y - 4, 48, 6);
-
-  // strings (drawn faint — the live SVG overlay adds the bright vibrating ones)
-  g.strokeStyle = "rgba(243,235,221,.55)";
-  g.lineWidth = 2;
-  for (let i = 0; i < 6; i++) {
-    const t = i / 5 - 0.5;
-    g.beginPath();
-    g.moveTo(t * 36, SADDLE_Y);
-    g.lineTo(t * 26, NUT_Y);
-    g.stroke();
-  }
-  g.restore();
-
   return c;
-}
-
-function bodyPath(g: CanvasRenderingContext2D) {
-  // classical figure-eight: upper bout (narrow) + waist + lower bout (wide)
-  g.beginPath();
-  g.moveTo(0, -120);
-  g.bezierCurveTo(95, -125, 140, -70, 125, -5);
-  g.bezierCurveTo(115, 45, 100, 60, 130, 115);
-  g.bezierCurveTo(185, 200, 185, 330, 0, 345);
-  g.bezierCurveTo(-185, 330, -185, 200, -130, 115);
-  g.bezierCurveTo(-100, 60, -115, 45, -125, -5);
-  g.bezierCurveTo(-140, -70, -95, -125, 0, -120);
-  g.closePath();
 }

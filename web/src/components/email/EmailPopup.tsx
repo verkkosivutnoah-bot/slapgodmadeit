@@ -84,7 +84,7 @@ export function EmailPopup() {
             Guitar Vault <span className="text-ember">Lite</span>
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed text-mute">
-            5 free live guitar loops from SLAPGOD&apos;s Guitar Vault. Email required — confirm the link in your inbox (double opt-in) and the
+            10 free live guitar loops from SLAPGOD&apos;s Guitar Vault. Email required — confirm the link in your inbox (double opt-in) and the
             download is yours.
           </p>
           <div className="mt-7">
