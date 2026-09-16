@@ -7,16 +7,8 @@ export const metadata: Metadata = { title: "Free Downloads" };
 export default function FreePage() {
   return (
     <>
-      <PageHero
-        eyebrow="Free downloads"
-        ghost="FREE"
-        title={
-          <>
-            Free <span className="text-ember">sounds</span>
-          </>
-        }
-      >
-        Email required. Tick the consent box, confirm the double opt-in link in your inbox, and the download is yours.
+      <PageHero eyebrow="Free downloads" title="10 free loops">
+        Email required. Tick the consent box, confirm the link in your inbox, and the download is yours.
       </PageHero>
       <FreeDownloads />
     </>

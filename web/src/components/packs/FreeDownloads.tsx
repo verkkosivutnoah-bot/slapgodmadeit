@@ -18,17 +18,17 @@ export function FreeDownloads() {
             <MusicPlayer id="free-lite" label="Guitar Vault Lite preview" tracks={lite.demo} />
           </div>
           <div>
-            <p className="eyebrow text-ember">
+            <p className="eyebrow text-white">
               <DownloadIcon size={12} className="mr-1 inline" /> Free · {lite.soundLabel}
             </p>
-            <h2 id="lite-title" className="display mt-3 text-6xl sm:text-8xl">
+            <h2 id="lite-title" className="display mt-3 text-[36px] sm:text-[48px]">
               {lite.title}
             </h2>
             <p className="mt-4 text-lg text-bone/85">{lite.description}</p>
             <ul className="mt-6 flex flex-wrap gap-2">
               {lite.specs.map((s) => (
-                <li key={s} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-line px-3 font-mono text-[11px]">
-                  <CheckIcon size={12} className="text-ember" /> {s}
+                <li key={s} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-line px-3 text-[12px]">
+                  <CheckIcon size={12} className="text-stone-400" /> {s}
                 </li>
               ))}
             </ul>
@@ -51,7 +51,7 @@ export function FreeDownloads() {
       </Reveal>
 
       <section aria-labelledby="more-free">
-        <h2 id="more-free" className="display mb-6 text-5xl">
+        <h2 id="more-free" className="display mb-6 text-[32px]">
           More freebies
         </h2>
         <Stagger className="grid gap-4 md:grid-cols-2 grid-cols-1">
@@ -70,10 +70,10 @@ export function FreeDownloads() {
             </StaggerItem>
           ))}
           <StaggerItem>
-            <Link href={`/packs/${guitarVault.slug}`} className="panel group flex items-center gap-5 border-ember/30 p-4">
+            <Link href={`/packs/${guitarVault.slug}`} className="panel group flex items-center gap-5 border-white/30 p-4">
               <CoverArt src={guitarVault.cover} title={guitarVault.title} alt="" sizes="96px" className="h-24 w-24 shrink-0 rounded-2xl" />
               <div className="min-w-0 flex-1">
-                <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-ember">
+                <p className="flex items-center gap-1.5 text-[12px] text-white">
                   <SparkIcon size={10} /> Want all 50?
                 </p>
                 <p className="font-semibold">{guitarVault.title}</p>

@@ -93,39 +93,14 @@ export const SparkIcon = ({ size, ...p }: P) => (
   </svg>
 );
 
-/** Decorative waveform squiggle */
-export function Waveform({ className, bars = 48, seed = 3 }: { className?: string; bars?: number; seed?: number }) {
-  const heights = Array.from({ length: bars }, (_, i) => {
-    const v = Math.abs(Math.sin(i * 0.55 + seed) * 0.6 + Math.sin(i * 0.21 + seed * 2) * 0.4);
-    return Math.round((0.15 + v * 0.85) * 1000) / 1000;
-  });
-  return (
-    <svg className={className} viewBox={`0 0 ${bars * 4} 40`} preserveAspectRatio="none" aria-hidden>
-      {heights.map((h, i) => (
-        <rect key={i} x={i * 4} y={Math.round((20 - h * 18) * 100) / 100} width="2" height={Math.round(h * 3600) / 100} rx="1" fill="currentColor" />
-      ))}
-    </svg>
-  );
-}
-
-/** Rotating circular sticker badge */
-export function Sticker({ text, className, children }: { text: string; className?: string; children?: React.ReactNode }) {
-  const id = `sticker-${text.replace(/[^a-z0-9]/gi, "").slice(0, 12)}`;
-  return (
-    <div
-      className={`${/\b(absolute|fixed)\b/.test(className ?? "") ? "" : "relative"} ${/\bhidden\b/.test(className ?? "") ? "" : "grid"} place-items-center ${className ?? ""}`}
-      aria-hidden
-    >
-      <svg viewBox="0 0 120 120" className="absolute inset-0 h-full w-full motion-safe:animate-[spin_14s_linear_infinite]">
-        <defs>
-          <path id={id} d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" />
-        </defs>
-        <circle cx="60" cy="60" r="58" style={{ fill: "currentColor" }} />
-        <text fontFamily="var(--font-mono)" fontSize="10.5" letterSpacing="2.6" style={{ fill: "var(--color-ink)" }} fontWeight="700">
-          <textPath href={`#${id}`}>{text}</textPath>
-        </text>
-      </svg>
-      <div className="relative text-ink">{children}</div>
-    </div>
-  );
-}
+export const SearchIcon = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="M20 20l-3.5-3.5" />
+  </svg>
+);
+export const ArrowUpIcon = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}>
+    <path d="M12 19V5M6 11l6-6 6 6" />
+  </svg>
+);

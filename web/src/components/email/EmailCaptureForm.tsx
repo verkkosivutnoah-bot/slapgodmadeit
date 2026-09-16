@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useId, useState, type FormEvent } from "react";
-import { ArrowIcon, CheckIcon, MailIcon } from "@/components/ui/Icons";
+import { CheckIcon, MailIcon } from "@/components/ui/Icons";
 
 export const OPT_IN_KEY = "sg_subscribed";
 
@@ -69,9 +69,9 @@ export function EmailCaptureForm({
           role="status"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-start gap-4 rounded-2xl border border-ember/30 bg-ember/[0.06] p-5"
+          className="flex items-start gap-4 rounded-[22px] border border-line bg-white/[0.04] p-5"
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ember text-ink">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-deep">
             <CheckIcon />
           </span>
           <div>
@@ -96,7 +96,7 @@ export function EmailCaptureForm({
                 placeholder="you@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input pl-11"
+                className="input !pl-11"
                 data-autofocus={autoFocus || undefined}
                 aria-invalid={status === "error" && !!error}
                 aria-describedby={error ? `${id}-err` : undefined}
@@ -104,9 +104,8 @@ export function EmailCaptureForm({
             </div>
             {/* honeypot */}
             <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
-            <button type="submit" className="btn btn-primary shrink-0" disabled={status === "loading"}>
+            <button type="submit" className="btn btn-primary !h-[52px] shrink-0 !px-6" disabled={status === "loading"}>
               {status === "loading" ? "Sending…" : cta}
-              <ArrowIcon size={16} />
             </button>
           </div>
           <label htmlFor={`${id}-consent`} className="flex cursor-pointer items-start gap-3 text-[13px] leading-snug text-mute">
@@ -115,20 +114,20 @@ export function EmailCaptureForm({
               type="checkbox"
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
-              className="mt-0.5 h-[18px] w-[18px] shrink-0 cursor-pointer accent-[var(--color-ember)]"
+              className="mt-0.5 h-[18px] w-[18px] shrink-0 cursor-pointer accent-[var(--fg)]"
               required
             />
             <span>
               I agree to receive emails from SLAPGOD about free sounds, new releases and offers. Unsubscribe anytime. See the{" "}
-              <Link href="/privacy" className="text-bone underline decoration-bone/30 underline-offset-2 hover:decoration-ember">
+              <Link href="/privacy" className="text-bone underline decoration-bone/30 underline-offset-2 hover:decoration-white">
                 Privacy Policy
               </Link>
               .
             </span>
           </label>
-          <p className="font-mono text-[11px] text-mute/90">Double opt-in: we&apos;ll email you a link to confirm.</p>
+          <p className="text-[12px] text-mute/90">Double opt-in: we&apos;ll email you a link to confirm.</p>
           {error && (
-            <p id={`${id}-err`} role="alert" className="text-sm text-gold">
+            <p id={`${id}-err`} role="alert" className="text-sm text-stone-300">
               {error}
             </p>
           )}

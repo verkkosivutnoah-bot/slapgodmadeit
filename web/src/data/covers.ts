@@ -22,13 +22,13 @@ export function coverBlur(src: string): string {
   return bySrc.get(src)?.blur ?? DEFAULT_BLUR;
 }
 
-// 8×8 warm gradient (oxblood → ember) — generic blur placeholder
+// 8×8 neutral stone gradient — generic blur placeholder
 export const DEFAULT_BLUR =
   "data:image/svg+xml;base64," +
   (typeof btoa === "function"
     ? btoa(
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><defs><radialGradient id="g" cx="35%" cy="30%" r="90%"><stop offset="0" stop-color="#FF4B2B" stop-opacity=".55"/><stop offset=".5" stop-color="#5C0F1C"/><stop offset="1" stop-color="#160D0F"/></radialGradient></defs><rect width="8" height="8" fill="url(#g)"/></svg>`
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><defs><radialGradient id="g" cx="35%" cy="30%" r="90%"><stop offset="0" stop-color="#44403C"/><stop offset=".5" stop-color="#292524"/><stop offset="1" stop-color="#1C1917"/></radialGradient></defs><rect width="8" height="8" fill="url(#g)"/></svg>`
       )
     : Buffer.from(
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><defs><radialGradient id="g" cx="35%" cy="30%" r="90%"><stop offset="0" stop-color="#FF4B2B" stop-opacity=".55"/><stop offset=".5" stop-color="#5C0F1C"/><stop offset="1" stop-color="#160D0F"/></radialGradient></defs><rect width="8" height="8" fill="url(#g)"/></svg>`
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><defs><radialGradient id="g" cx="35%" cy="30%" r="90%"><stop offset="0" stop-color="#44403C"/><stop offset=".5" stop-color="#292524"/><stop offset="1" stop-color="#1C1917"/></radialGradient></defs><rect width="8" height="8" fill="url(#g)"/></svg>`
       ).toString("base64"));

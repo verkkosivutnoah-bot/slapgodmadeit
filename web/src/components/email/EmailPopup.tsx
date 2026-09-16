@@ -5,7 +5,6 @@ import { Dialog } from "@/components/ui/Dialog";
 import { CoverArt } from "@/components/ui/CoverArt";
 import { coverFor } from "@/data/covers";
 import { EmailCaptureForm, OPT_IN_KEY } from "./EmailCaptureForm";
-import { Sticker, Waveform } from "@/components/ui/Icons";
 
 const SEEN_KEY = "sg_popup_seen_v1";
 const DELAY_MS = 15000;
@@ -68,34 +67,22 @@ export function EmailPopup() {
   }, [pathname]);
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} title="Get Guitar Vault Lite free" className="max-w-[880px]">
-      <div className="grid md:grid-cols-[1fr_1.15fr] grid-cols-1">
-        <div className="relative hidden overflow-hidden rounded-l-[28px] md:block">
-          <CoverArt src={coverFor("packs", "guitar-vault-lite")} title="Guitar Vault Lite" alt="" sizes="400px" className="absolute inset-0" />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
-          <Sticker text="FREE • FREE • FREE • FREE • FREE • " className="absolute right-6 top-6 h-24 w-24 text-ember">
-            <span className="display text-xl">5</span>
-          </Sticker>
-          <Waveform className="absolute bottom-8 left-8 right-8 h-10 text-ember/80" />
-        </div>
-        <div className="p-7 pt-14 sm:p-10">
-          <p className="eyebrow text-ember">Free download</p>
-          <h2 className="display mt-3 text-5xl sm:text-6xl">
-            Guitar Vault <span className="text-ember">Lite</span>
-          </h2>
-          <p className="mt-4 text-[15px] leading-relaxed text-mute">
-            10 free live guitar loops from SLAPGOD&apos;s Guitar Vault. Email required — confirm the link in your inbox (double opt-in) and the
-            download is yours.
-          </p>
-          <div className="mt-7">
-            <EmailCaptureForm
-              source="popup_guitar_vault_lite"
-              cta="Get the loops"
-              autoFocus
-              successTitle="Check your inbox to confirm"
-              successText="We sent a confirmation link. Click it and Guitar Vault Lite lands in your inbox."
-            />
-          </div>
+    <Dialog open={open} onClose={() => setOpen(false)} title="Get 10 free loops" className="max-w-[520px]">
+      <div className="p-7 pt-14 text-center sm:p-10 sm:pt-12">
+        <CoverArt src={coverFor("packs", "guitar-vault-lite")} title="Guitar Vault Lite" alt="" sizes="96px" className="mx-auto h-20 w-20 rounded-2xl" />
+        <p className="eyebrow mt-6">Free download</p>
+        <h2 className="display mt-2 text-[clamp(32px,7vw,44px)]">10 free loops</h2>
+        <p className="mx-auto mt-3 max-w-sm text-[15px] leading-relaxed text-stone-300">
+          Guitar Vault Lite — ten live guitar loops. Email required; confirm the link in your inbox (double opt-in) and the download is yours.
+        </p>
+        <div className="mt-7 text-left">
+          <EmailCaptureForm
+            source="popup_guitar_vault_lite"
+            cta="Get the loops"
+            autoFocus
+            successTitle="Check your inbox to confirm"
+            successText="We sent a confirmation link. Click it and Guitar Vault Lite lands in your inbox."
+          />
         </div>
       </div>
     </Dialog>

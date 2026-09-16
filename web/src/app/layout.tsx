@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Inter, Newsreader } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
-const anton = Anton({ variable: "--font-anton", weight: "400", subsets: ["latin"], display: "swap" });
-const grotesk = Space_Grotesk({ variable: "--font-grotesk", subsets: ["latin"], display: "swap" });
-const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"], display: "swap" });
+// Display: Newsreader (free, variable w/ optical size) as a heavy editorial serif. UI: system stack, Inter as fallback.
+const serif = Newsreader({ variable: "--font-serif", subsets: ["latin"], axes: ["opsz"], display: "swap" });
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0B0708",
+  themeColor: "#1C1917",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -35,14 +35,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${anton.variable} ${grotesk.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${serif.variable} ${inter.variable}`}>
       <body className="min-h-svh">
         <Providers>
           <Header />
           <main id="main">{children}</main>
           <Footer />
         </Providers>
-        <div className="grain" aria-hidden />
       </body>
     </html>
   );

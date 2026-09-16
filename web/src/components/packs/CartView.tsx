@@ -36,7 +36,7 @@ export function CartView() {
     return (
       <div className="container-sg">
         <div className="panel mx-auto max-w-2xl p-10 text-center sm:p-16">
-          <p className="display text-5xl">Cart&apos;s empty</p>
+          <p className="display text-[32px]">Cart&apos;s empty</p>
           <p className="mt-3 text-mute">Grab a beat lease or a pack — or start with 10 free guitar loops.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/beats" className="btn btn-primary">
@@ -67,17 +67,17 @@ export function CartView() {
               >
                 <CoverArt src={i.cover} title={i.title} alt="" sizes="80px" className="h-16 w-16 shrink-0 rounded-xl sm:h-20 sm:w-20" />
                 <div className="min-w-0 flex-1">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-mute">{i.kind === "beat" ? "Beat lease" : "Pack"}</p>
-                  <Link href={i.href} className="block truncate font-semibold hover:text-ember">
+                  <p className="text-[12px] text-mute">{i.kind === "beat" ? "Beat lease" : "Pack"}</p>
+                  <Link href={i.href} className="block truncate font-semibold hover:text-white">
                     {i.title}
                   </Link>
                   {i.variant && <p className="text-sm text-mute">{i.variant}</p>}
                 </div>
-                <p className="display text-2xl">{format(i.priceEUR)}</p>
+                <p className="text-[26px] font-semibold tracking-tight">{format(i.priceEUR)}</p>
                 <button
                   type="button"
                   onClick={() => cart.remove(i.key)}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-line text-mute transition hover:border-gold hover:text-gold"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-line text-mute transition hover:border-stone-300 hover:text-stone-300"
                   aria-label={`Remove ${i.title} from cart`}
                 >
                   <CloseIcon size={14} />
@@ -86,14 +86,14 @@ export function CartView() {
             ))}
           </AnimatePresence>
         </ul>
-        <p className="mt-4 font-mono text-xs text-mute">
+        <p className="mt-4 text-xs text-mute">
           Deal: {licenseDeals.bundle}.{" "}
           {leases.length > 0 && leases.length % 3 !== 0 && `Add ${3 - (leases.length % 3)} more lease${3 - (leases.length % 3) > 1 ? "s" : ""} to unlock a free one.`}
         </p>
       </section>
 
       <aside className="panel h-fit p-6 sm:p-8 lg:sticky lg:top-28" aria-labelledby="summary-title">
-        <h2 id="summary-title" className="display text-4xl">
+        <h2 id="summary-title" className="display text-[32px]">
           Summary
         </h2>
         <dl className="mt-6 space-y-3 text-sm">
@@ -102,20 +102,20 @@ export function CartView() {
             <dd>{format(cart.subtotalEUR)}</dd>
           </div>
           {discount > 0 && (
-            <div className="flex justify-between text-ember">
+            <div className="flex justify-between text-white">
               <dt>Buy 2 get 1 free</dt>
               <dd>−{format(discount)}</dd>
             </div>
           )}
           <div className="flex justify-between border-t border-line pt-3 text-base">
             <dt className="font-semibold">Total</dt>
-            <dd className="display text-3xl">{format(total)}</dd>
+            <dd className="text-[26px] font-semibold tracking-tight">{format(total)}</dd>
           </div>
         </dl>
-        <p className="mt-1 text-right font-mono text-[11px] text-mute">{vatNote}</p>
+        <p className="mt-1 text-right text-[12px] text-mute">{vatNote}</p>
 
         <label className="mt-6 flex cursor-pointer items-start gap-3 text-[13px] text-mute">
-          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-[18px] w-[18px] accent-[var(--color-ember)]" />
+          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-[18px] w-[18px] accent-[var(--fg)]" />
           <span>
             I accept the{" "}
             <Link href="/terms" className="text-bone underline underline-offset-2">
@@ -133,7 +133,7 @@ export function CartView() {
           </span>
         </label>
 
-        <button type="button" onClick={checkout} className="btn btn-primary mt-6 h-14 w-full">
+        <button type="button" onClick={checkout} className="btn btn-primary mt-6 !h-12 w-full">
           Checkout <ArrowIcon size={16} />
         </button>
         {notice && (
@@ -141,7 +141,7 @@ export function CartView() {
             {notice}
           </p>
         )}
-        <button type="button" onClick={cart.clear} className="mt-4 w-full text-center font-mono text-[11px] uppercase tracking-widest text-mute hover:text-bone">
+        <button type="button" onClick={cart.clear} className="mt-4 w-full text-center text-[12px] text-mute hover:text-bone">
           Clear cart
         </button>
       </aside>

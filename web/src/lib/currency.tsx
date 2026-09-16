@@ -94,7 +94,7 @@ export function CurrencyToggle({ className = "" }: { className?: string }) {
     <div
       role="group"
       aria-label="Currency"
-      className={`relative inline-flex h-9 items-center [@media(pointer:coarse)]:h-12 rounded-full border border-line bg-bone/[0.03] p-1 font-mono text-[11px] ${className}`}
+      className={`relative inline-flex h-9 items-center rounded-full bg-stone-300/[0.08] p-1 text-[13px] font-medium [@media(pointer:coarse)]:h-11 ${className}`}
     >
       {(["EUR", "USD"] as const).map((c) => (
         <button
@@ -102,11 +102,12 @@ export function CurrencyToggle({ className = "" }: { className?: string }) {
           type="button"
           aria-pressed={currency === c}
           onClick={() => setCurrency(c)}
-          className={`h-7 whitespace-nowrap rounded-full px-2.5 [@media(pointer:coarse)]:h-10 [@media(pointer:coarse)]:px-3.5 tracking-wider transition-colors ${
-            currency === c ? "bg-bone text-ink" : "text-mute hover:text-bone"
+          aria-label={c}
+          className={`h-7 min-w-8 whitespace-nowrap rounded-full px-2.5 [@media(pointer:coarse)]:h-9 [@media(pointer:coarse)]:min-w-10 transition-colors ${
+            currency === c ? "bg-stone-300/[0.16] text-bone" : "text-mute hover:text-bone"
           }`}
         >
-          {c === "EUR" ? "€ EUR" : "$ USD"}
+          {c === "EUR" ? "€" : "$"}
         </button>
       ))}
     </div>

@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useId, useState, type ReactNode } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/motion";
-import { ArrowIcon, CheckIcon, CloseIcon, DownloadIcon, SparkIcon, Sticker } from "@/components/ui/Icons";
+import { ArrowIcon, CheckIcon, CloseIcon, DownloadIcon, SparkIcon } from "@/components/ui/Icons";
 import { canDo, cantDo, faqs, leaseVsExclusive, registerSteps, SPLIT_SHEET_URL, splits, twoCopyrights } from "@/data/rights";
 import { CREDIT_FORMAT, licenseTiers } from "@/data/licenses";
 
@@ -12,60 +12,59 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 function FullTerms({ className = "" }: { className?: string }) {
   return (
-    <Link href="/licenses" className={`inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-mute transition hover:text-ember ${className}`}>
+    <Link href="/licenses" className={`inline-flex items-center gap-1.5 text-[12px] text-mute transition hover:text-white ${className}`}>
       Full terms <ArrowIcon size={12} />
     </Link>
   );
 }
 
-function BlockTitle({ n, children, id }: { n: string; children: ReactNode; id?: string }) {
+/** Accordion-style block: serif title row, content revealed on open. */
+function Block({ id, n, title, children }: { id: string; n: string; title: ReactNode; children: ReactNode }) {
+  const [open, setOpen] = useState(n === "01");
+  const panelId = useId();
   return (
-    <div className="mb-6 flex items-baseline gap-4">
-      <span className="font-mono text-xs text-ember">{n}</span>
-      <h3 id={id} className="display text-4xl sm:text-5xl">
-        {children}
+    <div id={id} className="scroll-mt-28 border-t border-line">
+      <h3>
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={() => setOpen((o) => !o)}
+          className="flex w-full items-center gap-4 py-6 text-left sm:gap-6 sm:py-8"
+        >
+          <span className="w-6 shrink-0 text-[13px] text-mute">{n}</span>
+          <span className="display flex-1 text-[clamp(24px,3.6vw,36px)]">{title}</span>
+          <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full bg-stone-300/[0.12] text-nav transition-transform duration-300 ${open ? "rotate-45" : ""}`} aria-hidden>
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </span>
+        </button>
       </h3>
+      {open && (
+        <motion.div id={panelId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE }} className="pb-10 sm:pl-12">
+          {children}
+        </motion.div>
+      )}
     </div>
   );
 }
 
-const INDEX = [
-  ["copyrights", "Two copyrights"],
-  ["lease-vs-exclusive", "Lease vs exclusive"],
-  ["can-cant", "Can / can't"],
-  ["splits", "Splits"],
-  ["credits", "Credits & claims"],
-  ["caps", "Caps & upgrades"],
-  ["faq", "FAQ"],
-] as const;
-
 export function KnowYourRights() {
   return (
     <section id="rights" className="relative scroll-mt-24 py-24 md:py-36" aria-labelledby="rights-title">
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[600px] bg-[radial-gradient(50%_60%_at_50%_0%,rgb(var(--violet-rgb)/0.12),transparent)]" />
-      <div className="container-sg">
+            <div className="container-sg">
         <SectionHeader
           id="rights-title"
           eyebrow="Producer & artist education"
-          ghost="RIGHTS"
-          title={
-            <>
-              Know your <span className="text-violet">rights</span>
-            </>
-          }
+          align="center"
+          title="Know your rights"
         >
           Licensing shouldn&apos;t need a lawyer to understand. Here&apos;s exactly what you get, what you can do, and how splits work — in plain language.
         </SectionHeader>
 
-        <nav aria-label="Know your rights sections" className="-mt-4 mb-16 flex flex-wrap gap-2">
-          {INDEX.map(([id, label]) => (
-            <a key={id} href={`#rights-${id}`} className="chip">
-              {label}
-            </a>
-          ))}
-        </nav>
 
-        <div className="space-y-24 md:space-y-32">
+        <div className="mx-auto max-w-[960px] border-b border-line">
           <TwoCopyrights />
           <LeaseVsExclusive />
           <CanCant />
@@ -73,7 +72,9 @@ export function KnowYourRights() {
           <CreditsClaims />
           <Caps />
           <Faq />
-          <p className="mx-auto max-w-2xl rounded-2xl border border-line p-5 text-center text-[13px] text-mute">
+        </div>
+        <div className="mx-auto mt-10 max-w-[960px]">
+          <p className="mx-auto max-w-2xl text-center text-[13px] text-mute">
             <strong className="text-bone">Summary only</strong> — the license agreement delivered with your purchase is the binding document. Not legal advice.{" "}
             <Link href="/licenses" className="text-bone underline underline-offset-2">
               Read the license agreements
@@ -92,9 +93,9 @@ function TwoCopyrights() {
   const card = (key: "composition" | "master", color: string, accent: string) => {
     const c = twoCopyrights[key];
     return (
-      <div className={`relative h-full rounded-3xl border p-6 sm:p-8 ${color}`}>
-        <p className={`font-mono text-[10px] uppercase tracking-[0.2em] ${accent}`}>© {key === "composition" ? "Copyright #1" : "Copyright #2"}</p>
-        <p className="display mt-2 text-5xl">{c.title}</p>
+      <div className={`relative h-full rounded-[22px] border p-6 sm:p-8 ${color}`}>
+        <p className={`text-[12px] ${accent}`}>© {key === "composition" ? "Copyright #1" : "Copyright #2"}</p>
+        <p className="display mt-2 text-[32px]">{c.title}</p>
         <p className="mt-1 text-sm text-mute">{c.aka}</p>
         <ul className="mt-6 space-y-2.5 text-[15px]">
           {c.points.map((p) => (
@@ -108,18 +109,17 @@ function TwoCopyrights() {
     );
   };
   return (
-    <div id="rights-copyrights" className="scroll-mt-28">
-      <BlockTitle n="01">Every song = two copyrights</BlockTitle>
+    <Block id="rights-copyrights" n="01" title={<>Every song = two copyrights</>}>
       <Reveal>
         <div className="mx-auto flex w-fit items-center gap-3 rounded-full border border-bone/30 bg-bone/[0.05] px-6 py-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-ember" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white" />
           <span className="display text-2xl">Your song</span>
         </div>
       </Reveal>
       <svg viewBox="0 0 800 90" className="mx-auto hidden h-[90px] w-full max-w-[800px] md:block" aria-hidden>
         {[
-          ["M400 0 C400 50 200 40 200 90", "var(--color-gold)"],
-          ["M400 0 C400 50 600 40 600 90", "var(--color-violet)"],
+          ["M400 0 C400 50 200 40 200 90", "var(--fg-2)"],
+          ["M400 0 C400 50 600 40 600 90", "var(--color-mute)"],
         ].map(([d, col]) => (
           <motion.path
             key={d}
@@ -136,37 +136,36 @@ function TwoCopyrights() {
         ))}
       </svg>
       <div className="mt-6 grid gap-4 md:mt-0 md:grid-cols-2 grid-cols-1">
-        <Reveal>{card("composition", "border-gold/35 bg-[linear-gradient(160deg,rgb(var(--gold-rgb)/0.1),transparent_60%)]", "text-gold")}</Reveal>
-        <Reveal delay={0.1}>{card("master", "border-violet/35 bg-[linear-gradient(160deg,rgb(var(--violet-rgb)/0.1),transparent_60%)]", "text-violet")}</Reveal>
+        <Reveal>{card("composition", "border-line", "text-stone-400")}</Reveal>
+        <Reveal delay={0.1}>{card("master", "border-line", "text-stone-400")}</Reveal>
       </div>
       <FullTerms className="mt-5" />
-    </div>
+    </Block>
   );
 }
 
 /* 2 ------------------------------------------------------------------ */
 function LeaseVsExclusive() {
   return (
-    <div id="rights-lease-vs-exclusive" className="scroll-mt-28">
-      <BlockTitle n="02">Lease vs exclusive</BlockTitle>
+    <Block id="rights-lease-vs-exclusive" n="02" title={<>Lease vs exclusive</>}>
       <Reveal>
-        <div className="overflow-hidden rounded-3xl border border-line">
+        <div className="overflow-hidden rounded-[22px] border border-line">
           <div className="grid grid-cols-[1fr_1fr] border-b border-line bg-bone/[0.03] sm:grid-cols-[0.8fr_1fr_1fr]">
             <div className="hidden p-5 sm:block" />
             <div className="p-5">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-ember">Lease</p>
-              <p className="display text-3xl">Basic → Unlimited</p>
+              <p className="text-[12px] text-white">Lease</p>
+              <p className="display text-[26px]">Basic → Unlimited</p>
             </div>
             <div className="border-l border-line p-5">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-gold">Exclusive</p>
-              <p className="display text-3xl">Exclusive rights</p>
+              <p className="text-[12px] text-stone-300">Exclusive</p>
+              <p className="display text-[26px]">Exclusive rights</p>
             </div>
           </div>
           <Stagger>
             {leaseVsExclusive.map((r) => (
               <StaggerItem key={r.label}>
                 <div className="grid grid-cols-2 border-b border-line/60 last:border-0 sm:grid-cols-[0.8fr_1fr_1fr]">
-                  <p className="col-span-2 px-5 pt-4 font-mono text-[11px] uppercase tracking-wider text-mute sm:col-span-1 sm:py-4">{r.label}</p>
+                  <p className="col-span-2 px-5 pt-4 text-[12px] text-mute sm:col-span-1 sm:py-4">{r.label}</p>
                   <p className="p-5 pt-2 text-[15px] sm:pt-4">{r.lease}</p>
                   <p className="border-l border-line p-5 pt-2 text-[15px] sm:pt-4">{r.exclusive}</p>
                 </div>
@@ -176,7 +175,7 @@ function LeaseVsExclusive() {
         </div>
       </Reveal>
       <FullTerms className="mt-5" />
-    </div>
+    </Block>
   );
 }
 
@@ -187,7 +186,7 @@ function CanCant() {
       {items.map((t) => (
         <StaggerItem as="li" key={t}>
           <div className="flex items-start gap-3 text-[15px]">
-            <span className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full ${ok ? "bg-ember text-ink" : "bg-gold text-ink"}`}>
+            <span className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full ${ok ? "bg-white text-deep" : "bg-stone-300/[0.12] text-nav"}`}>
               {ok ? <CheckIcon size={13} /> : <CloseIcon size={12} />}
             </span>
             {t}
@@ -197,20 +196,19 @@ function CanCant() {
     </Stagger>
   );
   return (
-    <div id="rights-can-cant" className="scroll-mt-28">
-      <BlockTitle n="03">What you can &amp; can&apos;t do</BlockTitle>
+    <Block id="rights-can-cant" n="03" title={<>What you can &amp; can&apos;t do</>}>
       <div className="grid gap-4 md:grid-cols-2 grid-cols-1">
-        <div className="rounded-3xl border border-ember/30 bg-ember/[0.04] p-6 sm:p-8">
-          <p className="display mb-6 text-4xl text-ember">You can</p>
+        <div className="rounded-[22px] border border-line p-6 sm:p-8">
+          <p className="display mb-6 text-[26px]">You can</p>
           {list(canDo, true)}
         </div>
-        <div className="rounded-3xl border border-gold/30 bg-gold/[0.04] p-6 sm:p-8">
-          <p className="display mb-6 text-4xl text-gold">You can&apos;t</p>
+        <div className="rounded-[22px] border border-line p-6 sm:p-8">
+          <p className="display mb-6 text-[26px] text-stone-300">You can&apos;t</p>
           {list(cantDo, false)}
         </div>
       </div>
       <FullTerms className="mt-5" />
-    </div>
+    </Block>
   );
 }
 
@@ -238,40 +236,39 @@ function Donut({ share, color, label }: { share: number; color: string; label: s
         </svg>
         <div className="absolute inset-0 grid place-items-center text-center">
           <div>
-            <p className="display text-5xl" style={{ color }}>
+            <p className="display text-[26px]" style={{ color }}>
               {share}%
             </p>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-mute">SLAPGOD</p>
+            <p className="text-[12px] text-mute">SLAPGOD</p>
           </div>
         </div>
       </div>
-      <figcaption className="mt-3 font-mono text-xs uppercase tracking-widest">{label}</figcaption>
+      <figcaption className="mt-3 text-xs">{label}</figcaption>
     </figure>
   );
 }
 
 function Splits() {
   return (
-    <div id="rights-splits" className="scroll-mt-28">
-      <BlockTitle n="04">Publishing splits</BlockTitle>
+    <Block id="rights-splits" n="04" title={<>Publishing splits</>}>
       <div className="grid gap-4 lg:grid-cols-[1fr_1.3fr] grid-cols-1">
-        <div className="grid gap-6 rounded-3xl border border-line bg-surface/40 p-6 sm:grid-cols-2 sm:p-8 grid-cols-1">
+        <div className="grid gap-6 rounded-[22px] border border-line bg-surface/40 p-6 sm:grid-cols-2 sm:p-8 grid-cols-1">
           <div>
-            <Donut share={splits.beats.share} color="var(--color-ember)" label={splits.beats.label} />
+            <Donut share={splits.beats.share} color="var(--fg)" label={splits.beats.label} />
             <p className="mt-3 text-center text-[13px] text-mute">{splits.beats.text}</p>
           </div>
           <div>
-            <Donut share={splits.loops.share} color="var(--color-gold)" label={splits.loops.label} />
+            <Donut share={splits.loops.share} color="var(--fg-2)" label={splits.loops.label} />
             <p className="mt-3 text-center text-[13px] text-mute">{splits.loops.text}</p>
           </div>
         </div>
-        <div className="rounded-3xl border border-line p-6 sm:p-8">
-          <p className="display text-3xl">How to register your song</p>
+        <div className="rounded-[22px] border border-line p-6 sm:p-8">
+          <p className="display text-[26px]">How to register your song</p>
           <Stagger as="ul" className="relative mt-6 space-y-5">
             {registerSteps.map((s, i) => (
               <StaggerItem as="li" key={s.title}>
                 <div className="flex gap-4">
-                  <span className="display grid h-11 w-11 shrink-0 place-items-center rounded-full border border-ember/50 text-xl text-ember">{i + 1}</span>
+                  <span className="display grid h-11 w-11 shrink-0 place-items-center rounded-full bg-stone-300/[0.12] text-xl text-bone">{i + 1}</span>
                   <div>
                     <p className="font-semibold">{s.title}</p>
                     <p className="mt-0.5 text-[14px] text-mute">{s.text}</p>
@@ -291,7 +288,7 @@ function Splits() {
         </div>
       </div>
       <FullTerms className="mt-5" />
-    </div>
+    </Block>
   );
 }
 
@@ -299,14 +296,13 @@ function Splits() {
 function CreditsClaims() {
   const [copied, setCopied] = useState(false);
   return (
-    <div id="rights-credits" className="scroll-mt-28">
-      <BlockTitle n="05">Credits, claims &amp; originality</BlockTitle>
+    <Block id="rights-credits" n="05" title={<>Credits, claims &amp; originality</>}>
       <div className="grid gap-4 lg:grid-cols-3 grid-cols-1">
         <Reveal className="lg:col-span-2">
-          <div className="flex h-full flex-col justify-between rounded-3xl border border-line bg-surface/40 p-6 sm:p-8">
+          <div className="flex h-full flex-col justify-between rounded-[22px] border border-line bg-surface/40 p-6 sm:p-8">
             <div>
               <p className="eyebrow">Credit format</p>
-              <p className="mt-4 break-words font-mono text-2xl text-bone sm:text-4xl">
+              <p className="mt-4 break-words text-2xl text-bone sm:text-4xl">
                 &ldquo;{CREDIT_FORMAT}&rdquo;
               </p>
               <p className="mt-4 text-[14px] text-mute">Use it in song titles/descriptions where possible, and in your distributor&apos;s producer credit field.</p>
@@ -335,37 +331,37 @@ function CreditsClaims() {
           </div>
         </Reveal>
         <Reveal delay={0.1}>
-          <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-ember/30 bg-ember/[0.05] p-8 text-center">
-            <Sticker text="100% ORIGINAL • NO UNCLEARED SAMPLES • " className="h-32 w-32 text-ember">
-              <CheckIcon size={30} />
-            </Sticker>
-            <p className="display mt-6 text-3xl">Sample-safe guarantee</p>
+          <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-[22px] border border-line p-8 text-center">
+            <span className="grid h-16 w-16 place-items-center rounded-full bg-stone-300/[0.12] text-bone">
+              <CheckIcon size={26} />
+            </span>
+            <p className="display mt-6 text-[28px]">Sample-safe guarantee</p>
             <p className="mt-2 text-[14px] text-mute">100% original — every guitar played by SLAPGOD. No uncleared samples.</p>
           </div>
         </Reveal>
         <Reveal className="lg:col-span-3">
-          <div className="grid gap-6 rounded-3xl border border-violet/30 bg-[linear-gradient(120deg,rgb(var(--violet-rgb)/0.1),transparent_60%)] p-6 sm:p-8 md:grid-cols-[1fr_1.4fr] md:items-center grid-cols-1">
+          <div className="grid gap-6 rounded-[22px] border border-line p-6 sm:p-8 md:grid-cols-[1fr_1.4fr] md:items-center grid-cols-1">
             <div>
-              <p className="eyebrow text-violet">Got a Content ID claim?</p>
-              <p className="display mt-3 text-4xl">Don&apos;t panic. We&apos;ll whitelist you.</p>
+              <p className="eyebrow text-stone-400">Got a Content ID claim?</p>
+              <p className="display mt-3 text-[32px]">Don&apos;t panic. We&apos;ll whitelist you.</p>
             </div>
             <div>
               <ol className="grid gap-3 text-[14px] sm:grid-cols-3 grid-cols-1">
                 {["Grab the video link + your order number", "Send them via the contact form (topic: Content ID)", "We clear it fast — usually within 48h"].map((s, i) => (
                   <li key={s} className="rounded-2xl border border-line p-4">
-                    <span className="font-mono text-xs text-violet">0{i + 1}</span>
+                    <span className="text-xs text-stone-400">0{i + 1}</span>
                     <p className="mt-1">{s}</p>
                   </li>
                 ))}
               </ol>
-              <Link href="/contact?topic=content-id" className="btn btn-sm mt-4 border border-violet/50 text-violet hover:bg-violet/10">
+              <Link href="/contact?topic=content-id" className="btn btn-sm btn-ghost mt-4">
                 Report a claim <ArrowIcon size={14} />
               </Link>
             </div>
           </div>
         </Reveal>
       </div>
-    </div>
+    </Block>
   );
 }
 
@@ -375,26 +371,25 @@ function Caps() {
   const tiers = licenseTiers.slice(0, 4);
   const widths = [18, 42, 66, 100];
   return (
-    <div id="rights-caps" className="scroll-mt-28">
-      <BlockTitle n="06">Stream caps &amp; upgrades</BlockTitle>
-      <div className="grid gap-8 rounded-3xl border border-line p-6 sm:p-8 lg:grid-cols-[1fr_1.5fr] grid-cols-1">
+    <Block id="rights-caps" n="06" title={<>Stream caps &amp; upgrades</>}>
+      <div className="grid gap-8 rounded-[22px] border border-line p-6 sm:p-8 lg:grid-cols-[1fr_1.5fr] grid-cols-1">
         <div className="space-y-4 text-[15px] text-bone/85">
           <p>Each lease covers your song up to a stream + sales cap, for a set term. Caps count across all platforms combined.</p>
           <p>
-            Getting close? <strong className="text-ember">Upgrade anytime and just pay the difference</strong> — your release stays up, nothing resets.
+            Getting close? <strong className="text-white">Upgrade anytime and just pay the difference</strong> — your release stays up, nothing resets.
           </p>
           <FullTerms />
         </div>
         <ul className="space-y-4" aria-label="Stream caps per tier">
           {tiers.map((t, i) => (
             <li key={t.id}>
-              <div className="mb-1.5 flex justify-between font-mono text-[11px] uppercase tracking-wider">
+              <div className="mb-1.5 flex justify-between text-[12px]">
                 <span>{t.name}</span>
                 <span className="text-mute">{t.streams} streams</span>
               </div>
               <div className="h-3 overflow-hidden rounded-full bg-bone/10">
                 <motion.div
-                  className="h-full origin-left rounded-full bg-[linear-gradient(90deg,var(--color-violet),var(--color-gold),var(--color-ember))]"
+                  className="h-full origin-left rounded-full bg-stone-300"
                   style={{ width: "100%" }}
                   initial={reduce ? { scaleX: widths[i] / 100 } : { scaleX: 0 }}
                   whileInView={{ scaleX: widths[i] / 100 }}
@@ -406,7 +401,7 @@ function Caps() {
           ))}
         </ul>
       </div>
-    </div>
+    </Block>
   );
 }
 
@@ -415,9 +410,8 @@ function Faq() {
   const [open, setOpen] = useState<number | null>(0);
   const base = useId();
   return (
-    <div id="rights-faq" className="scroll-mt-28">
-      <BlockTitle n="07">FAQ</BlockTitle>
-      <div className="divide-y divide-line rounded-3xl border border-line">
+    <Block id="rights-faq" n="07" title={<>FAQ</>}>
+      <div className="divide-y divide-line rounded-[22px] border border-line">
         {faqs.map((f, i) => {
           const isOpen = open === i;
           return (
@@ -429,11 +423,11 @@ function Faq() {
                   aria-expanded={isOpen}
                   aria-controls={`${base}-a${i}`}
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="flex w-full items-center justify-between gap-6 px-5 py-5 text-left text-[16px] font-semibold transition hover:text-ember sm:px-7"
+                  className="flex w-full items-center justify-between gap-6 px-5 py-5 text-left text-[16px] font-semibold transition hover:text-white sm:px-7"
                 >
                   {f.q}
                   <span
-                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line transition-transform duration-500 ${isOpen ? "rotate-45 border-ember text-ember" : ""}`}
+                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line transition-transform duration-500 ${isOpen ? "rotate-45 border-white text-white" : ""}`}
                     aria-hidden
                   >
                     <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -462,6 +456,6 @@ function Faq() {
           );
         })}
       </div>
-    </div>
+    </Block>
   );
 }

@@ -17,9 +17,9 @@ export default async function Image() {
           flexDirection: "column",
           justifyContent: "flex-end",
           padding: 72,
-          background: "radial-gradient(circle at 70% 35%, #F2B544 0%, #FF4B2B 22%, #5C0F1C 48%, #0B0708 75%)",
-          color: "#F3EBDD",
-          fontFamily: "sans-serif",
+          background: "radial-gradient(circle at 50% 110%, #44403C 0%, #292524 35%, #1C1917 70%)",
+          color: "#FAFAF9",
+          fontFamily: "serif",
         }}
       >
         <div style={{ fontSize: 28, letterSpacing: 8, textTransform: "uppercase", opacity: 0.8 }}>Beats · Guitar loops · Sample packs</div>

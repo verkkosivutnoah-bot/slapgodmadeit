@@ -7,8 +7,8 @@ import { accentStyle, useCoverAccent } from "@/lib/coverAccent";
 import { MusicPlayer } from "@/components/player/MusicPlayer";
 import { EmailCaptureForm } from "@/components/email/EmailCaptureForm";
 import { PackCard } from "./PackCard";
-import { Magnetic, Reveal, Stagger, StaggerItem } from "@/components/ui/motion";
-import { ArrowIcon, CheckIcon, SparkIcon, Sticker } from "@/components/ui/Icons";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/motion";
+import { ArrowIcon, CheckIcon } from "@/components/ui/Icons";
 import { getPack, packs } from "@/data/packs";
 import { CREDIT_FORMAT, loopLicenseSummary } from "@/data/licenses";
 import { useCart } from "@/lib/cart";
@@ -33,7 +33,7 @@ export function PackDetail({ slug }: { slug: string }) {
         <CoverBackdrop src={pack.cover} title={pack.title} />
 
         <div className="container-sg">
-          <nav aria-label="Breadcrumb" className="mb-8 font-mono text-[11px] uppercase tracking-widest text-mute">
+          <nav aria-label="Breadcrumb" className="mb-8 text-[12px] text-mute">
             <Link href="/packs" className="hover:text-bone">
               Packs
             </Link>{" "}
@@ -44,11 +44,7 @@ export function PackDetail({ slug }: { slug: string }) {
             {/* left: cover + player */}
             <div className="space-y-8">
               <CoverShowcase src={pack.cover} title={pack.title}>
-                {pack.badge && (
-                  <Sticker text={`${pack.badge} • ${pack.badge} • ${pack.badge} • `} className="absolute -right-2 -top-4 h-24 w-24 text-gold sm:-right-8 sm:-top-8 sm:h-28 sm:w-28">
-                    <SparkIcon size={22} />
-                  </Sticker>
-                )}
+                
               </CoverShowcase>
             </div>
 
@@ -59,23 +55,23 @@ export function PackDetail({ slug }: { slug: string }) {
                 {pack.placeholder && <span className="ml-2 rounded bg-bone/10 px-1.5 py-0.5 text-[9px]">placeholder</span>}
               </motion.p>
               <motion.h1
-                className="display mt-4 text-[14vw] sm:text-7xl xl:text-8xl"
+                className="display mt-3 text-[clamp(36px,5.5vw,56px)]"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, ease: EASE }}
               >
                 {pack.title}
               </motion.h1>
-              <p className="mt-5 text-xl text-bone/85">{pack.tagline}</p>
+              <p className="mt-4 text-[17px] text-stone-300">{pack.tagline}</p>
 
               <div className="mt-8 flex flex-wrap items-end gap-x-4 gap-y-2">
-                <span className="display text-7xl">{format(pack.price, { usd: pack.priceUSD, interval: pack.interval })}</span>
-                {pack.compareAt && <s className="mb-2 font-mono text-lg text-mute">{format(pack.compareAt)}</s>}
+                <span className="text-[26px] font-semibold tracking-tight">{format(pack.price, { usd: pack.priceUSD, interval: pack.interval })}</span>
+                {pack.compareAt && <s className="mb-2 text-lg text-mute">{format(pack.compareAt)}</s>}
                 {pack.deal && (
-                  <span className="mb-3 rounded-full bg-gold px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-ink">{pack.deal}</span>
+                  <span className="tag mb-3 ">{pack.deal}</span>
                 )}
               </div>
-              {!isFree && <p className="mt-1 font-mono text-[11px] text-mute">{vatNote} · instant download</p>}
+              {!isFree && <p className="mt-1 text-[12px] text-mute">{vatNote} · instant download</p>}
 
               <div className="mt-6">
                 {isFree ? (
@@ -89,10 +85,10 @@ export function PackDetail({ slug }: { slug: string }) {
                   </button>
                 ) : (
                   <div className="flex flex-wrap gap-3">
-                    <Magnetic>
+                    
                       <button
                         type="button"
-                        className="btn btn-primary h-14 px-8"
+                        className="btn btn-primary !h-12 !px-7"
                         onClick={() =>
                           cart.add({ key: cartKey, kind: "pack", productId: pack.slug, title: pack.title, priceEUR: pack.price, cover: pack.cover, href: `/packs/${pack.slug}` })
                         }
@@ -105,9 +101,9 @@ export function PackDetail({ slug }: { slug: string }) {
                           <>Add to cart · {format(pack.price, { usd: pack.priceUSD })}</>
                         )}
                       </button>
-                    </Magnetic>
+                    
                     {inCart && (
-                      <Link href="/cart" className="btn btn-ghost h-14">
+                      <Link href="/cart" className="btn btn-ghost !h-12">
                         Checkout <ArrowIcon size={16} />
                       </Link>
                     )}
@@ -118,8 +114,8 @@ export function PackDetail({ slug }: { slug: string }) {
               <Stagger className="mt-8 flex flex-wrap gap-2">
                 {pack.specs.map((s) => (
                   <StaggerItem key={s}>
-                    <span className="inline-flex h-8 items-center gap-1.5 rounded-full border border-line bg-ink/40 px-3 font-mono text-[11px]">
-                      <CheckIcon size={12} className="text-ember" /> {s}
+                    <span className="inline-flex h-8 items-center gap-1.5 rounded-full bg-stone-300/[0.1] px-3 text-[12px]">
+                      <CheckIcon size={12} className="text-stone-400" /> {s}
                     </span>
                   </StaggerItem>
                 ))}
@@ -140,10 +136,10 @@ export function PackDetail({ slug }: { slug: string }) {
         {/* contents */}
         <section aria-labelledby="contents-title" className="panel p-6 sm:p-8">
           <div className="flex items-baseline justify-between">
-            <h2 id="contents-title" className="display text-4xl sm:text-5xl">
+            <h2 id="contents-title" className="display text-[30px] sm:text-[40px]">
               What&apos;s inside
             </h2>
-            <p className="font-mono text-xs text-mute">{pack.soundLabel}</p>
+            <p className="text-xs text-mute">{pack.soundLabel}</p>
           </div>
           <p className="mt-3 text-[15px] leading-relaxed text-mute">{pack.description}</p>
           <ul className="mt-6 divide-y divide-line border-y border-line">
@@ -159,13 +155,13 @@ export function PackDetail({ slug }: { slug: string }) {
                     aria-expanded={expandable ? open : undefined}
                     disabled={!expandable}
                   >
-                    <span className="display w-14 text-3xl text-ember">{c.count}</span>
+                    <span className="display w-14 text-[28px] text-white">{c.count}</span>
                     <span className="flex-1">
                       <span className="block font-semibold">{c.name}</span>
-                      <span className="font-mono text-[11px] uppercase tracking-wider text-mute">{c.detail ?? c.unit}</span>
+                      <span className="text-[12px] text-mute">{c.detail ?? c.unit}</span>
                     </span>
                     {expandable && (
-                      <span className={`grid h-8 w-8 place-items-center rounded-full border border-line transition-transform duration-500 ${open ? "rotate-45 border-ember text-ember" : ""}`} aria-hidden>
+                      <span className={`grid h-8 w-8 place-items-center rounded-full border border-line transition-transform duration-500 ${open ? "rotate-45 border-white text-white" : ""}`} aria-hidden>
                         +
                       </span>
                     )}
@@ -180,13 +176,13 @@ export function PackDetail({ slug }: { slug: string }) {
                         className="overflow-hidden"
                       >
                         {c.examples.map((e) => (
-                          <li key={e} className="truncate pb-2 pl-[72px] font-mono text-[12px] text-bone/75">
+                          <li key={e} className="truncate pb-2 pl-[72px] text-[12px] text-bone/75">
                             {e}
                             {c.unit === "loops" && ".wav"}
                           </li>
                         ))}
                         {c.unit === "loops" && c.count > c.examples.length && (
-                          <li className="pb-4 pl-[72px] font-mono text-[11px] text-mute">+ {c.count - c.examples.length} more</li>
+                          <li className="pb-4 pl-[72px] text-[12px] text-mute">+ {c.count - c.examples.length} more</li>
                         )}
                       </motion.ul>
                     )}
@@ -217,22 +213,22 @@ export function PackDetail({ slug }: { slug: string }) {
 
         {/* license */}
         <aside aria-labelledby="license-title" className="panel h-fit p-6 sm:p-8 lg:sticky lg:top-28">
-          <p className="eyebrow text-ember">Royalty-free license</p>
-          <h2 id="license-title" className="display mt-2 text-4xl">
+          <p className="eyebrow text-white">Royalty-free license</p>
+          <h2 id="license-title" className="display mt-2 text-[32px]">
             {loopLicenseSummary.title}
           </h2>
           <ul className="mt-5 space-y-3 text-[14px]">
             {loopLicenseSummary.points.map((p) => (
               <li key={p} className="flex gap-2.5">
-                <CheckIcon size={15} className="mt-0.5 shrink-0 text-ember" /> {p}
+                <CheckIcon size={15} className="mt-0.5 shrink-0 text-white" /> {p}
               </li>
             ))}
           </ul>
-          <div className="mt-6 flex items-center gap-4 rounded-2xl border border-gold/30 bg-gold/[0.06] p-4">
-            <span className="display text-5xl text-gold">25%</span>
+          <div className="mt-6 flex items-center gap-4 rounded-2xl border border-stone-300/30 bg-stone-300/[0.06] p-4">
+            <span className="display text-[32px] text-stone-300">25%</span>
             <span className="text-[13px] text-mute">publishing split to SLAPGOD on commercially released songs using these loops</span>
           </div>
-          <p className="mt-5 font-mono text-[12px]">Credit: &ldquo;{CREDIT_FORMAT}&rdquo;</p>
+          <p className="mt-5 text-[12px]">Credit: &ldquo;{CREDIT_FORMAT}&rdquo;</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/licenses" className="btn btn-ghost btn-sm">
               Full license
@@ -246,7 +242,7 @@ export function PackDetail({ slug }: { slug: string }) {
       </div>
 
       <section className="container-sg mt-24" aria-labelledby="related-title">
-        <h2 id="related-title" className="display mb-8 text-5xl">
+        <h2 id="related-title" className="display mb-8 text-[32px]">
           More packs
         </h2>
         <Stagger className="grid grid-cols-1 gap-5 min-[520px]:grid-cols-2 lg:grid-cols-4">

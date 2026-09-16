@@ -27,7 +27,7 @@ export function ContactForm() {
   if (sent) {
     return (
       <div role="status" className="flex items-start gap-4">
-        <span className="grid h-10 w-10 place-items-center rounded-full bg-ember text-ink">
+        <span className="grid h-10 w-10 place-items-center rounded-full bg-white text-ink">
           <CheckIcon />
         </span>
         <div>

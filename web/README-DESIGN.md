@@ -1,6 +1,6 @@
 # SLAPGOD web — design notes
 
-Next.js 16 (App Router, Turbopack) · Tailwind v4 · `motion` · `lenis`. Run `npm run dev` → http://localhost:3000.
+Next.js 16 (App Router, Turbopack) · Tailwind v4 · `motion`. Run `npm run dev` → http://localhost:3000.
 
 ## Components
 
@@ -9,11 +9,11 @@ Next.js 16 (App Router, Turbopack) · Tailwind v4 · `motion` · `lenis`. Run `n
 | Music player (owner spec, ported) | `src/components/player/MusicPlayer.tsx`, `music-player.css` |
 | One-at-a-time audio + keyboard shortcut owner | `src/components/player/audioFocus.ts` |
 | Global sticky dock player (mini bar ⇄ expanded card, persists across pages) | `src/components/player/GlobalPlayer.tsx` (`usePlayer().playQueue(tracks, i)`) |
-| Hero ("The Vault") | `src/components/home/Hero.tsx` (layers + parallax), `hero/vaultScene.ts` (procedural guitar/sun/arch source), `hero/AsciiStars.tsx` (stars renderer), `hero/GuitarStrings.tsx` (vibrating SVG strings, visual only), `hero/DustMotes.tsx` |
+| Hero | `src/components/home/Hero.tsx` — centered serif headline, pill search (→ `/beats?q=`), Guitar Vault MusicPlayer centerpiece |
 | Cover art (next/image + fallback) / accent color | `src/components/ui/CoverArt.tsx`, `ui/CoverShowcase.tsx`, `src/lib/coverAccent.ts` |
 | Beat detail page | `src/app/beats/[slug]`, `src/components/beats/BeatDetail.tsx` |
 | Motion primitives (Reveal, Stagger, Parallax, Magnetic, Tilt, Marquee) | `src/components/ui/motion.tsx` |
-| Lenis smooth scroll + scroll lock | `src/components/ui/SmoothScroll.tsx` |
+| Route scroll reset + scroll lock | `src/components/ui/SmoothScroll.tsx` |
 | Accessible dialog (focus trap, Esc, restore focus) | `src/components/ui/Dialog.tsx` |
 | Email capture form / popup | `src/components/email/EmailCaptureForm.tsx`, `EmailPopup.tsx` |
 | License modal / cards / table | `src/components/beats/LicenseModal.tsx`, `src/components/licenses/LicenseCards.tsx` |
@@ -30,12 +30,14 @@ Next.js 16 (App Router, Turbopack) · Tailwind v4 · `motion` · `lenis`. Run `n
 - `src/data/rights.ts` — "Know your rights" copy + FAQ
 - `src/data/seller.ts` — **fill in `[TBD]` Y-tunnus, street address, email**
 
-## Palette ("flamenco noir")
+## Look & palette (monochrome stone)
 
-All colors live in **one place**: the `:root` channel variables at the top of `src/app/globals.css`
-(`--ink-rgb`, `--surface-rgb`, `--raised-rgb`, `--oxblood-rgb`, `--ember-rgb`, `--gold-rgb`, `--violet-rgb`, `--bone-rgb`, `--mute-rgb`).
-Tailwind classes (`bg-ember`, `text-gold/80`, …) and all component CSS read from them. CTAs on ember/gold use dark ink text (AA).
-Generated placeholder covers use the same hex values in `scripts/gen-covers.mjs` (re-run `npm run covers:placeholders` after a palette change).
+Simple, calm, pill-shaped UI. All colors live in the `:root` block at the top of `src/app/globals.css`
+(`--ink-rgb` #1C1917 bg, `--deep-rgb` #0C0A09, `--surface-rgb` #292524, `--fg` #FAFAF9, `--fg-2` #D6D3D1, `--mute-rgb` #A8A29E,
+`--silver` gradient — the only "accent", used for "Most popular" / flagship badge / one highlighted word via `.text-silver` / `.bg-silver`).
+Fonts: display = **Newsreader** (next/font, weight 700, tight tracking) via `.display`; UI = system stack (-apple-system / SF Pro, Inter fallback).
+Primary CTA `.btn-primary` = white pill; secondary `.btn-ghost` = rgba(214,211,209,.12) pill. No blurs, backdrop filters, grain or continuous animations.
+Placeholder covers are monochrome (`npm run covers:placeholders`).
 
 ## Adding a beat / pack
 
@@ -53,7 +55,6 @@ Generated placeholder covers use the same hex values in `scripts/gen-covers.mjs`
 
 ## Swap in real assets
 
-- **Hero**: the source is procedural (`hero/vaultScene.ts`, "wide" + "tall"/portrait layouts). To use a photo instead: `<AsciiStars src="/hero/source.jpg" />` in `Hero.tsx` and remove `<GuitarStrings>` (strings are aligned to the procedural guitar).
 - **Covers**: see "Adding a beat / pack".
 - **Audio**: real guitar previews in `public/audio/packs/spanish-guitar/`; producer tag `public/audio/tag/slapgod-tag.mp3` (kept for future preview tagging — not used on the site; the only sound on the site comes from the music players); placeholder beat loops `public/audio/*.m4a` (synthesized by `scripts/gen-audio.py`) — replace with tagged beat previews.
 - **Instagram tiles**: `src/components/home/InstagramStrip.tsx`.
@@ -68,8 +69,7 @@ Generated placeholder covers use the same hex values in `scripts/gen-covers.mjs`
 
 ## Mobile / deploy notes
 
-- No Lenis on touch devices (native momentum scroll); gentler parallax ≤767px; pointer parallax desktop only.
-- Hero canvases are client-only dynamic imports; the HTML wordmark is the LCP element. Mobile renders fewer cells/particles.
+- Native scrolling everywhere (Lenis removed). Only gentle fade/slide-up reveals.
 - Global player: compact bar respecting `safe-area-inset-bottom`; expanded = full-screen sheet on phones (swipe the handle down or tap the chevron; Esc closes).
 - Dialogs (license, email popup) are bottom sheets on phones (swipe handle / close button / Esc). Popup exit-intent is desktop-only.
 - Beat filters collapse into a drawer on phones; license comparison table scrolls horizontally with a sticky first column.

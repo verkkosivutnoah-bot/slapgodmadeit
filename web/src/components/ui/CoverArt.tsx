@@ -28,7 +28,7 @@ export function CoverArt({
   const failed = !src || failedSrc === src;
 
   return (
-    <div className={`relative overflow-hidden bg-surface ${className}`}>
+    <div className={`${/\b(absolute|fixed)\b/.test(className) ? "" : "relative "}overflow-hidden bg-surface ${className}`}>
       {failed ? (
         <FallbackCover title={title} />
       ) : (
@@ -69,22 +69,22 @@ export function FallbackCover({ title }: { title: string }) {
       <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full" aria-hidden>
         <defs>
           <radialGradient id={`${id}s`} cx={`${cx}%`} cy={`${cy}%`} r="60%">
-            <stop offset="0" stopColor="#F2B544" />
-            <stop offset=".35" stopColor="#FF4B2B" />
-            <stop offset=".75" stopColor="#5C0F1C" />
-            <stop offset="1" stopColor="#0B0708" />
+            <stop offset="0" stopColor="#E7E5E4" />
+            <stop offset=".35" stopColor="#78716C" />
+            <stop offset=".75" stopColor="#292524" />
+            <stop offset="1" stopColor="#0C0A09" />
           </radialGradient>
         </defs>
         <rect width="100" height="100" fill={`url(#${id}s)`} />
-        <g transform={`rotate(${rot} 50 50)`} stroke="#F3EBDD" strokeOpacity=".18" strokeWidth=".4">
+        <g transform={`rotate(${rot} 50 50)`} stroke="#FAFAF9" strokeOpacity=".18" strokeWidth=".4">
           {Array.from({ length: 14 }, (_, i) => (
             <line key={i} x1="-20" x2="120" y1={i * 8} y2={i * 8} />
           ))}
         </g>
       </svg>
       <div className="absolute inset-x-0 bottom-0 p-[8%] [container-type:inline-size]">
-        <p className="display line-clamp-3 text-[clamp(14px,11cqi,40px)] leading-[0.9] text-bone">{title}</p>
-        <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.2em] text-bone/70">SLAPGOD</p>
+        <p className="display line-clamp-3 text-[clamp(14px,10cqi,36px)] leading-[1] text-bone">{title}</p>
+        <p className="mt-1 text-[12px] text-bone/70">SLAPGOD</p>
       </div>
     </div>
   );

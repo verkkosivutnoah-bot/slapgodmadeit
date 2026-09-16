@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Contact" };
 export default function ContactPage() {
   return (
     <>
-      <PageHero eyebrow="Contact" title="Contact" ghost="HOLLA">
+      <PageHero eyebrow="Contact" title="Contact">
         Custom beats, exclusive offers, Content ID whitelisting, split sheets or licensing questions — send a message.
       </PageHero>
       <div className="container-sg grid gap-8 lg:grid-cols-[1.4fr_1fr] grid-cols-1">
@@ -34,7 +34,7 @@ export default function ContactPage() {
             Email: {seller.email}
             <br />
             Instagram:{" "}
-            <a href={seller.instagramUrl} target="_blank" rel="noreferrer" className="text-ember underline-offset-2 hover:underline">
+            <a href={seller.instagramUrl} target="_blank" rel="noreferrer" className="text-white underline-offset-2 hover:underline">
               {seller.instagram}
             </a>
           </address>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { MusicPlayer } from "@/components/player/MusicPlayer";
 import { CoverBackdrop, CoverShowcase } from "@/components/ui/CoverShowcase";
-import { Magnetic, Reveal } from "@/components/ui/motion";
+import { Reveal } from "@/components/ui/motion";
 import { CheckIcon } from "@/components/ui/Icons";
 import { useLicenseModal } from "./LicenseModal";
 import { BeatRow } from "./BeatRow";
@@ -25,7 +25,7 @@ export function BeatDetail({ slug }: { slug: string }) {
       <section className="relative isolate overflow-hidden pb-16 pt-24 md:pt-36">
         <CoverBackdrop src={beat.cover} title={beat.title} />
         <div className="container-sg">
-          <nav aria-label="Breadcrumb" className="mb-8 font-mono text-[11px] uppercase tracking-widest text-mute">
+          <nav aria-label="Breadcrumb" className="mb-8 text-[12px] text-mute">
             <Link href="/beats" className="inline-flex min-h-11 items-center hover:text-bone">
               Beats
             </Link>{" "}
@@ -35,9 +35,9 @@ export function BeatDetail({ slug }: { slug: string }) {
             <CoverShowcase src={beat.cover} title={beat.title} />
             <div>
               <p className="eyebrow">
-                {beat.genre} beat {beat.isNew && <span className="ml-2 text-gold">· New</span>}
+                {beat.genre} beat {beat.isNew && <span className="ml-2 text-stone-300">· New</span>}
               </p>
-              <h1 className="display mt-3 text-[clamp(48px,14vw,120px)]">{beat.title}</h1>
+              <h1 className="display mt-3 text-[clamp(40px,10vw,72px)]">{beat.title}</h1>
               <ul className="mt-5 flex flex-wrap gap-2">
                 {[`${beat.bpm} BPM`, beat.key, ...beat.moods, ...beat.tags].map((t) => (
                   <li key={t} className="tag !h-8 !px-3">
@@ -47,17 +47,17 @@ export function BeatDetail({ slug }: { slug: string }) {
               </ul>
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <p>
-                  <span className="font-mono text-xs text-mute">Leases from </span>
-                  <span className="display text-5xl">{format(beat.priceFrom)}</span>
-                  <span className="block font-mono text-[11px] text-mute">{vatNote}</span>
+                  <span className="text-xs text-mute">Leases from </span>
+                  <span className="text-[26px] font-semibold tracking-tight">{format(beat.priceFrom)}</span>
+                  <span className="block text-[12px] text-mute">{vatNote}</span>
                 </p>
-                <Magnetic>
-                  <button type="button" className="btn btn-primary h-14 px-8" onClick={() => openLicense(beat)}>
+                
+                  <button type="button" className="btn btn-primary !h-12 !px-7" onClick={() => openLicense(beat)}>
                     License this beat
                   </button>
-                </Magnetic>
+                
               </div>
-              <p className="mt-3 font-mono text-[11px] text-gold">
+              <p className="mt-3 text-[12px] text-stone-300">
                 {licenseDeals.bundle} · {licenseDeals.upgrade}
               </p>
               <Reveal className="mt-8">
@@ -70,7 +70,7 @@ export function BeatDetail({ slug }: { slug: string }) {
 
       <section className="container-sg grid gap-6 lg:grid-cols-[1.4fr_1fr] grid-cols-1" aria-labelledby="tiers-title">
         <div className="panel p-5 sm:p-8">
-          <h2 id="tiers-title" className="display text-4xl sm:text-5xl">
+          <h2 id="tiers-title" className="display text-[30px] sm:text-[40px]">
             Pick a license
           </h2>
           <ul className="mt-6 grid gap-2 sm:grid-cols-2 grid-cols-1">
@@ -79,18 +79,18 @@ export function BeatDetail({ slug }: { slug: string }) {
                 <button
                   type="button"
                   onClick={() => openLicense(beat, t.id)}
-                  className={`flex min-h-16 w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition hover:border-[var(--track-accent,var(--color-ember))] ${
-                    t.popular ? "border-gold/50 bg-gold/[0.05]" : "border-line"
+                  className={`flex min-h-16 w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition hover:border-[var(--track-accent,var(--fg))] ${
+                    t.popular ? "border-stone-300/50 bg-stone-300/[0.05]" : "border-line"
                   }`}
                 >
                   <span>
                     <span className="block font-semibold">{t.name}</span>
-                    <span className="font-mono text-[11px] text-mute">
+                    <span className="text-[12px] text-mute">
                       {t.files} · {t.streams} streams
                     </span>
                   </span>
-                  <span className="display shrink-0 text-2xl">
-                    {t.fromPrice && <span className="mr-1 font-mono text-[10px] text-mute">from</span>}
+                  <span className="text-[26px] font-semibold tracking-tight">
+                    {t.fromPrice && <span className="mr-1 text-[12px] text-mute">from</span>}
                     {format(t.price)}
                   </span>
                 </button>
@@ -103,7 +103,7 @@ export function BeatDetail({ slug }: { slug: string }) {
           <ul className="mt-4 space-y-2.5 text-[14px]">
             {leaseTerms.map((l) => (
               <li key={l} className="flex gap-2">
-                <CheckIcon size={14} className="mt-0.5 shrink-0 text-ember" /> {l}
+                <CheckIcon size={14} className="mt-0.5 shrink-0 text-white" /> {l}
               </li>
             ))}
           </ul>
@@ -115,7 +115,7 @@ export function BeatDetail({ slug }: { slug: string }) {
 
       {more.length > 0 && (
         <section className="container-sg mt-20" aria-labelledby="more-title">
-          <h2 id="more-title" className="display mb-6 text-4xl sm:text-5xl">
+          <h2 id="more-title" className="display mb-6 text-[30px] sm:text-[40px]">
             More like this
           </h2>
           <ul className="space-y-1">

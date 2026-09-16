@@ -1,7 +1,7 @@
 "use client";
 // Extracts a vibrant, readable accent color from a cover image (client-side, cached per src).
 // Result is an `hsl()` string with clamped saturation/lightness so it stays legible on the ink
-// background (≥ ~4.5:1), or null when the cover has no usable color (callers fall back to ember).
+// background (≥ ~4.5:1), or null when the cover has no usable color (callers fall back to off-white).
 import { useEffect, useState } from "react";
 
 const cache = new Map<string, string | null>();
@@ -54,9 +54,9 @@ export function extractAccent(src: string): Promise<string | null> {
         const best = bins.reduce((a, b) => (b.w > a.w ? b : a));
         if (best.w < 1.5) return resolve(null);
         const h = best.h / best.w;
-        const s = Math.min(1, Math.max(0.6, best.s / best.w));
-        // blue/violet hues need more lightness to stay readable on near-black
-        const l = h > 200 && h < 290 ? 0.7 : 0.6;
+        // monochrome site: keep only a whisper of the cover's hue (low saturation, high lightness)
+        const s = Math.min(0.18, (best.s / best.w) * 0.25);
+        const l = 0.8;
         resolve(`hsl(${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%)`);
       } catch {
         resolve(null); // tainted canvas / decode error
@@ -86,7 +86,7 @@ export function useCoverAccent(src?: string | null) {
   return accent;
 }
 
-/** Style object exposing the accent as --track-accent (omitted when unknown → CSS falls back to ember). */
+/** Style object exposing the accent as --track-accent (omitted when unknown → CSS falls back to off-white). */
 export function accentStyle(accent: string | null): React.CSSProperties | undefined {
   return accent ? ({ ["--track-accent" as string]: accent } as React.CSSProperties) : undefined;
 }

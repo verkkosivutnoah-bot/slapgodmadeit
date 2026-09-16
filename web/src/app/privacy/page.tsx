@@ -11,7 +11,7 @@ export default function PrivacyPage() {
       <p className="mt-3 text-mute">
         Full privacy policy coming soon. It will cover email marketing consent (double opt-in, unsubscribe anytime), order data, payment processing and cookies.
       </p>
-      <h3 className="mt-6 font-mono text-xs uppercase tracking-widest text-mute">Data controller</h3>
+      <h3 className="mt-6 text-xs text-mute">Data controller</h3>
       <address className="mt-2 not-italic leading-relaxed text-bone/90">
         {seller.name} ({seller.legalForm}) · Y-tunnus: {seller.businessId}
         <br />

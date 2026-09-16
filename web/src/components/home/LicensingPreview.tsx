@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { LicenseCards } from "@/components/licenses/LicenseCards";
-import { ArrowIcon } from "@/components/ui/Icons";
 
 export function LicensingPreview() {
   return (
@@ -10,15 +9,10 @@ export function LicensingPreview() {
         <SectionHeader
           id="licensing-title"
           eyebrow="Beat licenses"
-          ghost="LEASE"
-          title={
-            <>
-              Pick your <span className="text-ember">lease</span>
-            </>
-          }
+          title="Simple licensing"
           action={
             <Link href="/licenses" className="btn btn-ghost">
-              Compare all terms <ArrowIcon size={16} />
+              Compare all terms
             </Link>
           }
         >

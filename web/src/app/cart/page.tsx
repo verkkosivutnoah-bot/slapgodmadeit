@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Cart" };
 export default function CartPage() {
   return (
     <>
-      <PageHero eyebrow="Checkout" title="Your cart" ghost="CART" />
+      <PageHero eyebrow="Checkout" title="Your cart" />
       <CartView />
     </>
   );

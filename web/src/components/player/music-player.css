@@ -4,8 +4,8 @@
    ========================================================================== */
 
 .card {
-  /* per-track accent (from cover art) with ember fallback */
-  --accent: var(--track-accent, var(--color-ember));
+  /* per-track accent (subtle, desaturated — from cover art) with off-white fallback */
+  --accent: var(--track-accent, #fafaf9);
   --disc: 248px;
   --pad: 24px;
   position: relative;
@@ -14,16 +14,11 @@
   align-items: center;
   gap: 32px;
   padding: var(--pad);
-  border-radius: 28px;
+  border-radius: 24px;
   color: var(--color-bone);
-  background:
-    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
-    radial-gradient(90% 90% at 100% 100%, rgb(var(--oxblood-rgb) / 0.35), transparent 60%),
-    linear-gradient(160deg, var(--color-raised) 0%, var(--color-ink) 100%);
-  border: 1px solid rgb(var(--bone-rgb) / 0.09);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.06),
-    0 40px 90px -40px rgb(0 0 0 / 0.9);
+  background: #0c0a09;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  text-align: left;
   isolation: isolate;
   container-type: inline-size;
   -webkit-tap-highlight-color: transparent;
@@ -31,6 +26,7 @@
 
 /* ambient glow that breathes in when playing */
 .card::before {
+  display: none;
   content: "";
   position: absolute;
   z-index: -1;
@@ -40,7 +36,7 @@
   aspect-ratio: 1;
   translate: -50% -50%;
   border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 40%, transparent), rgb(var(--oxblood-rgb) / 0.3) 45%, transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 40%, transparent), rgb(var(--surface-rgb) / 0.3) 45%, transparent 70%);
   opacity: 0.25;
   scale: 0.85;
   transition: opacity 0.8s ease, scale 0.8s ease;
@@ -68,7 +64,7 @@
 }
 .mask:focus-visible {
   clip-path: none;
-  box-shadow: 0 0 0 3px var(--color-ember);
+  box-shadow: 0 0 0 3px var(--fg);
 }
 /* static light sheen over the spinning vinyl */
 .mask::after {
@@ -149,9 +145,8 @@
   border-radius: 50%;
   background: radial-gradient(circle, var(--color-surface) 0%, var(--color-ink) 70%);
   box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--accent) 85%, transparent),
-    0 0 0 6px rgb(var(--ink-rgb) / 0.7),
-    0 0 24px color-mix(in srgb, var(--accent) 30%, transparent);
+    0 0 0 1px rgb(255 255 255 / 0.35),
+    0 0 0 6px rgb(12 10 9 / 0.7);
   display: grid;
   place-items: center;
   pointer-events: none;
@@ -198,12 +193,7 @@
   fill: var(--accent);
   will-change: transform;
 }
-.scales > g:nth-of-type(1) circle,
-.scales > g:nth-of-type(2) circle { fill: color-mix(in srgb, var(--accent) 70%, var(--color-gold)); }
-.scales > g:nth-of-type(3) circle,
-.scales > g:nth-of-type(4) circle { fill: color-mix(in srgb, var(--accent) 70%, var(--color-gold)); }
-.scales > g:nth-of-type(5) circle,
-.scales > g:nth-of-type(6) circle { fill: color-mix(in srgb, var(--accent) 55%, var(--color-bone)); }
+.scales > g:nth-of-type(odd) circle { fill: color-mix(in srgb, var(--accent) 80%, #a8a29e); }
 
 .track-info {
   position: relative;
@@ -221,10 +211,7 @@
   pointer-events: none;
 }
 .artist {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 13px;
   color: var(--color-mute);
   white-space: nowrap;
   overflow: hidden;
@@ -233,10 +220,10 @@
 }
 .track {
   font-family: var(--font-display);
-  font-size: clamp(1.3rem, 5.4cqi, 2.4rem);
-  line-height: 1;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 5.4cqi, 2.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -255,12 +242,10 @@
   from {
     opacity: 0;
     transform: translateX(var(--dx, 14px));
-    filter: blur(4px);
   }
   to {
     opacity: 1;
     transform: none;
-    filter: blur(0);
   }
 }
 @keyframes sg-ti-out {
@@ -274,9 +259,9 @@
 
 .bar {
   position: relative;
-  height: 6px;
+  height: 3px;
   border-radius: 99px;
-  background: rgb(var(--bone-rgb) / 0.12);
+  background: rgb(255 255 255 / 0.12);
   cursor: pointer;
   touch-action: none;
   outline: none;
@@ -288,14 +273,13 @@
   inset: -10px 0;
 }
 .bar:focus-visible {
-  box-shadow: 0 0 0 2px var(--color-ink), 0 0 0 4px var(--color-ember);
+  box-shadow: 0 0 0 2px var(--color-ink), 0 0 0 4px var(--fg);
 }
 .bar-fill {
   position: relative;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 45%, var(--color-oxblood)), var(--accent));
-  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 50%, transparent);
+  background: var(--accent);
   transition: width 0.25s linear;
 }
 .bar-fill::after {
@@ -308,7 +292,9 @@
   translate: 0 -50%;
   border-radius: 50%;
   background: var(--color-bone);
-  box-shadow: 0 0 0 3px rgb(var(--ember-rgb) / 0.35);
+  width: 10px;
+  height: 10px;
+  right: -5px;
   scale: 0;
   transition: scale 0.25s ease;
 }
@@ -321,8 +307,7 @@
 .time {
   display: flex;
   gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-mute);
   font-variant-numeric: tabular-nums;
   margin-top: -6px;
@@ -345,43 +330,40 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid rgb(var(--bone-rgb) / 0.12);
-  background: rgb(var(--bone-rgb) / 0.03);
-  color: var(--color-bone);
+  border: none;
+  background: rgb(214 211 209 / 0.12);
+  color: #e7e5e4;
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.3s ease;
 }
 .ctrl:hover {
-  background: rgb(var(--bone-rgb) / 0.1);
+  background: rgb(214 211 209 / 0.2);
 }
 .ctrl:active {
   transform: scale(0.9);
 }
 .ctrl:focus-visible {
-  outline: 2px solid var(--color-ember);
+  outline: 2px solid var(--fg);
   outline-offset: 2px;
 }
 .ctrl-play {
   width: 56px;
   height: 56px;
   border: none;
-  background: var(--color-ember);
-  color: var(--color-ink);
+  background: #ffffff;
+  color: #0c0a09;
   margin: 0 4px;
 }
 .ctrl-play:hover {
-  background: color-mix(in srgb, var(--color-ember), white 14%);
-}
-.card.is-playing .ctrl-play {
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 14%, transparent), 0 0 36px color-mix(in srgb, var(--accent) 55%, transparent);
+  background: #e7e5e4;
 }
 .ctrl-toggle {
-  color: var(--color-mute);
+  color: #a8a29e;
+  background: transparent;
 }
 .ctrl-toggle.is-active {
-  color: var(--color-ember);
-  border-color: rgb(var(--ember-rgb) / 0.45);
-  background: rgb(var(--ember-rgb) / 0.08);
+  color: #fafaf9;
+  background: rgb(214 211 209 / 0.12);
 }
 .ctrl-loop .loop-one {
   position: absolute;
@@ -392,9 +374,9 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--color-ember);
-  color: var(--color-ink);
-  font: 700 8px/1 var(--font-mono);
+  background: #fafaf9;
+  color: #0c0a09;
+  font: 700 8px/1 var(--font-sans);
   scale: 0;
   transition: scale 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
 }
@@ -458,17 +440,17 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--color-bone);
-  background: rgb(var(--bone-rgb) / 0.06);
-  border: 1px solid rgb(var(--bone-rgb) / 0.12);
+  color: #e7e5e4;
+  background: rgb(214 211 209 / 0.12);
+  border: none;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 .dock-expand:hover {
-  background: rgb(var(--bone-rgb) / 0.14);
+  background: rgb(214 211 209 / 0.2);
 }
 .dock-expand:focus-visible {
-  outline: 2px solid var(--color-ember);
+  outline: 2px solid var(--fg);
   outline-offset: 2px;
 }
 
@@ -482,9 +464,9 @@
   justify-items: stretch;
   gap: 14px;
   padding: 10px 60px 10px 10px;
-  border-radius: 22px;
-  background: rgb(var(--surface-rgb) / 0.97);
-  box-shadow: 0 20px 60px -20px rgb(0 0 0 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.06);
+  border-radius: 9999px;
+  padding-right: 64px;
+  background: #0c0a09;
 }
 .card--dock::before {
   width: 160px;
@@ -497,7 +479,7 @@
   transform: scale(1.12);
 }
 .card--dock .hole {
-  box-shadow: 0 0 0 1px rgb(var(--ember-rgb) / 0.85);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.4);
 }
 .card--dock .info {
   width: auto;
@@ -526,10 +508,13 @@
   gap: 2px;
 }
 .card--dock .artist {
-  font-size: 10px;
+  font-size: 12px;
 }
 .card--dock .track {
-  font-size: 1.15rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: 0;
+  font-size: 15px;
 }
 .card--dock .bar {
   grid-area: bar;
@@ -553,6 +538,9 @@
 }
 
 @media (max-width: 860px) {
+  .card.card--dock {
+    border-radius: 22px;
+  }
   .card--dock .info {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: "ti ctrls" "bar bar";
@@ -582,9 +570,9 @@
   grid-template-columns: 1fr;
   justify-items: center;
   gap: 22px;
-  background:
-    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
-    linear-gradient(160deg, rgb(var(--raised-rgb) / 0.96) 0%, rgb(var(--ink-rgb) / 0.97) 100%);
+  border-radius: 24px;
+  padding: var(--pad);
+  background: #0c0a09;
   animation: sg-pop 0.5s cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 .card--expanded::before {
@@ -644,7 +632,7 @@
     top: 0;
     bottom: 0;
     padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
-    background: rgb(var(--ink-rgb) / 0.98);
+    background: rgb(28 25 23);
     display: flex;
     align-items: stretch;
     touch-action: none;
@@ -655,7 +643,7 @@
     width: 100%;
     margin: 0;
     align-content: center;
-    border-radius: 28px;
+    border-radius: 24px;
     padding-top: 44px;
   }
   .dock.is-expanded .dock-handle {

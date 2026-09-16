@@ -64,15 +64,15 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
               <CoverArt src={beat.cover} title={beat.title} alt="" sizes="80px" className="h-16 w-16 shrink-0 rounded-xl sm:h-20 sm:w-20" />
               <div className="min-w-0">
                 <p className="eyebrow">Choose a license</p>
-                <p className="display truncate text-4xl sm:text-5xl">{beat.title}</p>
-                <p className="mt-1 font-mono text-xs text-mute">
+                <p className="display truncate text-[30px] sm:text-[40px]">{beat.title}</p>
+                <p className="mt-1 text-xs text-mute">
                   {beat.bpm} BPM · {beat.key} · {beat.genre}
                 </p>
               </div>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <span className="tag !bg-gold/15 !text-gold">
+              <span className="tag !bg-stone-300/15 !text-stone-300">
                 <SparkIcon size={10} className="mr-1" /> {licenseDeals.bundle}
               </span>
               <span className="tag">{licenseDeals.upgrade}</span>
@@ -87,7 +87,7 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
                     <label
                       key={t.id}
                       className={`relative flex cursor-pointer flex-col rounded-2xl border p-4 transition ${
-                        active ? "border-ember bg-ember/[0.07]" : "border-line hover:border-bone/30"
+                        active ? "border-white bg-white/[0.07]" : "border-line hover:border-bone/30"
                       } ${t.id === "exclusive" ? "col-span-2 sm:col-span-1" : ""}`}
                     >
                       <input
@@ -102,18 +102,18 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
                         className="sr-only"
                       />
                       {t.popular && (
-                        <span className="absolute -top-2.5 left-3 rounded-full bg-gold px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-ink">
+                        <span className="bg-silver absolute -top-2.5 left-3 rounded-full px-2 py-0.5 text-[11px] font-semibold">
                           Most popular
                         </span>
                       )}
-                      <span className="font-mono text-[10px] uppercase tracking-widest text-mute">{t.short}</span>
+                      <span className="text-[12px] text-mute">{t.short}</span>
                       <span className="mt-1 text-sm font-semibold leading-tight">{t.name}</span>
-                      <span className={`display mt-3 text-3xl ${active ? "text-ember" : ""}`}>
-                        {t.fromPrice && <span className="mr-1 font-mono text-[10px] text-mute">from</span>}
+                      <span className="mt-3 text-[22px] font-semibold">
+                        {t.fromPrice && <span className="mr-1 text-[12px] text-mute">from</span>}
                         {format(t.price)}
                       </span>
                       {active && (
-                        <motion.span layoutId="tier-check" className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-ember text-ink">
+                        <motion.span layoutId="tier-check" className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-white text-ink">
                           <CheckIcon size={12} />
                         </motion.span>
                       )}
@@ -135,13 +135,13 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
                 >
                   {TABLE_ROWS.map((r) => (
                     <div key={r.key} className="flex flex-col">
-                      <dt className="font-mono text-[10px] uppercase tracking-widest text-mute">{r.label}</dt>
+                      <dt className="text-[12px] text-mute">{r.label}</dt>
                       <dd className="mt-0.5 text-bone">{String(selected[r.key])}</dd>
                     </div>
                   ))}
                   {selected.extra?.map((x) => (
                     <p key={x} className="col-span-2 flex gap-2 text-[13px] text-mute">
-                      <SparkIcon size={12} className="mt-1 shrink-0 text-ember" /> {x}
+                      <SparkIcon size={12} className="mt-1 shrink-0 text-white" /> {x}
                     </p>
                   ))}
                 </motion.dl>
@@ -150,7 +150,7 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
                 <li className="eyebrow mb-3">Every lease</li>
                 {leaseTerms.map((t) => (
                   <li key={t} className="flex gap-2">
-                    <CheckIcon size={14} className="mt-0.5 shrink-0 text-ember" />
+                    <CheckIcon size={14} className="mt-0.5 shrink-0 text-white" />
                     {t}
                   </li>
                 ))}
@@ -168,7 +168,7 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
               {selected.id === "exclusive" ? (
                 <Link
                   href={`/contact?topic=exclusive&beat=${beat.slug}`}
-                  className="btn btn-gold"
+                  className="btn btn-ghost"
                   onClick={() => setOpen(false)}
                 >
                   Make an offer <ArrowIcon size={16} />

@@ -7,7 +7,7 @@ import { scrollLock } from "./SmoothScroll";
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-/** Accessible modal: portal, focus trap, Esc to close, focus restore, scroll lock (Lenis-aware). */
+/** Accessible modal: portal, focus trap, Esc to close, focus restore, scroll lock. */
 export function Dialog({
   open,
   onClose,
@@ -80,7 +80,7 @@ export function Dialog({
       {open && (
         <div className="fixed inset-0 z-[90] flex items-end justify-center sm:items-center sm:p-6">
           <motion.div
-            className="absolute inset-0 bg-ink/75 backdrop-blur-md"
+            className="absolute inset-0 bg-deep/70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -94,7 +94,6 @@ export function Dialog({
             aria-modal="true"
             aria-labelledby={labelledBy ?? (title ? titleId : undefined)}
             tabIndex={-1}
-            data-lenis-prevent
             drag="y"
             dragListener={false}
             dragControls={dragControls}
@@ -103,7 +102,7 @@ export function Dialog({
             onDragEnd={(_, info) => {
               if (info.offset.y > 110 || info.velocity.y > 700) onClose();
             }}
-            className={`relative max-h-[90svh] w-full overflow-y-auto overscroll-contain rounded-t-[28px] border pb-[env(safe-area-inset-bottom)] sm:max-h-[92svh] sm:rounded-[28px] sm:pb-0 border-line bg-[linear-gradient(160deg,var(--color-raised),var(--color-ink))] shadow-[0_40px_120px_-20px_rgb(0_0_0/0.9)] outline-none ${className}`}
+            className={`relative max-h-[90svh] w-full overflow-y-auto overscroll-contain rounded-t-[24px] border pb-[env(safe-area-inset-bottom)] sm:max-h-[92svh] sm:rounded-[24px] sm:pb-0 border-line bg-ink outline-none ${className}`}
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}
@@ -120,7 +119,7 @@ export function Dialog({
             <button
               type="button"
               onClick={onClose}
-              className="absolute right-3 top-3 z-20 grid h-11 w-11 place-items-center rounded-full border border-line bg-ink/40 text-bone transition hover:bg-bone/10"
+              className="absolute right-3 top-3 z-20 grid h-11 w-11 place-items-center rounded-full bg-stone-300/[0.12] text-nav transition-colors hover:bg-stone-300/20"
               aria-label="Close dialog"
             >
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

@@ -1,6 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { BeatCard, BeatRow } from "./BeatRow";
 import { GridIcon, ListIcon, PlayIcon } from "@/components/ui/Icons";
 import { usePlayer } from "@/components/player/GlobalPlayer";
@@ -16,7 +17,8 @@ const BPM_BANDS = [
 ];
 
 export function BeatCatalog() {
-  const [q, setQ] = useState("");
+  const params = useSearchParams();
+  const [q, setQ] = useState(() => params.get("q") ?? "");
   const [genres, setGenres] = useState<Genre[]>([]);
   const [moods, setMoods] = useState<Mood[]>([]);
   const [key, setKey] = useState("all");
@@ -36,7 +38,7 @@ export function BeatCatalog() {
         (key === "all" || b.key === key) &&
         b.bpm >= band.min &&
         b.bpm <= band.max &&
-        (!query || `${b.title} ${b.genre} ${b.tags.join(" ")} ${b.moods.join(" ")}`.toLowerCase().includes(query))
+        (!query || `${b.title} ${b.genre} ${b.bpm} bpm ${b.key} ${b.tags.join(" ")} ${b.moods.join(" ")}`.toLowerCase().includes(query))
     );
     if (sort === "bpm-asc") list.sort((a, b) => a.bpm - b.bpm);
     if (sort === "bpm-desc") list.sort((a, b) => b.bpm - a.bpm);
@@ -49,15 +51,13 @@ export function BeatCatalog() {
 
   return (
     <div className="container-sg">
-      <div className="mb-6 flex flex-wrap items-center gap-2">
-        <span className="inline-flex h-8 items-center rounded-full bg-gold px-3 font-mono text-[10px] font-bold uppercase tracking-wider text-ink">
-          {licenseDeals.bundle}
-        </span>
+      <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
+        <span className="tag">{licenseDeals.bundle}</span>
         <span className="tag">{licenseDeals.upgrade}</span>
       </div>
 
       {/* filters */}
-      <div className="panel mb-8 space-y-4 p-3 sm:p-5 md:sticky md:top-24 md:z-30" role="search" aria-label="Filter beats">
+      <div className="mb-8 space-y-4 rounded-[22px] border border-line bg-ink p-3 sm:p-4 md:sticky md:top-[76px] md:z-30" role="search" aria-label="Filter beats">
         <div className="flex gap-2 md:hidden">
           <label htmlFor="beat-search-m" className="sr-only">
             Search beats
@@ -167,7 +167,7 @@ export function BeatCatalog() {
         </div>
       </div>
 
-      <div className="mb-4 flex items-center justify-between font-mono text-xs text-mute">
+      <div className="mb-4 flex items-center justify-between text-xs text-mute">
         <p aria-live="polite">
           {results.length} beat{results.length === 1 ? "" : "s"}
         </p>
@@ -191,13 +191,13 @@ export function BeatCatalog() {
       <AnimatePresence mode="wait">
         {results.length === 0 ? (
           <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="panel p-12 text-center">
-            <p className="display text-4xl">No beats match</p>
+            <p className="display text-[32px]">No beats match</p>
             <p className="mt-2 text-mute">Try fewer filters — or ask for a custom beat.</p>
           </motion.div>
         ) : view === "list" ? (
           <motion.ul key="list" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-1">
-            {results.map((b, i) => (
-              <BeatRow key={b.id} beat={b} queue={results} index={i} />
+            {results.map((b) => (
+              <BeatRow key={b.id} beat={b} queue={results} />
             ))}
           </motion.ul>
         ) : (

@@ -10,21 +10,22 @@ const OUT = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "cover
 mkdirSync(join(OUT, "beats"), { recursive: true });
 mkdirSync(join(OUT, "packs"), { recursive: true });
 
-// "Flamenco noir" palette — keep in sync with src/app/globals.css tokens
-const INK = "#0B0708";
-const PLUM = "#160D0F"; // deep surface
-const OXBLOOD = "#5C0F1C";
-const EMBER = "#FF4B2B";
-const GOLD = "#F2B544";
-const VIOLET = "#8C6CFF";
-const BONE = "#F3EBDD";
+// Monochrome stone palette — keep in sync with src/app/globals.css tokens
+const INK = "#0C0A09";
+const PLUM = "#1C1917"; // page bg
+const STONE_800 = "#292524";
+const STONE_500 = "#78716C";
+const STONE_400 = "#A8A29E";
+const STONE_300 = "#D6D3D1";
+const SILVER = "#E6E7E9";
+const BONE = "#FAFAF9";
 const PALETTES = [
-  [EMBER, GOLD, BONE],
-  [GOLD, EMBER, OXBLOOD],
-  [EMBER, VIOLET, GOLD],
-  [GOLD, OXBLOOD, BONE],
-  [VIOLET, EMBER, GOLD],
-  ["#FF7A3C", GOLD, OXBLOOD],
+  [STONE_300, STONE_500, BONE],
+  [SILVER, STONE_800, STONE_400],
+  [STONE_400, STONE_300, STONE_800],
+  [BONE, STONE_500, STONE_300],
+  [STONE_300, STONE_800, SILVER],
+  [STONE_500, STONE_300, BONE],
 ];
 
 function rngFrom(str) {
@@ -119,7 +120,7 @@ const styles = {
   },
   rosette(r, id, p) {
     // guitar sound-hole rosette + strings
-    let s = `<rect width="600" height="600" fill="#1a0c10"/><rect width="600" height="600" fill="url(#g1-${id})"/>`;
+    let s = `<rect width="600" height="600" fill="${PLUM}"/><rect width="600" height="600" fill="url(#g1-${id})"/>`;
     const cx = 300, cy = 290;
     for (let i = 0; i < 64; i++) {
       const a = (i / 64) * Math.PI * 2;
@@ -132,7 +133,7 @@ const styles = {
     s += `<circle cx="${cx}" cy="${cy}" r="120" fill="${INK}"/>`;
     for (let i = 0; i < 6; i++) {
       const x = 240 + i * 24;
-      s += `<line x1="${x}" y1="0" x2="${x}" y2="600" stroke="${i < 3 ? "#e8d9b0" : BONE}" stroke-opacity=".85" stroke-width="${f(3.2 - i * 0.4)}"/>`;
+      s += `<line x1="${x}" y1="0" x2="${x}" y2="600" stroke="${i < 3 ? STONE_300 : BONE}" stroke-opacity=".85" stroke-width="${f(3.2 - i * 0.4)}"/>`;
     }
     return s;
   },
@@ -159,7 +160,7 @@ function cover(slug, style, paletteIdx, label) {
   const id = slug.replace(/[^a-z0-9]/gi, "");
   const body = styles[style](r, id, p);
   const mark = label
-    ? `<g font-family="Impact, 'Arial Narrow', sans-serif" fill="${BONE}"><text x="34" y="560" font-size="46" letter-spacing="1">${label}</text><text x="566" y="60" font-size="18" text-anchor="end" fill-opacity=".8" font-family="Menlo, monospace">SLAPGOD</text></g>`
+    ? `<g font-family="Georgia, 'Times New Roman', serif" font-weight="700" fill="${BONE}"><text x="34" y="560" font-size="44" letter-spacing="-1">${label}</text><text x="566" y="60" font-size="18" text-anchor="end" fill-opacity=".8" font-family="Menlo, monospace">SLAPGOD</text></g>`
     : `<text x="566" y="570" font-size="16" text-anchor="end" fill="${BONE}" fill-opacity=".75" font-family="Menlo, monospace">SG</text>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">${defs(id, p)}<rect width="600" height="600" fill="${INK}"/>${body}<rect width="600" height="600" filter="url(#grain-${id})"/>${mark}</svg>`;
 }
