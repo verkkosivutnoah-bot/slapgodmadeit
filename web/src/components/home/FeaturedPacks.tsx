@@ -1,35 +1,32 @@
 "use client";
-import Link from "next/link";
 import { PackCard } from "@/components/packs/PackCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { Stagger, StaggerItem } from "@/components/ui/motion";
-import { packs } from "@/data/packs";
+import { DragScroll } from "@/components/ui/DragScroll";
+import { Reveal } from "@/components/ui/motion";
+import { freePacks, loopClub, packs } from "@/data/packs";
 
 export function FeaturedPacks() {
-  const items = packs.filter((p) => p.slug !== "guitar-vault-vol-1").slice(0, 6);
+  const items = [...packs.filter((p) => p.slug !== "guitar-vault-vol-1"), freePacks[0], loopClub];
   return (
-    <section className="py-20 md:py-28" aria-labelledby="packs-title">
+    <section className="section overflow-hidden" aria-labelledby="packs-title">
       <div className="container-sg">
-        <SectionHeader
-          id="packs-title"
-          eyebrow="Loops & sample packs"
-          title="Packs"
-          action={
-            <Link href="/packs" className="btn btn-ghost">
-              All packs
-            </Link>
-          }
-        >
-          Royalty-free loops, drum kits and bundles — every sound original.
+        <SectionHeader id="packs-title" eyebrow="Loops & sample packs" title="Packs" href="/packs" hrefLabel="All packs">
+          Royalty-free loops, drum kits and bundles. Drag to browse.
         </SectionHeader>
-        <Stagger className="grid grid-cols-1 gap-5 min-[520px]:grid-cols-2 lg:grid-cols-3">
-          {items.map((p) => (
-            <StaggerItem key={p.slug}>
-              <PackCard pack={p} className="h-full" />
-            </StaggerItem>
-          ))}
-        </Stagger>
       </div>
+      <Reveal>
+        <DragScroll
+          label="Packs carousel"
+          className="scroll-px-[max(16px,calc((100vw-1200px)/2))] px-[max(16px,calc((100vw-1200px)/2))] pb-2"
+        >
+          {items.map((p, i) => (
+            <div key={p.slug} className="w-[72vw] shrink-0 sm:w-[300px] lg:w-[320px]">
+              <PackCard pack={p} priority={i < 2} sizes="(max-width: 640px) 72vw, 320px" />
+            </div>
+          ))}
+          <div className="w-px shrink-0" aria-hidden />
+        </DragScroll>
+      </Reveal>
     </section>
   );
 }

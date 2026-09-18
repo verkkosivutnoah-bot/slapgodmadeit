@@ -41,12 +41,14 @@ type AudioCtor = typeof AudioContext;
 
 /* ------------------------------------------------------------- useRafLoop */
 
-function useRafLoop(cb: (now: number, dt: number) => void) {
+// SG: `active` gates the loop — no rAF runs while the player is idle/offscreen.
+function useRafLoop(cb: (now: number, dt: number) => void, active = true) {
   const cbRef = useRef(cb);
   useEffect(() => {
     cbRef.current = cb;
   });
   useEffect(() => {
+    if (!active) return;
     let raf = 0;
     let last = performance.now();
     const loop = (now: number) => {
@@ -57,7 +59,7 @@ function useRafLoop(cb: (now: number, dt: number) => void) {
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [active]);
 }
 
 /* --------------------------------------------------- useAudioAnalyser */
@@ -476,10 +478,12 @@ function ScalesMixer({
   isPlaying,
   getFrequencyData,
   visibleRef,
+  active = true,
 }: {
   isPlaying: boolean;
   getFrequencyData?: () => Uint8Array | null;
   visibleRef?: RefObject<boolean>;
+  active?: boolean;
 }) {
   const maskId = useId().replace(/:/g, '_');
   const colRefs = useRef<(SVGGElement | null)[]>([]);
@@ -521,7 +525,7 @@ function ScalesMixer({
         })`;
       }
     }
-  });
+  }, active);
 
   return (
     <svg className="scales" viewBox="0 0 98 108" aria-hidden="true">
@@ -581,6 +585,7 @@ function Disc({
   direction,
   onZoomToggle,
   visibleRef,
+  active = true,
 }: {
   layers: Layer[];
   isPlaying: boolean;
@@ -589,6 +594,7 @@ function Disc({
   direction: Direction;
   onZoomToggle: () => void;
   visibleRef?: RefObject<boolean>;
+  active?: boolean;
 }) {
   const spinRef = useRef<HTMLDivElement>(null);
   const rotRef = useRef(0);
@@ -639,7 +645,7 @@ function Disc({
     if (deg === lastWritten.current) return; // SG: skip identical writes
     lastWritten.current = deg;
     el.style.transform = `scale(1.01) rotate(${deg}deg)`;
-  });
+  }, active);
 
   return (
     <div
@@ -907,6 +913,8 @@ export function MusicPlayer({
   const [isZoomed, setIsZoomed] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const visibleRef = useRef(true);
+  const [visible, setVisible] = useState(true);
+  const [settling, setSettling] = useState(true);
   // SG: per-track accent color extracted from the cover → --track-accent
   const accent = useCoverAccent(player.currentTrack?.cover);
 
@@ -984,12 +992,22 @@ export function MusicPlayer({
     const io = new IntersectionObserver(
       ([entry]) => {
         visibleRef.current = entry.isIntersecting;
+        setVisible(entry.isIntersecting);
       },
       { rootMargin: '100px' }
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
+
+  /* SG: keep the rAF loops alive briefly after state changes so spin-down / transitions finish, then stop */
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSettling(true);
+    const t = setTimeout(() => setSettling(false), 2200);
+    return () => clearTimeout(t);
+  }, [player.state.isPlaying, trackSig, isZoomed]);
+  const animActive = visible && (player.state.isPlaying || settling);
 
   /* SG: callbacks + imperative api */
   const onTrackChangeRef = useRef(onTrackChange);
@@ -1042,12 +1060,14 @@ export function MusicPlayer({
         direction={player.state.direction}
         onZoomToggle={() => setIsZoomed((z) => !z)}
         visibleRef={visibleRef}
+        active={animActive}
       />
       <div className="info">
         <ScalesMixer
           isPlaying={player.state.isPlaying}
           getFrequencyData={player.getFrequencyData}
           visibleRef={visibleRef}
+          active={animActive}
         />
         <TrackInfo layers={layers} />
         <ProgressBar

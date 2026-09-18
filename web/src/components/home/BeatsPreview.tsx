@@ -1,35 +1,26 @@
 "use client";
-import Link from "next/link";
-import { BeatRow } from "@/components/beats/BeatRow";
+import { BeatRow, TrackListHeader } from "@/components/beats/BeatRow";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { Reveal } from "@/components/ui/motion";
+import { Stagger, StaggerItem } from "@/components/ui/motion";
 import { beats } from "@/data/beats";
 
 const list = beats.slice(0, 6);
 
 export function BeatsPreview() {
   return (
-    <section className="py-20 md:py-28" aria-labelledby="beats-title">
-      <div className="container-sg max-w-[920px]">
-        <SectionHeader
-          id="beats-title"
-          eyebrow="Beat catalog"
-          title="Fresh beats"
-          action={
-            <Link href="/beats" className="btn btn-ghost">
-              All beats
-            </Link>
-          }
-        >
+    <section className="section" aria-labelledby="beats-title">
+      <div className="container-sg">
+        <SectionHeader id="beats-title" eyebrow="Beat catalog" title="Fresh beats" href="/beats" hrefLabel="All beats">
           Tagged previews, instant delivery, upgrade anytime.
         </SectionHeader>
-        <Reveal>
-          <ul className="space-y-1">
-            {list.map((b) => (
-              <BeatRow key={b.id} beat={b} queue={list} />
-            ))}
-          </ul>
-        </Reveal>
+        <TrackListHeader />
+        <Stagger as="ul" className="mt-2 space-y-0.5">
+          {list.map((b, i) => (
+            <StaggerItem as="li" key={b.id}>
+              <BeatRow beat={b} queue={list} index={i} as="div" />
+            </StaggerItem>
+          ))}
+        </Stagger>
       </div>
     </section>
   );

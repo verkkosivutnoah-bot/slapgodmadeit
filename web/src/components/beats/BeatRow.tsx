@@ -7,7 +7,7 @@ import { PauseIcon, PlayIcon } from "@/components/ui/Icons";
 import { CoverArt } from "@/components/ui/CoverArt";
 import { toPlayerTrack, type Beat } from "@/data/beats";
 
-function usePlayBeat(beat: Beat, queue: Beat[]) {
+export function usePlayBeat(beat: Beat, queue: Beat[]) {
   const player = usePlayer();
   const isCurrent = player.started && player.currentId === beat.id;
   const playing = isCurrent && player.isPlaying;
@@ -18,85 +18,137 @@ function usePlayBeat(beat: Beat, queue: Beat[]) {
   return { isCurrent, playing, onPlay };
 }
 
-function PlayButton({ playing, onPlay, title, className = "" }: { playing: boolean; onPlay: () => void; title: string; className?: string }) {
+/** Tiny equalizer — animates only while playing (paused state = no animation frames). */
+export function EQ({ playing }: { playing: boolean }) {
   return (
-    <button
-      type="button"
-      onClick={onPlay}
-      className={`grid h-11 w-11 shrink-0 place-items-center rounded-full transition-colors ${
-        playing ? "bg-white text-deep" : "bg-stone-300/[0.12] text-nav hover:bg-stone-300/20"
-      } ${className}`}
-      aria-label={playing ? `Pause ${title}` : `Play ${title}`}
-    >
-      {playing ? <PauseIcon size={14} /> : <PlayIcon size={14} />}
-    </button>
+    <span className={`eq ${playing ? "" : "is-paused"}`} aria-hidden>
+      <i />
+      <i />
+      <i />
+    </span>
   );
 }
 
-/** Simple list row: cover · title · BPM/key · play · "License from" pill */
-export function BeatRow({ beat, queue }: { beat: Beat; queue: Beat[]; index?: number }) {
+export function TrackListHeader() {
+  return (
+    <div className="hidden grid-cols-[40px_48px_minmax(0,1fr)_120px_56px_auto] items-center gap-4 border-b border-line px-3 pb-3 text-[12px] font-medium uppercase tracking-[0.12em] text-mute md:grid">
+      <span className="text-center">#</span>
+      <span />
+      <span>Title</span>
+      <span>BPM · Key</span>
+      <span className="text-right">Time</span>
+      <span className="w-[150px]" />
+    </div>
+  );
+}
+
+/** Track-list row: number ↔ play toggle · 48px cover · title + tags · BPM/key · duration · license pill */
+export function BeatRow({ beat, queue, index = 0, as: Tag = "li" }: { beat: Beat; queue: Beat[]; index?: number; as?: "li" | "div" }) {
   const { isCurrent, playing, onPlay } = usePlayBeat(beat, queue);
   const { openLicense } = useLicenseModal();
   const { format } = useCurrency();
 
   return (
-    <li
-      className={`flex items-center gap-3 rounded-[20px] px-2 py-2 transition-colors sm:gap-4 sm:px-3 ${
-        isCurrent ? "bg-white/[0.06]" : "hover:bg-white/[0.035]"
+    <Tag
+      className={`group grid grid-cols-[40px_48px_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-2 py-2.5 transition-colors duration-300 sm:gap-4 sm:px-3 md:grid-cols-[40px_48px_minmax(0,1fr)_120px_56px_auto] ${
+        isCurrent ? "bg-white/[0.06]" : "hover:bg-white/[0.04]"
       }`}
     >
-      <Link href={`/beats/${beat.slug}`} className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-xl sm:h-14 sm:w-14" tabIndex={-1} aria-hidden>
-        <CoverArt src={beat.cover} title={beat.title} alt="" sizes="56px" className="absolute inset-0" />
+      {/* number / play toggle */}
+      <button
+        type="button"
+        onClick={onPlay}
+        className="relative grid h-10 w-10 place-items-center rounded-full text-[14px] tabular-nums text-mute transition-colors hover:bg-white hover:text-deep"
+        aria-label={playing ? `Pause ${beat.title}` : `Play ${beat.title}`}
+      >
+        {isCurrent ? (
+          <>
+            <span className="group-hover:hidden">{playing ? <EQ playing /> : <PlayIcon size={14} />}</span>
+            <span className="hidden group-hover:block">{playing ? <PauseIcon size={14} /> : <PlayIcon size={14} />}</span>
+          </>
+        ) : (
+          <>
+            <span className="transition-opacity group-hover:opacity-0 [@media(hover:none)]:opacity-0">{String(index + 1).padStart(2, "0")}</span>
+            <span className="absolute inset-0 grid place-items-center opacity-0 transition-opacity group-hover:opacity-100 [@media(hover:none)]:opacity-100">
+              <PlayIcon size={14} />
+            </span>
+          </>
+        )}
+      </button>
+
+      <Link href={`/beats/${beat.slug}`} className="frame block h-12 w-12 !rounded-[10px]" tabIndex={-1} aria-hidden>
+        <CoverArt src={beat.cover} title={beat.title} alt="" sizes="48px" className="absolute inset-0" />
       </Link>
-      <div className="min-w-0 flex-1">
+
+      <div className="min-w-0">
         <p className="truncate text-[15px] font-medium text-bone">
-          <Link href={`/beats/${beat.slug}`} className="hover:underline hover:underline-offset-4">
+          <Link href={`/beats/${beat.slug}`} className="link-u">
             {beat.title}
           </Link>
-          {beat.isNew && <span className="ml-2 align-middle text-xs font-normal text-mute">New</span>}
+          {beat.isNew && <span className="bg-silver ml-2 rounded-full px-1.5 py-px align-middle text-[10px] font-semibold">NEW</span>}
         </p>
         <p className="mt-0.5 truncate text-[13px] text-mute">
-          {beat.bpm} BPM · {beat.key}
-          <span className="hidden sm:inline"> · {beat.genre}</span>
+          <span className="md:hidden">
+            {beat.bpm} BPM · {beat.key} ·{" "}
+          </span>
+          {beat.genre} · {beat.moods.join(", ")}
         </p>
       </div>
-      <PlayButton playing={playing} onPlay={onPlay} title={beat.title} />
+
+      <p className="hidden text-[14px] tabular-nums text-stone-300 md:block">
+        {beat.bpm} · {beat.key}
+      </p>
+      <p className="hidden text-right text-[14px] tabular-nums text-mute md:block">{beat.duration}</p>
+
       <button
         type="button"
         onClick={() => openLicense(beat)}
-        className="btn btn-sm btn-ghost shrink-0"
+        className="btn btn-sm btn-ghost shrink-0 md:w-[150px]"
         aria-label={`License ${beat.title}, from ${format(beat.priceFrom)}`}
       >
-        <span className="hidden sm:inline">License from</span>
+        <span className="hidden sm:inline">License</span>
         <span>{format(beat.priceFrom)}</span>
       </button>
-    </li>
+    </Tag>
   );
 }
 
 export function BeatCard({ beat, queue }: { beat: Beat; queue: Beat[] }) {
-  const { playing, onPlay } = usePlayBeat(beat, queue);
+  const { isCurrent, playing, onPlay } = usePlayBeat(beat, queue);
   const { openLicense } = useLicenseModal();
   const { format } = useCurrency();
   return (
-    <article className="group rounded-[22px] border border-line bg-white/[0.02] p-3 transition-colors hover:bg-white/[0.04]">
-      <Link href={`/beats/${beat.slug}`} className="relative block aspect-square overflow-hidden rounded-2xl" tabIndex={-1} aria-hidden>
-        <CoverArt src={beat.cover} title={beat.title} sizes="(max-width: 480px) 90vw, (max-width: 1024px) 45vw, 300px" className="absolute inset-0" />
-      </Link>
-      <div className="flex items-center gap-3 px-1 pb-1 pt-3">
-        <div className="min-w-0 flex-1">
+    <article className="group">
+      <div className="frame aspect-square">
+        <Link href={`/beats/${beat.slug}`} tabIndex={-1} aria-hidden>
+          <CoverArt src={beat.cover} title={beat.title} sizes="(max-width: 480px) 90vw, (max-width: 1024px) 45vw, 300px" className="absolute inset-0" />
+        </Link>
+        <button
+          type="button"
+          onClick={onPlay}
+          className={`absolute bottom-3 right-3 grid h-11 w-11 place-items-center rounded-full bg-white text-deep transition-[opacity,transform] duration-500 ${
+            isCurrent ? "opacity-100" : "translate-y-1 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100"
+          }`}
+          aria-label={playing ? `Pause ${beat.title}` : `Play ${beat.title}`}
+        >
+          {playing ? <PauseIcon size={14} /> : <PlayIcon size={14} />}
+        </button>
+      </div>
+      <div className="flex items-start justify-between gap-3 pt-3">
+        <div className="min-w-0">
           <p className="truncate font-medium">
-            <Link href={`/beats/${beat.slug}`}>{beat.title}</Link>
+            <Link href={`/beats/${beat.slug}`} className="link-u">
+              {beat.title}
+            </Link>
           </p>
-          <p className="text-[13px] text-mute">
+          <p className="text-[13px] tabular-nums text-mute">
             {beat.bpm} BPM · {beat.key}
           </p>
         </div>
-        <PlayButton playing={playing} onPlay={onPlay} title={beat.title} />
+        <button type="button" onClick={() => openLicense(beat)} className="btn btn-sm btn-ghost shrink-0">
+          {format(beat.priceFrom)}
+        </button>
       </div>
-      <button type="button" onClick={() => openLicense(beat)} className="btn btn-sm btn-ghost mt-2 w-full">
-        License from {format(beat.priceFrom)}
-      </button>
     </article>
   );
 }

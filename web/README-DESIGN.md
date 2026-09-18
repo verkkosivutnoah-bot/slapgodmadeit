@@ -9,9 +9,10 @@ Next.js 16 (App Router, Turbopack) · Tailwind v4 · `motion`. Run `npm run dev`
 | Music player (owner spec, ported) | `src/components/player/MusicPlayer.tsx`, `music-player.css` |
 | One-at-a-time audio + keyboard shortcut owner | `src/components/player/audioFocus.ts` |
 | Global sticky dock player (mini bar ⇄ expanded card, persists across pages) | `src/components/player/GlobalPlayer.tsx` (`usePlayer().playQueue(tracks, i)`) |
-| Hero | `src/components/home/Hero.tsx` — centered serif headline, pill search (→ `/beats?q=`), Guitar Vault MusicPlayer centerpiece |
+| Hero | `src/components/home/Hero.tsx` — line-reveal serif headline, pill search (→ `/beats?q=`), trust chips, spinning vinyl centerpiece (plays Guitar Vault previews) |
 | Cover art (next/image + fallback) / accent color | `src/components/ui/CoverArt.tsx`, `ui/CoverShowcase.tsx`, `src/lib/coverAccent.ts` |
-| Beat detail page | `src/app/beats/[slug]`, `src/components/beats/BeatDetail.tsx` |
+| Beat / pack detail | `src/components/beats/BeatDetail.tsx` (segmented license picker w/ animated selection + live summary), `src/components/packs/PackDetail.tsx`; both use `ui/CoverShowcase.tsx` + `StickyBuyBar` |
+| Track list | `src/components/beats/BeatRow.tsx` — number↔play toggle, equalizer when playing, BPM/key/duration columns |
 | Motion primitives (Reveal, Stagger, Parallax, Magnetic, Tilt, Marquee) | `src/components/ui/motion.tsx` |
 | Route scroll reset + scroll lock | `src/components/ui/SmoothScroll.tsx` |
 | Accessible dialog (focus trap, Esc, restore focus) | `src/components/ui/Dialog.tsx` |
@@ -32,12 +33,27 @@ Next.js 16 (App Router, Turbopack) · Tailwind v4 · `motion`. Run `npm run dev`
 
 ## Look & palette (monochrome stone)
 
-Simple, calm, pill-shaped UI. All colors live in the `:root` block at the top of `src/app/globals.css`
+Editorial, calm, pill-shaped UI. All colors live in the `:root` block at the top of `src/app/globals.css`
 (`--ink-rgb` #1C1917 bg, `--deep-rgb` #0C0A09, `--surface-rgb` #292524, `--fg` #FAFAF9, `--fg-2` #D6D3D1, `--mute-rgb` #A8A29E,
-`--silver` gradient — the only "accent", used for "Most popular" / flagship badge / one highlighted word via `.text-silver` / `.bg-silver`).
-Fonts: display = **Newsreader** (next/font, weight 700, tight tracking) via `.display`; UI = system stack (-apple-system / SF Pro, Inter fallback).
-Primary CTA `.btn-primary` = white pill; secondary `.btn-ghost` = rgba(214,211,209,.12) pill. No blurs, backdrop filters, grain or continuous animations.
-Placeholder covers are monochrome (`npm run covers:placeholders`).
+`--silver` gradient — the only accent: "Most popular" ring, NEW/Free/flagship badges, a few highlighted words via `.text-silver` / `.bg-silver`).
+Fonts: display = **Newsreader** (next/font, 700, tight tracking) via `.display`; UI = system stack (SF Pro, Inter fallback).
+Utilities: `.section` (vertical rhythm), `.eyebrow` (uppercase muted label), `.link-u` (underline-slide), `.frame` (rounded image frame, 1.03 hover scale),
+`.btn-primary` (white pill ↔ stone on hover), `.btn-ghost` (stone pill ↔ white on hover), `.snap-x-row` (horizontal snap scroll).
+No blurs, no backdrop filters, no grain. Placeholder covers are monochrome SVG art (`npm run covers:placeholders`).
+
+## Motion system
+
+One module: `src/components/ui/motion.tsx` (motion/react; transform + opacity + clip-path only; ease `[0.22,1,0.36,1]`, 0.5–0.9s, stagger 0.06; static under prefers-reduced-motion).
+- `LineReveal` — headlines slide up line by line (hero, page heros, section titles)
+- `Reveal`, `Stagger`/`StaggerItem` — fade-up once (viewport once, -10% margin)
+- `RevealImage` — cover clip-path opens + image settles 1.06 → 1
+- `Rise` — on-mount entrance (hero search / chips)
+- `PillTabs` (`ui/PillTabs.tsx`) — sliding active pill (layoutId): beat genres, pack types, beat-vs-loop licenses
+- `DragScroll` (`ui/DragScroll.tsx`) — snap carousel, mouse drag + native touch swipe (home packs)
+- `StickyBuyBar` (`ui/StickyBuyBar.tsx`) — mobile buy bar on detail pages (sits above the player dock)
+- Page transition: `src/app/template.tsx` 240ms cross-fade. Header fades in; nav active pill slides.
+- "Wow" moments: hero vinyl (spins via CSS only while the preview plays; scales/fades on scroll via `useScroll`), packs carousel, footer wordmark rise.
+- Idle cost: zero continuous animation. The MusicPlayer rAF loops only run while it is visible AND playing (plus ~2s to settle); the equalizer and vinyl spin are CSS and paused when not playing.
 
 ## Adding a beat / pack
 

@@ -103,9 +103,44 @@
   }
 
   .eyebrow {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--color-mute);
+  }
+
+  /* vertical rhythm */
+  .section {
+    padding-block: clamp(64px, 11vw, 152px);
+  }
+
+  /* underline-slide link */
+  .link-u {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.45s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s;
+  }
+  .link-u:hover,
+  .link-u:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* cover frame: image scales slightly on hover */
+  .frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    isolation: isolate;
+  }
+  .frame img {
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .group:hover .frame img,
+  .frame:hover img {
+    transform: scale(1.03);
   }
 
   /* heavy editorial serif */
@@ -142,23 +177,24 @@
     font-size: 15px;
     font-weight: 500;
     white-space: nowrap;
-    transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+    transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), color 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s, opacity 0.2s;
   }
   .btn-primary {
     background: #ffffff;
     color: #0c0a09;
   }
   .btn-primary:hover {
-    background: #e7e5e4;
+    background: #292524;
+    color: #fafaf9;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
   }
-  .btn-ghost,
   .btn-ghost {
     background: rgb(214 211 209 / 0.12);
     color: var(--color-nav);
   }
-  .btn-ghost:hover,
   .btn-ghost:hover {
-    background: rgb(214 211 209 / 0.2);
+    background: #fafaf9;
+    color: #0c0a09;
   }
   .btn-sm {
     height: 38px;
@@ -306,3 +342,98 @@
   }
 }
 
+
+/* ------------------------------------------------------------ details */
+html {
+  scrollbar-color: #44403c transparent;
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #44403c;
+  border-radius: 9999px;
+  border: 3px solid #1c1917;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+.silver-ring {
+  background: var(--silver);
+  padding: 1px;
+}
+.snap-x-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.snap-x-row::-webkit-scrollbar {
+  display: none;
+}
+.snap-x-row > * {
+  scroll-snap-align: start;
+}
+.snap-x-row.is-dragging {
+  scroll-snap-type: none;
+  cursor: grabbing;
+}
+.snap-x-row.is-dragging * {
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------ vinyl (hero / detail) */
+.vinyl {
+  position: relative;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: #0c0a09;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+.vinyl-spin {
+  position: absolute;
+  inset: 0;
+  animation: sg-spin 7s linear infinite;
+  animation-play-state: paused; /* runs only while playing */
+}
+.vinyl.is-playing .vinyl-spin {
+  animation-play-state: running;
+}
+.vinyl-grooves {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background:
+    repeating-radial-gradient(circle, rgb(0 0 0 / 0) 0 2px, rgb(0 0 0 / 0.22) 2px 3px),
+    radial-gradient(circle, transparent 30%, rgb(12 10 9 / 0.55) 31%, rgb(12 10 9 / 0.2) 70%, rgb(12 10 9 / 0.6) 100%);
+  pointer-events: none;
+}
+.vinyl-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: conic-gradient(from 200deg, transparent 0deg, rgb(255 255 255 / 0.12) 25deg, transparent 60deg, transparent 180deg, rgb(255 255 255 / 0.08) 210deg, transparent 245deg);
+  pointer-events: none;
+}
+@keyframes sg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vinyl-spin {
+    animation: none;
+  }
+}
+
+/* mobile sticky buy bar sits above the player dock when it is visible */
+.buybar {
+  bottom: calc(12px + env(safe-area-inset-bottom));
+}
+body:has(.dock.is-visible) .buybar {
+  bottom: calc(104px + env(safe-area-inset-bottom));
+}

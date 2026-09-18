@@ -7,6 +7,7 @@ import { useCart } from "@/lib/cart";
 import { useCurrency } from "@/lib/currency";
 import { licenseDeals } from "@/data/licenses";
 import { ArrowIcon, CloseIcon } from "@/components/ui/Icons";
+import { EASE, Reveal } from "@/components/ui/motion";
 
 export function CartView() {
   const cart = useCart();
@@ -35,26 +36,26 @@ export function CartView() {
   if (cart.count === 0) {
     return (
       <div className="container-sg">
-        <div className="panel mx-auto max-w-2xl p-10 text-center sm:p-16">
-          <p className="display text-[32px]">Cart&apos;s empty</p>
-          <p className="mt-3 text-mute">Grab a beat lease or a pack — or start with 10 free guitar loops.</p>
+        <Reveal className="mx-auto max-w-xl rounded-[24px] border border-line p-10 text-center sm:p-16">
+          <p className="display text-[36px]">Your cart is empty</p>
+          <p className="mt-3 text-stone-400">Grab a beat lease or a pack — or start with 10 free guitar loops.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/beats" className="btn btn-primary">
               Browse beats
             </Link>
-            <Link href="/packs" className="btn btn-ghost">
-              Packs
+            <Link href="/free" className="btn btn-ghost">
+              Free loops
             </Link>
           </div>
-        </div>
+        </Reveal>
       </div>
     );
   }
 
   return (
-    <div className="container-sg grid gap-8 lg:grid-cols-[1.5fr_1fr] grid-cols-1">
+    <div className="container-sg grid grid-cols-1 gap-10 pb-24 lg:grid-cols-[1.5fr_1fr] lg:gap-14 lg:pb-0">
       <section aria-label="Cart items">
-        <ul className="space-y-3">
+        <ul className="border-t border-line">
           <AnimatePresence initial={false}>
             {cart.items.map((i) => (
               <motion.li
@@ -62,22 +63,24 @@ export function CartView() {
                 layout
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                className="panel flex items-center gap-4 p-3 sm:p-4"
+                exit={{ opacity: 0, x: -24, transition: { duration: 0.3 } }}
+                transition={{ duration: 0.45, ease: EASE }}
+                className="flex items-center gap-4 border-b border-line py-4"
               >
-                <CoverArt src={i.cover} title={i.title} alt="" sizes="80px" className="h-16 w-16 shrink-0 rounded-xl sm:h-20 sm:w-20" />
+                <Link href={i.href} className="frame block h-16 w-16 shrink-0 !rounded-[12px] sm:h-20 sm:w-20" tabIndex={-1} aria-hidden>
+                  <CoverArt src={i.cover} title={i.title} alt="" sizes="80px" className="absolute inset-0" />
+                </Link>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[12px] text-mute">{i.kind === "beat" ? "Beat lease" : "Pack"}</p>
-                  <Link href={i.href} className="block truncate font-semibold hover:text-white">
+                  <Link href={i.href} className="link-u truncate text-[16px] font-medium">
                     {i.title}
                   </Link>
-                  {i.variant && <p className="text-sm text-mute">{i.variant}</p>}
+                  <p className="mt-0.5 text-[13px] text-mute">{i.variant ?? (i.kind === "beat" ? "Beat lease" : "Pack")}</p>
                 </div>
-                <p className="text-[26px] font-semibold tracking-tight">{format(i.priceEUR)}</p>
+                <p className="text-[17px] font-semibold tabular-nums">{format(i.priceEUR)}</p>
                 <button
                   type="button"
                   onClick={() => cart.remove(i.key)}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-line text-mute transition hover:border-stone-300 hover:text-stone-300"
+                  className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-stone-300/[0.1] text-nav transition-colors duration-300 hover:bg-white hover:text-deep"
                   aria-label={`Remove ${i.title} from cart`}
                 >
                   <CloseIcon size={14} />
@@ -86,36 +89,38 @@ export function CartView() {
             ))}
           </AnimatePresence>
         </ul>
-        <p className="mt-4 text-xs text-mute">
-          Deal: {licenseDeals.bundle}.{" "}
+        <p className="mt-5 text-[13px] text-mute">
+          {licenseDeals.bundle}.{" "}
           {leases.length > 0 && leases.length % 3 !== 0 && `Add ${3 - (leases.length % 3)} more lease${3 - (leases.length % 3) > 1 ? "s" : ""} to unlock a free one.`}
         </p>
       </section>
 
-      <aside className="panel h-fit p-6 sm:p-8 lg:sticky lg:top-28" aria-labelledby="summary-title">
+      <aside id="cart-summary" className="h-fit scroll-mt-24 rounded-[24px] border border-line p-6 sm:p-8 lg:sticky lg:top-28" aria-labelledby="summary-title">
         <h2 id="summary-title" className="display text-[32px]">
           Summary
         </h2>
-        <dl className="mt-6 space-y-3 text-sm">
+        <dl className="mt-6 space-y-3 text-[15px]">
           <div className="flex justify-between">
             <dt className="text-mute">Subtotal</dt>
-            <dd>{format(cart.subtotalEUR)}</dd>
+            <dd className="tabular-nums">{format(cart.subtotalEUR)}</dd>
           </div>
-          {discount > 0 && (
-            <div className="flex justify-between text-white">
-              <dt>Buy 2 get 1 free</dt>
-              <dd>−{format(discount)}</dd>
-            </div>
-          )}
-          <div className="flex justify-between border-t border-line pt-3 text-base">
-            <dt className="font-semibold">Total</dt>
-            <dd className="text-[26px] font-semibold tracking-tight">{format(total)}</dd>
+          <AnimatePresence initial={false}>
+            {discount > 0 && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="flex justify-between overflow-hidden text-stone-300">
+                <dt>Buy 2 get 1 free</dt>
+                <dd className="tabular-nums">−{format(discount)}</dd>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div className="flex items-baseline justify-between border-t border-line pt-4">
+            <dt className="font-medium">Total</dt>
+            <dd className="text-[30px] font-semibold tracking-tight tabular-nums">{format(total)}</dd>
           </div>
         </dl>
         <p className="mt-1 text-right text-[12px] text-mute">{vatNote}</p>
 
-        <label className="mt-6 flex cursor-pointer items-start gap-3 text-[13px] text-mute">
-          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-[18px] w-[18px] accent-[var(--fg)]" />
+        <label className="mt-6 flex cursor-pointer items-start gap-3 text-[13px] leading-snug text-mute">
+          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-[18px] w-[18px] shrink-0 accent-[var(--fg)]" />
           <span>
             I accept the{" "}
             <Link href="/terms" className="text-bone underline underline-offset-2">
@@ -137,14 +142,33 @@ export function CartView() {
           Checkout <ArrowIcon size={16} />
         </button>
         {notice && (
-          <p role="status" className="mt-4 rounded-xl border border-line p-3 text-[13px] text-mute">
+          <p role="status" className="mt-4 rounded-2xl border border-line p-3 text-[13px] text-mute">
             {notice}
           </p>
         )}
-        <button type="button" onClick={cart.clear} className="mt-4 w-full text-center text-[12px] text-mute hover:text-bone">
+        <button type="button" onClick={cart.clear} className="link-u mx-auto mt-5 block text-[13px] text-mute hover:text-bone">
           Clear cart
         </button>
       </aside>
+
+      {/* mobile sticky checkout */}
+      <div className="buybar fixed inset-x-3 z-40 lg:hidden">
+        <div className="flex items-center justify-between gap-3 rounded-full border border-line bg-deep py-2 pl-5 pr-2">
+          <span className="text-[15px] font-semibold tabular-nums">
+            {format(total)} <span className="text-[12px] font-normal text-mute">· {cart.count} item{cart.count === 1 ? "" : "s"}</span>
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              if (!agree) document.getElementById("cart-summary")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              checkout();
+            }}
+            className="btn btn-primary btn-sm"
+          >
+            Checkout
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

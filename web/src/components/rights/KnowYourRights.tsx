@@ -4,11 +4,11 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useId, useState, type ReactNode } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Reveal, Stagger, StaggerItem } from "@/components/ui/motion";
-import { ArrowIcon, CheckIcon, CloseIcon, DownloadIcon, SparkIcon } from "@/components/ui/Icons";
+import { ArrowIcon, CheckIcon, CloseIcon, DownloadIcon } from "@/components/ui/Icons";
 import { canDo, cantDo, faqs, leaseVsExclusive, registerSteps, SPLIT_SHEET_URL, splits, twoCopyrights } from "@/data/rights";
 import { CREDIT_FORMAT, licenseTiers } from "@/data/licenses";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 function FullTerms({ className = "" }: { className?: string }) {
   return (
@@ -30,29 +30,38 @@ function Block({ id, n, title, children }: { id: string; n: string; title: React
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((o) => !o)}
-          className="flex w-full items-center gap-4 py-6 text-left sm:gap-6 sm:py-8"
+          className="group flex w-full items-center gap-4 py-6 text-left sm:gap-6 sm:py-8"
         >
           <span className="w-6 shrink-0 text-[13px] text-mute">{n}</span>
-          <span className="display flex-1 text-[clamp(24px,3.6vw,36px)]">{title}</span>
-          <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full bg-stone-300/[0.12] text-nav transition-transform duration-300 ${open ? "rotate-45" : ""}`} aria-hidden>
+          <span className="display flex-1 text-[clamp(24px,3.6vw,38px)] transition-colors duration-300 group-hover:text-stone-300">{title}</span>
+          <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full transition-[transform,background-color,color] duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${open ? "rotate-45 bg-white text-deep" : "bg-stone-300/[0.12] text-nav"}`} aria-hidden>
             <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M12 5v14M5 12h14" />
             </svg>
           </span>
         </button>
       </h3>
-      {open && (
-        <motion.div id={panelId} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE }} className="pb-10 sm:pl-12">
-          {children}
-        </motion.div>
-      )}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            id={panelId}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ height: { duration: 0.55, ease: EASE }, opacity: { duration: 0.35 } }}
+            className="overflow-hidden"
+          >
+            <div className="pb-12 sm:pl-12">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 export function KnowYourRights() {
   return (
-    <section id="rights" className="relative scroll-mt-24 py-24 md:py-36" aria-labelledby="rights-title">
+    <section id="rights" className="section relative scroll-mt-24" aria-labelledby="rights-title">
             <div className="container-sg">
         <SectionHeader
           id="rights-title"
@@ -100,7 +109,7 @@ function TwoCopyrights() {
         <ul className="mt-6 space-y-2.5 text-[15px]">
           {c.points.map((p) => (
             <li key={p} className="flex gap-2.5">
-              <SparkIcon size={12} className={`mt-1.5 shrink-0 ${accent}`} />
+              <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-stone-500" aria-hidden />
               {p}
             </li>
           ))}
@@ -111,7 +120,7 @@ function TwoCopyrights() {
   return (
     <Block id="rights-copyrights" n="01" title={<>Every song = two copyrights</>}>
       <Reveal>
-        <div className="mx-auto flex w-fit items-center gap-3 rounded-full border border-bone/30 bg-bone/[0.05] px-6 py-3">
+        <div className="mx-auto flex w-fit items-center gap-3 rounded-full border border-line px-6 py-3">
           <span className="h-2.5 w-2.5 rounded-full bg-white" />
           <span className="display text-2xl">Your song</span>
         </div>
@@ -126,8 +135,7 @@ function TwoCopyrights() {
             d={d}
             fill="none"
             style={{ stroke: col }}
-            strokeWidth="2"
-            strokeDasharray="1 0"
+            strokeWidth="1.5"
             initial={reduce ? false : { pathLength: 0 }}
             whileInView={{ pathLength: 1 }}
             viewport={{ once: true }}
@@ -219,15 +227,15 @@ function Donut({ share, color, label }: { share: number; color: string; label: s
     <figure className="flex flex-col items-center">
       <div className="relative h-44 w-44 sm:h-52 sm:w-52">
         <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90" role="img" aria-label={`${label}: SLAPGOD ${share}%, you ${100 - share}%`}>
-          <circle cx="60" cy="60" r="48" fill="none" stroke="rgb(var(--bone-rgb) / 0.1)" strokeWidth="16" />
+          <circle cx="60" cy="60" r="48" fill="none" style={{ stroke: "rgb(255 255 255 / 0.08)" }} strokeWidth="10" />
           <motion.circle
             cx="60"
             cy="60"
             r="48"
             fill="none"
             style={{ stroke: color }}
-            strokeWidth="16"
-            strokeLinecap="butt"
+            strokeWidth="10"
+            strokeLinecap="round"
             initial={reduce ? { pathLength: share / 100 } : { pathLength: 0 }}
             whileInView={{ pathLength: share / 100 }}
             viewport={{ once: true }}

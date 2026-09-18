@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/layout/PageHero";
 import { LicenseCards, LicenseTable } from "@/components/licenses/LicenseCards";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Reveal } from "@/components/ui/motion";
-import { CheckIcon } from "@/components/ui/Icons";
-import { CREDIT_FORMAT, loopLicenseSummary } from "@/data/licenses";
+import { CREDIT_FORMAT } from "@/data/licenses";
 import { splits } from "@/data/rights";
 
 export const metadata: Metadata = { title: "License Agreements" };
@@ -12,76 +12,61 @@ export const metadata: Metadata = { title: "License Agreements" };
 export default function LicensesPage() {
   return (
     <>
-      <PageHero eyebrow="Legal · Licensing" title="Licenses">
+      <PageHero eyebrow="Legal · Licensing" lines={["Licenses, in", "plain language"]}>
         Beat lease tiers, exclusive rights and the loop license — summarized. The full agreement text is delivered with every purchase.
       </PageHero>
 
-      <div className="container-sg space-y-20">
-        <section aria-labelledby="tiers">
-          <h2 id="tiers" className="display mb-8 text-[30px] sm:text-[40px]">
-            Beat lease tiers
-          </h2>
-          <LicenseCards />
-        </section>
+      <section className="container-sg pb-24" aria-label="License tiers">
+        <LicenseCards />
+      </section>
 
-        <section aria-labelledby="compare">
-          <h2 id="compare" className="display mb-8 text-[30px] sm:text-[40px]">
-            Full comparison
-          </h2>
-          <Reveal>
-            <LicenseTable />
-          </Reveal>
-        </section>
+      <section className="section container-sg" aria-labelledby="compare">
+        <SectionHeader id="compare" eyebrow="Beat leases" title="Full comparison">
+          Every cap, side by side. Scroll sideways on smaller screens.
+        </SectionHeader>
+        <Reveal>
+          <LicenseTable />
+        </Reveal>
+      </section>
 
-        <section aria-labelledby="loops" className="grid gap-6 lg:grid-cols-2 grid-cols-1">
-          <div className="panel p-6 sm:p-10">
-            <h2 id="loops" className="display text-[32px]">
-              {loopLicenseSummary.title}
-            </h2>
-            <ul className="mt-6 space-y-3 text-[15px]">
-              {loopLicenseSummary.points.map((p) => (
-                <li key={p} className="flex gap-3">
-                  <CheckIcon size={16} className="mt-1 shrink-0 text-white" /> {p}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="panel p-6 sm:p-10">
-            <h2 className="display text-[32px]">Splits &amp; credit</h2>
-            <dl className="mt-6 grid grid-cols-2 gap-4">
-              <div className="rounded-2xl border border-line p-5">
-                <dt className="eyebrow">Beats</dt>
-                <dd className="display mt-2 text-[44px] text-white">{splits.beats.share}%</dd>
-                <dd className="text-sm text-mute">writer share to SLAPGOD</dd>
-              </div>
-              <div className="rounded-2xl border border-line p-5">
-                <dt className="eyebrow">Loops</dt>
-                <dd className="display mt-2 text-[44px] text-stone-300">{splits.loops.share}%</dd>
-                <dd className="text-sm text-mute">publishing on released songs</dd>
-              </div>
-            </dl>
-            <p className="mt-6 text-lg">&ldquo;{CREDIT_FORMAT}&rdquo;</p>
-            <Link href="/#rights" className="btn btn-ghost btn-sm mt-6">
-              Know your rights guide
-            </Link>
-          </div>
-        </section>
+      <section className="container-sg" aria-labelledby="splits">
+        <SectionHeader id="splits" eyebrow="Publishing" title="Splits & credit" href="/#rights" hrefLabel="Know your rights" />
+        <Reveal className="grid grid-cols-1 border-y border-line sm:grid-cols-3">
+          {[
+            { k: `${splits.beats.share}%`, v: "Writer share to SLAPGOD on songs made with a beat" },
+            { k: `${splits.loops.share}%`, v: "Publishing split on released songs that use the loops" },
+            { k: "Credit", v: `“${CREDIT_FORMAT}”` },
+          ].map((x, i) => (
+            <div key={x.k} className={`py-10 sm:px-8 ${i > 0 ? "border-t border-line sm:border-l sm:border-t-0" : "sm:pl-0"}`}>
+              <p className="display text-[clamp(44px,6vw,72px)] leading-none">{x.k}</p>
+              <p className="mt-4 max-w-[260px] text-[15px] leading-relaxed text-stone-400">{x.v}</p>
+            </div>
+          ))}
+        </Reveal>
+      </section>
 
-        <section aria-labelledby="agreements" className="panel p-6 sm:p-10">
-          <h2 id="agreements" className="display text-[32px]">
-            License agreement text
+      <section className="section container-sg" aria-labelledby="agreements">
+        <Reveal className="mx-auto max-w-3xl rounded-[24px] border border-line p-7 sm:p-12">
+          <p className="eyebrow">Agreements</p>
+          <h2 id="agreements" className="display mt-4 text-[clamp(30px,4vw,44px)]">
+            Full license text
           </h2>
-          <p className="mt-3 max-w-2xl text-mute">
-            Content coming soon — full agreements for Basic MP3, Premium WAV, Trackout, Unlimited, Exclusive Rights and the Loop/Sample license.
+          <p className="mt-4 text-[15px] leading-relaxed text-stone-400">
+            Coming soon — full agreements for Basic MP3, Premium WAV, Trackout, Unlimited, Exclusive Rights and the loop/sample license.
           </p>
           <div className="mt-8 space-y-3" aria-hidden>
-            {[94, 80, 88, 62, 90, 74, 84].map((w, i) => (
-              <div key={i} className="h-3 rounded-full bg-bone/[0.06]" style={{ width: `${w}%` }} />
+            {[94, 80, 88, 62, 90, 74].map((w, i) => (
+              <div key={i} className="h-2 rounded-full bg-white/[0.05]" style={{ width: `${w}%` }} />
             ))}
           </div>
-          <p className="mt-8 text-xs text-mute">Summary only — the license agreement delivered with your purchase is the binding document.</p>
-        </section>
-      </div>
+          <p className="mt-8 text-[13px] text-mute">
+            Summary only — the license agreement delivered with your purchase is the binding document.{" "}
+            <Link href="/contact?topic=licensing" className="link-u text-stone-300">
+              Questions?
+            </Link>
+          </p>
+        </Reveal>
+      </section>
     </>
   );
 }

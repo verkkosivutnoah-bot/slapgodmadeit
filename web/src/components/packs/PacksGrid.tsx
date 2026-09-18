@@ -4,7 +4,8 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import { PackCard } from "./PackCard";
-import { Reveal } from "@/components/ui/motion";
+import { EASE, Reveal } from "@/components/ui/motion";
+import { PillTabs } from "@/components/ui/PillTabs";
 import { freePacks, guitarVault, loopClub, packs, type PackType } from "@/data/packs";
 import { useCurrency } from "@/lib/currency";
 
@@ -22,42 +23,40 @@ export function PacksGrid() {
       <Reveal>
         <Link
           href={`/packs/${guitarVault.slug}`}
-          className="group relative mb-14 grid grid-cols-1 items-center gap-6 rounded-[24px] border border-line bg-white/[0.02] p-3 transition-colors hover:bg-white/[0.04] md:grid-cols-[300px_1fr] md:gap-10"
+          className="group relative mb-20 grid grid-cols-1 items-center gap-8 md:grid-cols-[minmax(0,420px)_1fr] md:gap-14"
         >
-          <CoverArt src={guitarVault.cover} title={guitarVault.title} alt="" priority sizes="(max-width: 768px) 100vw, 320px" className="aspect-square w-full rounded-2xl" />
-          <div className="flex flex-col justify-center gap-3 px-3 pb-4 md:px-0 md:pr-8">
+          <div className="frame aspect-square !rounded-[24px] ring-1 ring-white/10">
+            <CoverArt src={guitarVault.cover} title={guitarVault.title} alt="" priority sizes="(max-width: 768px) 92vw, 420px" className="absolute inset-0" />
+          </div>
+          <div className="flex flex-col gap-4">
             <p className="eyebrow">Flagship · {guitarVault.soundLabel}</p>
-            <p className="display text-[clamp(30px,4.5vw,48px)]">{guitarVault.title}</p>
-            <p className="max-w-xl text-stone-300">{guitarVault.tagline}</p>
-            <p className="flex items-center gap-3">
-              <span className="text-[22px] font-semibold">{format(guitarVault.price)}</span>
-              {guitarVault.compareAt && <s className="text-sm text-mute">{format(guitarVault.compareAt)}</s>}
-              <span className="btn btn-primary btn-sm ml-2">View pack</span>
+            <p className="display text-[clamp(36px,5vw,60px)]">{guitarVault.title}</p>
+            <p className="max-w-md text-[17px] leading-relaxed text-stone-300">{guitarVault.tagline}</p>
+            <p className="mt-2 flex flex-wrap items-center gap-4">
+              <span className="text-[26px] font-semibold tabular-nums">{format(guitarVault.price)}</span>
+              {guitarVault.compareAt && <s className="text-[15px] text-mute">{format(guitarVault.compareAt)}</s>}
+              <span className="btn btn-primary">View pack</span>
             </p>
           </div>
         </Link>
       </Reveal>
 
-      <div className="no-scrollbar mb-8 flex gap-2 overflow-x-auto [scrollbar-width:none]" role="group" aria-label="Filter by type">
-        {FILTERS.map((f) => (
-          <button key={f} type="button" className="chip shrink-0" aria-pressed={type === f} onClick={() => setType(f)}>
-            {f}
-          </button>
-        ))}
+      <div className="mb-10 flex justify-center">
+        <PillTabs options={FILTERS} value={type} onChange={setType} label="Filter packs by type" />
       </div>
 
-      <motion.div layout className="grid grid-cols-1 gap-5 min-[520px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <AnimatePresence mode="popLayout">
+      <motion.div layout className="grid grid-cols-1 gap-x-5 gap-y-10 min-[520px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <AnimatePresence mode="popLayout" initial={false}>
           {list.map((p) => (
             <motion.div
               key={p.slug}
               layout
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.45, ease: EASE }}
             >
-              <PackCard pack={p} className="h-full" />
+              <PackCard pack={p} />
             </motion.div>
           ))}
         </AnimatePresence>

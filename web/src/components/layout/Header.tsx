@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { useCart } from "@/lib/cart";
 import { CurrencyToggle } from "@/lib/currency";
 import { CartIcon, CloseIcon, MenuIcon } from "@/components/ui/Icons";
@@ -28,6 +29,7 @@ export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 8);
@@ -63,7 +65,12 @@ export function Header() {
       >
         Skip to content
       </a>
-      <header className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${scrolled || open ? "bg-ink" : "bg-transparent"}`}>
+      <motion.header
+        initial={reduce ? false : { opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-500 ${scrolled || open ? "border-line bg-ink" : "border-transparent bg-transparent"}`}
+      >
         <div className="container-sg flex h-[76px] items-center justify-between gap-4">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex min-h-11 items-center" aria-label="SLAPGOD home">
@@ -75,11 +82,18 @@ export function Header() {
                   key={n.href}
                   href={n.href}
                   aria-current={pathname === n.href ? "page" : undefined}
-                  className={`rounded-full px-3 py-2 text-[15px] font-medium transition-colors ${
-                    pathname.startsWith(n.href) ? "text-bone" : "text-nav hover:text-bone"
+                  className={`relative rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors duration-300 ${
+                    pathname.startsWith(n.href) ? "text-bone" : "text-stone-400 hover:text-bone"
                   }`}
                 >
-                  {n.label}
+                  {pathname.startsWith(n.href) && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute inset-0 rounded-full bg-stone-300/[0.1]"
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  )}
+                  <span className="relative">{n.label}</span>
                 </Link>
               ))}
             </nav>
@@ -115,7 +129,7 @@ export function Header() {
             </button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {open && (
         <div

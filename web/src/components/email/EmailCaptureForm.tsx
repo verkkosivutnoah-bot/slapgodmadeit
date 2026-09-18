@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useId, useState, type FormEvent } from "react";
-import { CheckIcon, MailIcon } from "@/components/ui/Icons";
+import { MailIcon } from "@/components/ui/Icons";
 
 export const OPT_IN_KEY = "sg_subscribed";
 
@@ -71,9 +71,16 @@ export function EmailCaptureForm({
           animate={{ opacity: 1, y: 0 }}
           className="flex items-start gap-4 rounded-[22px] border border-line bg-white/[0.04] p-5"
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-deep">
-            <CheckIcon />
-          </span>
+          <motion.span
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-deep"
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <motion.path d="M5 12l5 5L20 7" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} />
+            </svg>
+          </motion.span>
           <div>
             <p className="font-semibold text-bone">{successTitle}</p>
             <p className="mt-1 text-sm text-mute">{successText}</p>

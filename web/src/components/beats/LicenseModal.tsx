@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { Dialog } from "@/components/ui/Dialog";
-import { ArrowIcon, CheckIcon, SparkIcon } from "@/components/ui/Icons";
+import { ArrowIcon, CheckIcon } from "@/components/ui/Icons";
 import { useCart } from "@/lib/cart";
 import { useCurrency } from "@/lib/currency";
 import { licenseDeals, leaseTerms, licenseTiers, TABLE_ROWS, type LicenseId } from "@/data/licenses";
@@ -73,7 +73,7 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
 
             <div className="mt-5 flex flex-wrap gap-2">
               <span className="tag !bg-stone-300/15 !text-stone-300">
-                <SparkIcon size={10} className="mr-1" /> {licenseDeals.bundle}
+                {licenseDeals.bundle}
               </span>
               <span className="tag">{licenseDeals.upgrade}</span>
             </div>
@@ -141,7 +141,7 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
                   ))}
                   {selected.extra?.map((x) => (
                     <p key={x} className="col-span-2 flex gap-2 text-[13px] text-mute">
-                      <SparkIcon size={12} className="mt-1 shrink-0 text-white" /> {x}
+                      <CheckIcon size={14} className="mt-0.5 shrink-0 text-stone-500" /> {x}
                     </p>
                   ))}
                 </motion.dl>
@@ -150,7 +150,7 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
                 <li className="eyebrow mb-3">Every lease</li>
                 {leaseTerms.map((t) => (
                   <li key={t} className="flex gap-2">
-                    <CheckIcon size={14} className="mt-0.5 shrink-0 text-white" />
+                    <CheckIcon size={14} className="mt-0.5 shrink-0 text-stone-500" />
                     {t}
                   </li>
                 ))}

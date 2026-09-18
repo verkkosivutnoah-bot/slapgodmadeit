@@ -1,83 +1,110 @@
 "use client";
 import Link from "next/link";
-import { Stagger, StaggerItem } from "@/components/ui/motion";
+import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { EASE } from "@/components/ui/motion";
+import { PillTabs } from "@/components/ui/PillTabs";
 import { CheckIcon } from "@/components/ui/Icons";
-import { licenseDeals, leaseTerms, licenseTiers, TABLE_ROWS } from "@/data/licenses";
+import { licenseDeals, leaseTerms, licenseTiers, loopLicenseSummary, TABLE_ROWS } from "@/data/licenses";
 import { useCurrency } from "@/lib/currency";
 
-export function LicenseCards({ ctaHref = "/beats" }: { ctaHref?: string }) {
+type Tab = "beats" | "loops";
+
+export function LicenseCards({ ctaHref = "/beats", withTabs = true }: { ctaHref?: string; withTabs?: boolean }) {
   const { format, vatNote } = useCurrency();
+  const [tab, setTab] = useState<Tab>("beats");
+
   return (
     <div>
-      <div className="mb-8 flex flex-wrap items-center gap-2">
-        <span className="chip">{licenseDeals.bundle}</span>
-        <span className="chip">{licenseDeals.upgrade}</span>
-        <Link href="/contact?topic=custom" className="chip">
-          {licenseDeals.customBeat.label} from {format(licenseDeals.customBeat.from)} →
-        </Link>
-      </div>
+      {withTabs && (
+        <div className="mb-10 flex justify-center md:justify-start">
+          <PillTabs<Tab> options={["beats", "loops"]} labels={{ beats: "Beat leases", loops: "Loops & packs" }} value={tab} onChange={setTab} label="License type" />
+        </div>
+      )}
 
-      <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 grid-cols-1">
-        {licenseTiers.map((t) => (
-          <StaggerItem key={t.id} className="h-full">
-            <article
-              className={`relative flex h-full flex-col rounded-[22px] border p-6 transition-colors ${
-                t.popular ? "border-white/25 bg-white/[0.05]" : "border-line bg-white/[0.02]"
-              }`}
-            >
-              {t.popular && (
-                <span className="bg-silver absolute -top-3 left-6 rounded-full px-3 py-1 text-[12px] font-semibold">
-                  Most popular
-                </span>
-              )}
-              <h3 className="text-[16px] font-medium leading-tight">{t.name}</h3>
-              <p className="mt-5 flex items-baseline gap-1.5">
-                {t.fromPrice && <span className="text-xs text-mute">from</span>}
-                <span className="text-[30px] font-semibold tracking-tight">{format(t.price, { usd: t.priceUSD })}</span>
-              </p>
-              <ul className="mt-6 space-y-2.5 text-[13px]">
-                {TABLE_ROWS.slice(0, 7).map((r) => (
-                  <li key={r.key} className="flex gap-2">
-                    <CheckIcon size={14} className="mt-0.5 shrink-0 text-stone-400" />
-                    <span>
-                      <span className="text-mute">{r.label}:</span> {String(t[r.key])}
-                    </span>
-                  </li>
-                ))}
-                {t.extra?.map((x) => (
-                  <li key={x} className="flex gap-2 text-bone/90">
-                    <CheckIcon size={14} className="mt-0.5 shrink-0 text-stone-400" /> {x}
+      <AnimatePresence mode="wait" initial={false}>
+        {tab === "beats" ? (
+          <motion.div key="beats" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.4, ease: EASE }}>
+            {/* mobile: horizontal snap row · desktop: 5 columns */}
+            <div className="snap-x-row -mx-4 scroll-px-4 px-4 pb-2 pt-4 lg:mx-0 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-visible lg:px-0">
+              {licenseTiers.map((t) => (
+                <div key={t.id} className={`w-[78vw] max-w-[300px] shrink-0 rounded-[24px] sm:w-[280px] lg:w-auto lg:max-w-none ${t.popular ? "silver-ring" : ""}`}>
+                  <article className={`relative flex h-full flex-col rounded-[23px] p-6 ${t.popular ? "bg-[#211d1b]" : "border border-line bg-white/[0.015]"}`}>
+                    {t.popular && (
+                      <span className="bg-silver absolute -top-3 left-6 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em]">Most popular</span>
+                    )}
+                    <h3 className="text-[15px] font-medium text-stone-300">{t.name}</h3>
+                    <p className="mt-4 flex items-baseline gap-1.5">
+                      {t.fromPrice && <span className="text-[13px] text-mute">from</span>}
+                      <span className="text-[34px] font-semibold tracking-tight tabular-nums">{format(t.price, { usd: t.priceUSD })}</span>
+                    </p>
+                    <p className="mt-1 text-[13px] text-mute">{t.files}</p>
+                    <div className="my-5 h-px bg-line" />
+                    <ul className="space-y-2.5 text-[13.5px]">
+                      {TABLE_ROWS.slice(1, 7).map((r) => (
+                        <li key={r.key} className="flex items-baseline justify-between gap-3">
+                          <span className="text-mute">{r.label.replace("Sales / downloads", "Sales")}</span>
+                          <span className="text-right tabular-nums text-stone-200">{String(t[r.key])}</span>
+                        </li>
+                      ))}
+                      {t.extra?.map((x) => (
+                        <li key={x} className="flex gap-2.5 pt-1 text-stone-300">
+                          <CheckIcon size={14} className="mt-0.5 shrink-0 text-stone-500" /> {x}
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-auto pt-7">
+                      {t.id === "exclusive" ? (
+                        <Link href="/contact?topic=exclusive" className="btn btn-ghost btn-sm w-full">
+                          Make an offer
+                        </Link>
+                      ) : (
+                        <Link href={ctaHref} className={`btn btn-sm w-full ${t.popular ? "btn-primary" : "btn-ghost"}`}>
+                          Choose a beat
+                        </Link>
+                      )}
+                    </div>
+                  </article>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 flex flex-col gap-5 border-t border-line pt-8 md:flex-row md:items-start md:justify-between">
+              <ul className="grid grid-cols-1 gap-x-10 gap-y-2 text-[14px] text-stone-400 sm:grid-cols-2">
+                {leaseTerms.map((l) => (
+                  <li key={l} className="flex gap-2.5">
+                    <CheckIcon size={14} className="mt-1 shrink-0 text-stone-500" /> {l}
                   </li>
                 ))}
               </ul>
-              <div className="mt-auto pt-6">
-                {t.id === "exclusive" ? (
-                  <Link href="/contact?topic=exclusive" className="btn btn-ghost btn-sm w-full">
-                    Make an offer
+              <div className="shrink-0 space-y-1 text-[13px] text-mute md:text-right">
+                <p>{licenseDeals.bundle} · {licenseDeals.upgrade}</p>
+                <p>
+                  <Link href="/contact?topic=custom" className="link-u text-stone-300">
+                    {licenseDeals.customBeat.label} from {format(licenseDeals.customBeat.from)}
                   </Link>
-                ) : (
-                  <Link href={ctaHref} className={`btn btn-sm w-full ${t.popular ? "btn-primary" : "btn-ghost"}`}>
-                    Choose a beat
-                  </Link>
-                )}
+                </p>
+                <p>{vatNote} · SLAPGOD writer share 50%</p>
               </div>
-            </article>
-          </StaggerItem>
-        ))}
-      </Stagger>
-
-      <div className="mt-6 flex flex-col gap-4 rounded-[22px] border border-line p-6 md:flex-row md:items-center md:justify-between">
-        <ul className="grid gap-x-8 gap-y-2 text-[13px] text-mute sm:grid-cols-2 lg:grid-cols-3 grid-cols-1">
-          {leaseTerms.map((l) => (
-            <li key={l} className="flex gap-2">
-              <CheckIcon size={14} className="mt-0.5 shrink-0 text-stone-400" /> {l}
-            </li>
-          ))}
-        </ul>
-        <p className="shrink-0 text-[12px] text-mute">
-          {vatNote} · SLAPGOD writer share 50% on all tiers
-        </p>
-      </div>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div key="loops" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.4, ease: EASE }}>
+            <div className="grid grid-cols-1 items-center gap-10 rounded-[24px] border border-line p-7 sm:p-10 md:grid-cols-[auto_1fr] md:gap-16">
+              <div>
+                <p className="display text-[clamp(64px,10vw,112px)] leading-none">25%</p>
+                <p className="mt-2 max-w-[220px] text-[14px] text-mute">publishing split on commercially released songs using the loops</p>
+              </div>
+              <ul className="space-y-3 text-[15px]">
+                {loopLicenseSummary.points.map((pt) => (
+                  <li key={pt} className="flex gap-3 text-stone-300">
+                    <CheckIcon size={15} className="mt-1 shrink-0 text-stone-500" /> {pt}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
