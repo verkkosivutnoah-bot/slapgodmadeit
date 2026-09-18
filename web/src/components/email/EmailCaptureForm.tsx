@@ -69,10 +69,10 @@ export function EmailCaptureForm({
           role="status"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-start gap-4 rounded-[22px] border border-line bg-white/[0.04] p-5"
+          className="flex items-start gap-4 rounded-[22px] border border-coral/30 bg-coral/[0.06] p-5"
         >
           <motion.span
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-deep"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-coral text-deep"
             initial={{ scale: 0.6, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -121,12 +121,12 @@ export function EmailCaptureForm({
               type="checkbox"
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
-              className="mt-0.5 h-[18px] w-[18px] shrink-0 cursor-pointer accent-[var(--fg)]"
+              className="mt-0.5 h-[18px] w-[18px] shrink-0 cursor-pointer accent-[var(--coral)]"
               required
             />
             <span>
               I agree to receive emails from SLAPGOD about free sounds, new releases and offers. Unsubscribe anytime. See the{" "}
-              <Link href="/privacy" className="text-bone underline decoration-bone/30 underline-offset-2 hover:decoration-white">
+              <Link href="/privacy" className="text-bone underline decoration-coral/60 underline-offset-2 hover:decoration-coral">
                 Privacy Policy
               </Link>
               .
@@ -134,7 +134,7 @@ export function EmailCaptureForm({
           </label>
           <p className="text-[12px] text-mute/90">Double opt-in: we&apos;ll email you a link to confirm.</p>
           {error && (
-            <p id={`${id}-err`} role="alert" className="text-sm text-stone-300">
+            <p id={`${id}-err`} role="alert" className="text-sm text-coral">
               {error}
             </p>
           )}

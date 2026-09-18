@@ -24,7 +24,7 @@ export function StickyBuyBar({ anchor, children, mode = "after" }: { anchor: Ref
           exit={{ y: 80, opacity: 0 }}
           transition={{ duration: 0.45, ease: EASE }}
         >
-          <div className="flex items-center justify-between gap-3 rounded-full border border-line bg-deep py-2 pl-5 pr-2">{children}</div>
+          <div className="flex items-center justify-between gap-3 rounded-full border border-coral/30 bg-deep py-2 pl-5 pr-2 shadow-[0_14px_36px_-16px_var(--coral)]">{children}</div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Contact" };
 export default function ContactPage() {
   return (
     <>
-      <PageHero eyebrow="Contact" lines={["Let’s talk"]}>
+      <PageHero eyebrow="Contact" lines={[<>Let’s <span className="text-grad pr-[0.06em] italic">talk</span></>]}>
         Custom beats, exclusive offers, Content ID whitelisting, split sheets or licensing questions — send a message.
       </PageHero>
       <div className="container-sg grid grid-cols-1 gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">

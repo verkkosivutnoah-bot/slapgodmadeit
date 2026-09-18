@@ -6,6 +6,7 @@ import { useCurrency } from "@/lib/currency";
 import { PauseIcon, PlayIcon } from "@/components/ui/Icons";
 import { CoverArt } from "@/components/ui/CoverArt";
 import { toPlayerTrack, type Beat } from "@/data/beats";
+import { accentStyle, useCoverAccent } from "@/lib/coverAccent";
 
 export function usePlayBeat(beat: Beat, queue: Beat[]) {
   const player = usePlayer();
@@ -47,18 +48,22 @@ export function BeatRow({ beat, queue, index = 0, as: Tag = "li" }: { beat: Beat
   const { isCurrent, playing, onPlay } = usePlayBeat(beat, queue);
   const { openLicense } = useLicenseModal();
   const { format } = useCurrency();
+  const accent = useCoverAccent(beat.cover);
 
   return (
     <Tag
-      className={`group grid grid-cols-[40px_48px_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-2 py-2.5 transition-colors duration-300 sm:gap-4 sm:px-3 md:grid-cols-[40px_48px_minmax(0,1fr)_120px_56px_auto] ${
-        isCurrent ? "bg-white/[0.06]" : "hover:bg-white/[0.04]"
+      style={accentStyle(accent)}
+      className={`group relative grid grid-cols-[40px_48px_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-2 py-2.5 transition-colors duration-300 sm:gap-4 sm:px-3 md:grid-cols-[40px_48px_minmax(0,1fr)_120px_56px_auto] ${
+        isCurrent
+          ? "row-active bg-[color-mix(in_srgb,var(--track-accent,var(--coral))_11%,transparent)]"
+          : "hover:bg-[color-mix(in_srgb,var(--track-accent,var(--coral))_7%,transparent)]"
       }`}
     >
       {/* number / play toggle */}
       <button
         type="button"
         onClick={onPlay}
-        className="relative grid h-10 w-10 place-items-center rounded-full text-[14px] tabular-nums text-mute transition-colors hover:bg-white hover:text-deep"
+        className={`relative grid h-10 w-10 place-items-center rounded-full text-[14px] tabular-nums transition-colors hover:bg-coral hover:text-deep ${isCurrent ? "text-coral" : "text-mute"}`}
         aria-label={playing ? `Pause ${beat.title}` : `Play ${beat.title}`}
       >
         {isCurrent ? (
@@ -85,18 +90,19 @@ export function BeatRow({ beat, queue, index = 0, as: Tag = "li" }: { beat: Beat
           <Link href={`/beats/${beat.slug}`} className="link-u">
             {beat.title}
           </Link>
-          {beat.isNew && <span className="bg-silver ml-2 rounded-full px-1.5 py-px align-middle text-[10px] font-semibold">NEW</span>}
+          {beat.isNew && <span className="badge-coral ml-2 rounded-full px-1.5 py-px align-middle text-[10px] font-bold">NEW</span>}
         </p>
         <p className="mt-0.5 truncate text-[13px] text-mute">
           <span className="md:hidden">
             {beat.bpm} BPM · {beat.key} ·{" "}
           </span>
-          {beat.genre} · {beat.moods.join(", ")}
+          <span className="text-[color-mix(in_srgb,var(--track-accent,var(--lilac))_85%,white)]">{beat.genre}</span> · {beat.moods.join(", ")}
         </p>
       </div>
 
-      <p className="hidden text-[14px] tabular-nums text-stone-300 md:block">
-        {beat.bpm} · {beat.key}
+      <p className="hidden items-center gap-2 text-[14px] tabular-nums text-stone-300 md:flex">
+        <span className="tag tag-amber !h-[22px] !px-2">{beat.bpm}</span>
+        {beat.key}
       </p>
       <p className="hidden text-right text-[14px] tabular-nums text-mute md:block">{beat.duration}</p>
 
@@ -117,16 +123,17 @@ export function BeatCard({ beat, queue }: { beat: Beat; queue: Beat[] }) {
   const { isCurrent, playing, onPlay } = usePlayBeat(beat, queue);
   const { openLicense } = useLicenseModal();
   const { format } = useCurrency();
+  const accent = useCoverAccent(beat.cover);
   return (
-    <article className="group">
-      <div className="frame aspect-square">
+    <article className="group" style={accentStyle(accent)}>
+      <div className="frame card-lift aspect-square">
         <Link href={`/beats/${beat.slug}`} tabIndex={-1} aria-hidden>
           <CoverArt src={beat.cover} title={beat.title} sizes="(max-width: 480px) 90vw, (max-width: 1024px) 45vw, 300px" className="absolute inset-0" />
         </Link>
         <button
           type="button"
           onClick={onPlay}
-          className={`absolute bottom-3 right-3 grid h-11 w-11 place-items-center rounded-full bg-white text-deep transition-[opacity,transform] duration-500 ${
+          className={`play-btn absolute bottom-3 right-3 grid h-11 w-11 place-items-center rounded-full transition-[opacity,transform] duration-500 ${
             isCurrent ? "opacity-100" : "translate-y-1 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100"
           }`}
           aria-label={playing ? `Pause ${beat.title}` : `Play ${beat.title}`}
@@ -142,7 +149,7 @@ export function BeatCard({ beat, queue }: { beat: Beat; queue: Beat[] }) {
             </Link>
           </p>
           <p className="text-[13px] tabular-nums text-mute">
-            {beat.bpm} BPM · {beat.key}
+            <span className="text-amber">{beat.bpm} BPM</span> · {beat.key}
           </p>
         </div>
         <button type="button" onClick={() => openLicense(beat)} className="btn btn-sm btn-ghost shrink-0">

@@ -17,6 +17,25 @@
   --mute-rgb: 168 162 158; /* #A8A29E muted text */
   --silver: linear-gradient(105deg, #a8aaad 0%, #f0f1f2 13%, #c8cace 38%, #e6e7e9 72%, #b9bcc1 100%);
 
+  /* ---- ACCENTS (the only place accent colors are defined) ----
+     coral  = primary: CTAs, active states, play buttons, progress, link hover, prices. #0C0A09 text on coral = 6.4:1 (AA), coral text on ink = 5.6:1 (AA)
+     lilac  = secondary: glows, tags, gradients, selection
+     amber  = tertiary: "Most popular", badges, stars, BPM chips
+     --grad = signature gradient (headline words, sheen, dividers, popular border, progress) */
+  --coral-rgb: 255 90 60; /* #FF5A3C */
+  --orange-rgb: 255 138 61; /* #FF8A3D */
+  --lilac-rgb: 169 139 255; /* #A98BFF */
+  --amber-rgb: 255 181 71; /* #FFB547 */
+  --coral: rgb(var(--coral-rgb));
+  --orange: rgb(var(--orange-rgb));
+  --lilac: rgb(var(--lilac-rgb));
+  --amber: rgb(var(--amber-rgb));
+  --on-accent: #0c0a09;
+  --grad: linear-gradient(120deg, #ff5a3c, #ff8a3d 35%, #ffb547 55%, #a98bff 100%);
+  /* looping version (ends where it starts) for animated background-position shimmer */
+  --grad-loop: linear-gradient(120deg, #ff5a3c, #ff8a3d 17%, #ffb547 27%, #a98bff 50%, #ff8a3d 75%, #ff5a3c 100%);
+  --grad-conic: conic-gradient(from var(--sg-angle, 0deg), #ff5a3c, #ffb547, #a98bff, #ff8a3d, #ff5a3c);
+
   --fg: rgb(var(--fg-rgb));
   --fg-2: rgb(var(--fg2-rgb));
   --color-ink: rgb(var(--ink-rgb));
@@ -30,6 +49,10 @@
 }
 
 @theme inline {
+  --color-coral: rgb(var(--coral-rgb));
+  --color-orange: rgb(var(--orange-rgb));
+  --color-lilac: rgb(var(--lilac-rgb));
+  --color-amber: rgb(var(--amber-rgb));
   --color-ink: rgb(var(--ink-rgb));
   --color-deep: rgb(var(--deep-rgb));
   --color-surface: rgb(var(--surface-rgb));
@@ -75,11 +98,11 @@
     padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
   ::selection {
-    background: #fafaf9;
+    background: var(--lilac);
     color: #0c0a09;
   }
   :focus-visible {
-    outline: 2px solid #e6e7e9;
+    outline: 2px solid var(--coral);
     outline-offset: 3px;
     border-radius: 9999px;
   }
@@ -117,15 +140,15 @@
 
   /* underline-slide link */
   .link-u {
-    background-image: linear-gradient(currentColor, currentColor);
-    background-size: 0% 1px;
+    background-image: var(--grad);
+    background-size: 0% 1.5px;
     background-position: 0 100%;
     background-repeat: no-repeat;
     transition: background-size 0.45s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s;
   }
   .link-u:hover,
   .link-u:focus-visible {
-    background-size: 100% 1px;
+    background-size: 100% 1.5px;
   }
 
   /* cover frame: image scales slightly on hover */
@@ -140,7 +163,7 @@
   }
   .group:hover .frame img,
   .frame:hover img {
-    transform: scale(1.03);
+    transform: scale(1.06);
   }
 
   /* heavy editorial serif */
@@ -152,17 +175,47 @@
     font-optical-sizing: auto;
   }
 
-  .text-silver,
-  .text-outline {
+  .text-silver {
     background: var(--silver);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .bg-silver {
-    background: var(--silver);
-    color: #0c0a09;
+  /* signature gradient text (key words in headlines) */
+  .text-grad {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
+  /* slow shimmer: background-position drift on a looping gradient */
+  .text-grad-anim {
+    background: var(--grad-loop) 0 0 / 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: sg-shimmer 9s linear infinite;
+  }
+  .text-stroke {
+    color: transparent;
+    -webkit-text-stroke: 1.2px rgb(250 250 249 / 0.55);
+  }
+  .bg-grad {
+    background: var(--grad);
+    color: var(--on-accent);
+  }
+  /* small solid badges */
+  .badge-amber {
+    background: var(--amber);
+    color: var(--on-accent);
+  }
+  .badge-coral {
+    background: var(--coral);
+    color: var(--on-accent);
+  }
+  .text-coral { color: var(--coral); }
 
   /* buttons — pills */
   .btn {
@@ -179,14 +232,50 @@
     white-space: nowrap;
     transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), color 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s, opacity 0.2s;
   }
+  /* primary = coral pill; hover fades in the signature gradient + a white sheen sweeps across (transform only) */
   .btn-primary {
+    background: var(--coral);
+    color: var(--on-accent);
+    overflow: hidden;
+    isolation: isolate;
+    font-weight: 600;
+  }
+  .btn-primary::before,
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .btn-primary::before {
+    background: var(--grad);
+    opacity: 0;
+    transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-primary::after {
+    background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.55) 50%, transparent 70%);
+    transform: translateX(-110%);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 10px 30px -10px rgb(var(--coral-rgb) / 0.7);
+  }
+  .btn-primary:hover::before {
+    opacity: 1;
+  }
+  .btn-primary:hover::after {
+    transform: translateX(110%);
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* secondary CTA = the original white pill */
+  .btn-light {
     background: #ffffff;
     color: #0c0a09;
   }
-  .btn-primary:hover {
-    background: #292524;
-    color: #fafaf9;
-    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
+  .btn-light:hover {
+    background: var(--amber);
+    color: #0c0a09;
   }
   .btn-ghost {
     background: rgb(214 211 209 / 0.12);
@@ -195,6 +284,9 @@
   .btn-ghost:hover {
     background: #fafaf9;
     color: #0c0a09;
+  }
+  .btn-ghost:hover .text-coral {
+    color: #c7361b;
   }
   .btn-sm {
     height: 38px;
@@ -224,8 +316,8 @@
     color: var(--color-bone);
   }
   .chip[aria-pressed="true"] {
-    background: #fafaf9;
-    color: #0c0a09;
+    background: var(--coral);
+    color: var(--on-accent);
   }
 
   .tag {
@@ -236,8 +328,16 @@
     border-radius: 9999px;
     font-size: 12px;
     font-weight: 500;
-    background: rgb(214 211 209 / 0.1);
-    color: var(--fg-2);
+    background: rgb(var(--lilac-rgb) / 0.12);
+    color: var(--lilac);
+  }
+  .tag-coral {
+    background: rgb(var(--coral-rgb) / 0.12);
+    color: var(--coral);
+  }
+  .tag-amber {
+    background: rgb(var(--amber-rgb) / 0.12);
+    color: var(--amber);
   }
 
   .input {
@@ -259,7 +359,8 @@
   }
   .input:focus {
     outline: none;
-    border-color: rgb(255 255 255 / 0.25);
+    border-color: rgb(var(--coral-rgb) / 0.6);
+    box-shadow: 0 0 0 4px rgb(var(--coral-rgb) / 0.12);
   }
 
   .select {
@@ -289,6 +390,11 @@
     height: 1px;
     background: var(--color-line);
   }
+  .hairline-grad {
+    height: 1px;
+    background: var(--grad);
+    opacity: 0.6;
+  }
 }
 
 /* ------------------------------------------------------------ touch ergonomics */
@@ -316,13 +422,13 @@
 .eq i {
   width: 3px;
   height: 100%;
-  background: var(--fg);
+  background: var(--coral);
   border-radius: 2px;
   transform-origin: bottom;
   animation: sg-eq 0.9s ease-in-out infinite;
 }
-.eq i:nth-child(2) { animation-delay: -0.3s; }
-.eq i:nth-child(3) { animation-delay: -0.6s; }
+.eq i:nth-child(2) { animation-delay: -0.3s; background: var(--amber); }
+.eq i:nth-child(3) { animation-delay: -0.6s; background: var(--lilac); }
 .eq.is-paused i {
   animation-play-state: paused;
 }
@@ -436,4 +542,233 @@ html {
 }
 body:has(.dock.is-visible) .buybar {
   bottom: calc(104px + env(safe-area-inset-bottom));
+}
+
+
+/* ============================================================ COLOR + MOTION LAYER
+   Perf rules: transform/opacity for continuous motion (plus tiny background-position / @property
+   angle on small elements), no filter blur, no backdrop-filter, no canvas loops. Continuous
+   animations pause while offscreen via `.is-offscreen` (set by useOffscreenPause / <Marquee>). */
+
+@property --sg-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes sg-shimmer {
+  to { background-position: -200% 0; }
+}
+@keyframes sg-angle {
+  to { --sg-angle: 360deg; }
+}
+@layer components {
+.is-offscreen,
+.is-offscreen *,
+.is-offscreen *::before,
+.is-offscreen *::after {
+  animation-play-state: paused !important;
+}
+
+/* ---- aurora (hero): large radial-gradient blobs, softness from the gradient falloff only */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+.aurora-blob {
+  position: absolute;
+  width: 90vmax;
+  aspect-ratio: 1.5;
+  border-radius: 9999px;
+  will-change: transform;
+  animation: var(--anim) ease-in-out infinite alternate;
+}
+.aurora-blob.b1 {
+  left: -34vmax; top: -34vmax;
+  background: radial-gradient(closest-side, rgb(var(--coral-rgb) / 0.34), rgb(var(--coral-rgb) / 0.15) 38%, rgb(var(--coral-rgb) / 0.05) 68%, transparent 100%);
+  --anim: sg-drift-1 22s;
+}
+.aurora-blob.b2 {
+  right: -38vmax; top: -22vmax;
+  background: radial-gradient(closest-side, rgb(var(--lilac-rgb) / 0.32), rgb(var(--lilac-rgb) / 0.14) 38%, rgb(var(--lilac-rgb) / 0.04) 68%, transparent 100%);
+  --anim: sg-drift-2 27s;
+}
+.aurora-blob.b3 {
+  left: 5%; top: 38%;
+  width: 70vmax;
+  background: radial-gradient(closest-side, rgb(var(--amber-rgb) / 0.22), rgb(var(--amber-rgb) / 0.09) 40%, rgb(var(--amber-rgb) / 0.03) 70%, transparent 100%);
+  --anim: sg-drift-3 19s;
+}
+@keyframes sg-drift-1 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(12vmax, 8vmax, 0) scale(1.15, 0.9); }
+  100% { transform: translate3d(4vmax, 16vmax, 0) scale(0.92, 1.1); }
+}
+@keyframes sg-drift-2 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-14vmax, 10vmax, 0) scale(0.9, 1.12); }
+  100% { transform: translate3d(-6vmax, -4vmax, 0) scale(1.12, 0.95); }
+}
+@keyframes sg-drift-3 {
+  0% { transform: translate3d(0, 0, 0) scale(0.9); }
+  100% { transform: translate3d(-18vmax, -10vmax, 0) scale(1.15); }
+}
+@media (max-width: 767px) {
+  .aurora-blob.b3 {
+    display: none;
+  }
+  .aurora-blob { width: 120vmax; }
+  .aurora-blob.b1 { left: -60vmax; top: -40vmax; }
+  .aurora-blob.b2 { right: -60vmax; top: 0; }
+}
+
+/* ---- cursor spotlight (desktop only; --mx/--my set on pointermove) */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--track-accent, var(--coral)) 22%, transparent), transparent 60%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+}
+
+/* ---- cards: lift + accent glow (track accent when known) */
+.card-lift {
+  --glow: var(--track-accent, var(--coral));
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  .card-lift:hover,
+  .group:hover > .card-lift {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 50px -22px var(--glow), 0 0 0 1px color-mix(in srgb, var(--glow) 35%, transparent);
+  }
+}
+
+/* ---- play buttons */
+.play-btn {
+  background: var(--coral);
+  color: var(--on-accent);
+  box-shadow: 0 8px 24px -8px rgb(var(--coral-rgb) / 0.8);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), scale 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s, background-color 0.3s;
+}
+.play-btn:hover {
+  background: var(--amber);
+}
+
+/* ---- rotating conic border ("Most popular") */
+.grad-ring {
+  position: relative;
+  padding: 1.5px;
+  background: var(--grad-conic);
+  animation: sg-angle 6s linear infinite;
+  box-shadow: 0 24px 60px -30px rgb(var(--coral-rgb) / 0.7);
+}
+
+/* ---- section heading underline (drawn in by motion scaleX) */
+.grad-underline {
+  display: block;
+  height: 3px;
+  width: 72px;
+  border-radius: 9999px;
+  background: var(--grad);
+  transform-origin: left;
+}
+
+/* ---- marquee ticker */
+.marquee {
+  overflow: hidden;
+  border-block: 1px solid var(--color-line);
+  padding-block: clamp(14px, 2.4vw, 26px);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: sg-marquee 38s linear infinite;
+  will-change: transform;
+}
+.marquee-track > * {
+  flex-shrink: 0;
+}
+@keyframes sg-marquee {
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+/* ---- active beat row: accent bar */
+.row-active {
+  position: relative;
+}
+.row-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, var(--track-accent, var(--coral)), var(--lilac));
+}
+
+/* ---- vinyl glow ring (pulses while playing) */
+.vinyl-glow {
+  position: absolute;
+  inset: -7%;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(closest-side, transparent 84%, rgb(var(--coral-rgb) / 0.45) 90%, rgb(var(--lilac-rgb) / 0.22) 95%, transparent 100%);
+  opacity: 0.35;
+  transition: opacity 0.6s;
+}
+.is-playing > .vinyl-glow,
+.vinyl-wrap.is-playing .vinyl-glow {
+  opacity: 1;
+  animation: sg-pulse 2.4s ease-in-out infinite;
+}
+@keyframes sg-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.75; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+/* ---- footer wordmark gradient drift */
+.wordmark-grad {
+  background: var(--grad-loop) 0 0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.9;
+  animation: sg-shimmer 24s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob,
+  .text-grad-anim,
+  .grad-ring,
+  .marquee-track,
+  .wordmark-grad,
+  .vinyl-glow {
+    animation: none !important;
+  }
+  .btn-primary::after {
+    display: none;
+  }
+  .card-lift:hover,
+  .group:hover > .card-lift {
+    transform: none;
+  }
+}
 }

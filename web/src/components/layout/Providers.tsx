@@ -1,5 +1,6 @@
 "use client";
 import type { ReactNode } from "react";
+import { MotionConfig } from "motion/react";
 import { CurrencyProvider } from "@/lib/currency";
 import { CartProvider } from "@/lib/cart";
 import { PlayerProvider } from "@/components/player/GlobalPlayer";
@@ -9,6 +10,7 @@ import { EmailPopup } from "@/components/email/EmailPopup";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
+    <MotionConfig reducedMotion="user">
     <CurrencyProvider>
       <CartProvider>
         <PlayerProvider>
@@ -20,5 +22,6 @@ export function Providers({ children }: { children: ReactNode }) {
         </PlayerProvider>
       </CartProvider>
     </CurrencyProvider>
+    </MotionConfig>
   );
 }

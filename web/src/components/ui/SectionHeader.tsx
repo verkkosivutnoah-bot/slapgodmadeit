@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { LineReveal, Reveal } from "./motion";
+import { GradUnderline, LineReveal, Reveal } from "./motion";
 
 /** Section header: uppercase eyebrow + serif title (line reveal) + optional lead and right-aligned "View all" link. */
 export function SectionHeader({
@@ -32,6 +32,7 @@ export function SectionHeader({
           </Reveal>
         )}
         <LineReveal as="h2" id={id} inView lines={[title]} className="display text-[clamp(36px,5.6vw,60px)]" />
+        <GradUnderline className={`mt-5 ${center ? "mx-auto" : ""}`} />
         {children && (
           <Reveal delay={0.1} y={10}>
             <div className={`mt-4 max-w-xl text-[16px] leading-relaxed text-stone-400 ${center ? "mx-auto" : ""}`}>{children}</div>

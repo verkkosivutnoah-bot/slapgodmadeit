@@ -5,6 +5,8 @@ import { usePlayer } from "@/components/player/GlobalPlayer";
 import { useCurrency } from "@/lib/currency";
 import { CoverArt } from "@/components/ui/CoverArt";
 import type { Pack } from "@/data/packs";
+import { accentStyle, useCoverAccent } from "@/lib/coverAccent";
+import { spotlightMove } from "@/components/ui/motion";
 
 /** Cover-first pack card: 1:1 art, title + price below. */
 export function PackCard({ pack, priority = false, className = "", sizes }: { pack: Pack; priority?: boolean; className?: string; sizes?: string }) {
@@ -14,15 +16,16 @@ export function PackCard({ pack, priority = false, className = "", sizes }: { pa
   const playing = isCurrent && player.isPlaying;
   const href = pack.comingSoon ? "/packs#loop-club" : `/packs/${pack.slug}`;
   const free = pack.price === 0;
+  const accent = useCoverAccent(pack.cover);
 
   return (
-    <article className={`group relative ${className}`}>
-      <div className="frame aspect-square !rounded-[20px] ring-1 ring-white/[0.06]">
+    <article className={`group relative ${className}`} style={accentStyle(accent)}>
+      <div onPointerMove={spotlightMove} className="frame spotlight card-lift aspect-square !rounded-[20px] ring-1 ring-white/[0.06]">
         <CoverArt src={pack.cover} title={pack.title} priority={priority} sizes={sizes ?? "(max-width: 520px) 90vw, (max-width: 1024px) 45vw, 400px"} className="absolute inset-0" />
         {(free || pack.badge) && (
           <span
             className={`absolute left-3 top-3 z-[1] rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${
-              free || pack.badge === "FLAGSHIP" ? "bg-silver" : "bg-deep/85 text-nav"
+              free ? "badge-amber" : pack.badge === "FLAGSHIP" ? "bg-grad" : "bg-deep/85 text-lilac"
             }`}
           >
             {free ? "Free" : pack.badge}
@@ -36,7 +39,7 @@ export function PackCard({ pack, priority = false, className = "", sizes }: { pa
               if (isCurrent) player.toggle();
               else player.playQueue(pack.demo, 0);
             }}
-            className={`absolute bottom-3 right-3 z-[2] grid h-11 w-11 place-items-center rounded-full bg-white text-deep transition-[opacity,transform] duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
+            className={`play-btn absolute bottom-3 right-3 z-[2] grid h-11 w-11 place-items-center rounded-full ${
               isCurrent ? "opacity-100" : "translate-y-1.5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100"
             }`}
             aria-label={playing ? `Pause ${pack.title} demo` : `Play ${pack.title} demo`}
@@ -58,7 +61,7 @@ export function PackCard({ pack, priority = false, className = "", sizes }: { pa
           </p>
         </div>
         <p className="shrink-0 text-right">
-          <span className="block text-[16px] font-semibold tabular-nums">
+          <span className={`block text-[16px] font-semibold tabular-nums ${free ? "text-amber" : "text-coral"}`}>
             {pack.comingSoon ? "Soon" : format(pack.price, { usd: pack.priceUSD, interval: pack.interval })}
           </span>
           {pack.compareAt && <s className="text-[12px] text-mute">{format(pack.compareAt)}</s>}

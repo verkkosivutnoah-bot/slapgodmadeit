@@ -5,15 +5,18 @@ import { BeatsPreview } from "@/components/home/BeatsPreview";
 import { FreeTeaser } from "@/components/home/FreeTeaser";
 import { LicensingPreview } from "@/components/home/LicensingPreview";
 import { KnowYourRights } from "@/components/rights/KnowYourRights";
+import { Marquee } from "@/components/ui/Marquee";
 
 export default function Home() {
   return (
     <>
       <Hero />
+      <Marquee />
       <FlagshipVault />
       <BeatsPreview />
       <FeaturedPacks />
       <FreeTeaser />
+      <Marquee items={["Beats", "Guitar loops", "Drum kits", "One-shots", "Custom beats"]} reverse />
       <LicensingPreview />
       <KnowYourRights />
     </>

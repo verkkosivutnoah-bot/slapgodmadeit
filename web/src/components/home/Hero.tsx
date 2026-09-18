@@ -5,7 +5,7 @@ import { useRef, useState, type FormEvent } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowUpIcon, PauseIcon, PlayIcon, SearchIcon } from "@/components/ui/Icons";
 import { CoverArt } from "@/components/ui/CoverArt";
-import { EASE, LineReveal, Rise } from "@/components/ui/motion";
+import { EASE, LineReveal, Magnetic, Rise, spotlightMove, useOffscreenPause } from "@/components/ui/motion";
 import { usePlayer } from "@/components/player/GlobalPlayer";
 import { guitarVault } from "@/data/packs";
 
@@ -17,6 +17,7 @@ export function Hero() {
   const [q, setQ] = useState("");
   const ref = useRef<HTMLElement>(null);
   const player = usePlayer();
+  useOffscreenPause(ref);
 
   // the one "wow": vinyl drifts away (scale + fade) as you scroll — 2 motion values, no listeners
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -34,17 +35,28 @@ export function Hero() {
   }
 
   return (
-    <section ref={ref} className="relative flex h-[100svh] min-h-[640px] flex-col overflow-hidden" aria-labelledby="hero-title">
-      {/* soft light (gradient only) */}
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(45%_42%_at_50%_100%,rgb(255_255_255/0.11),rgb(255_255_255/0.035)_55%,transparent_80%),radial-gradient(60%_40%_at_50%_0%,rgb(255_255_255/0.04),transparent_70%)]"
-        aria-hidden
-      />
+    <section
+      ref={ref}
+      onPointerMove={spotlightMove}
+      className="spotlight relative isolate flex h-[100svh] min-h-[640px] flex-col overflow-hidden"
+      aria-labelledby="hero-title"
+    >
+      {/* aurora: drifting radial-gradient blobs (transform only; 2 on mobile) */}
+      <div className="aurora" aria-hidden>
+        <div className="aurora-blob b1" />
+        <div className="aurora-blob b2" />
+        <div className="aurora-blob b3" />
+      </div>
 
       <div className="container-sg relative z-10 flex flex-col items-center pt-[max(112px,15svh)] text-center">
         <LineReveal
           id="hero-title"
-          lines={["Guitar loops and beats,", "made by hand"]}
+          lines={[
+            "Guitar loops and beats,",
+            <>
+              made <span className="text-grad-anim pr-[0.04em] italic">by hand</span>
+            </>,
+          ]}
           className="display text-[clamp(40px,6.6vw,80px)] leading-[1.02]"
           delay={0.1}
         />
@@ -69,7 +81,7 @@ export function Hero() {
             />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white text-deep transition-colors duration-300 hover:bg-stone-300"
+              className="play-btn absolute right-2 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full"
               aria-label="Search"
             >
               <ArrowUpIcon size={16} />
@@ -80,7 +92,7 @@ export function Hero() {
         <Rise delay={0.55} className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[13px] text-mute">
           {TRUST.map((t, i) => (
             <span key={t} className="flex items-center gap-5">
-              {i > 0 && <span className="h-1 w-1 rounded-full bg-stone-600" aria-hidden />}
+              {i > 0 && <span className={`h-1.5 w-1.5 rounded-full ${i === 1 ? "bg-amber" : "bg-lilac"}`} aria-hidden />}
               {t}
             </span>
           ))}
@@ -96,8 +108,10 @@ export function Hero() {
           initial={reduce ? false : { y: 80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
-          className={`vinyl aspect-square w-full ${playing ? "is-playing" : ""}`}
+          className={`vinyl-wrap relative aspect-square w-full ${playing ? "is-playing" : ""}`}
         >
+          <div className="vinyl-glow" aria-hidden />
+          <div className={`vinyl h-full w-full ${playing ? "is-playing" : ""}`}>
           <div className="vinyl-spin">
             <CoverArt src={guitarVault.cover} title={guitarVault.title} alt="" priority sizes="620px" className="absolute inset-0" />
             <div className="vinyl-grooves" />
@@ -109,11 +123,12 @@ export function Hero() {
             <button
               type="button"
               onClick={() => (isCurrent ? player.toggle() : player.playQueue(guitarVault.demo, 0))}
-              className="grid h-14 w-14 place-items-center rounded-full bg-white text-deep transition-transform duration-300 hover:scale-105 sm:h-16 sm:w-16"
+              className="play-btn grid h-14 w-14 place-items-center rounded-full hover:scale-105 sm:h-16 sm:w-16"
               aria-label={playing ? "Pause Guitar Vault preview" : "Play Guitar Vault preview"}
             >
               {playing ? <PauseIcon size={18} /> : <PlayIcon size={18} />}
             </button>
+          </div>
           </div>
         </motion.div>
       </motion.div>
@@ -121,15 +136,22 @@ export function Hero() {
       {/* bottom corners */}
       <Rise delay={0.7} className="container-sg relative z-10 mt-auto flex items-end justify-between gap-3 pb-6">
         <Link href={`/packs/${guitarVault.slug}`} className="btn btn-ghost btn-sm hidden sm:inline-flex">
-          Now spinning: Guitar Vault Vol. 1
+          <span className={`eq ${playing ? "" : "is-paused"}`} aria-hidden>
+            <i />
+            <i />
+            <i />
+          </span>
+          Now spinning: <span className="text-grad font-semibold">Guitar Vault Vol. 1</span>
         </Link>
-        <div className="ml-auto flex gap-2">
-          <Link href="/beats" className="btn btn-ghost btn-sm">
-            Beats
-          </Link>
+        <div className="ml-auto flex items-center gap-2">
           <Link href="/packs" className="btn btn-ghost btn-sm">
             Packs
           </Link>
+          <Magnetic>
+            <Link href="/beats" className="btn btn-primary btn-sm">
+              Browse beats
+            </Link>
+          </Magnetic>
         </div>
       </Rise>
     </section>

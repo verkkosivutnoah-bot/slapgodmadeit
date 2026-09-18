@@ -87,7 +87,7 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
                     <label
                       key={t.id}
                       className={`relative flex cursor-pointer flex-col rounded-2xl border p-4 transition ${
-                        active ? "border-white bg-white/[0.07]" : "border-line hover:border-bone/30"
+                        active ? "border-coral bg-coral/[0.1]" : "border-line hover:border-bone/30"
                       } ${t.id === "exclusive" ? "col-span-2 sm:col-span-1" : ""}`}
                     >
                       <input
@@ -102,8 +102,8 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
                         className="sr-only"
                       />
                       {t.popular && (
-                        <span className="bg-silver absolute -top-2.5 left-3 rounded-full px-2 py-0.5 text-[11px] font-semibold">
-                          Most popular
+                        <span className="badge-amber absolute -top-2.5 left-3 rounded-full px-2 py-0.5 text-[11px] font-bold">
+                          ★ Most popular
                         </span>
                       )}
                       <span className="text-[12px] text-mute">{t.short}</span>
@@ -113,7 +113,7 @@ export function LicenseModalProvider({ children }: { children: ReactNode }) {
                         {format(t.price)}
                       </span>
                       {active && (
-                        <motion.span layoutId="tier-check" className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-white text-ink">
+                        <motion.span layoutId="tier-check" className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-coral text-deep">
                           <CheckIcon size={12} />
                         </motion.span>
                       )}

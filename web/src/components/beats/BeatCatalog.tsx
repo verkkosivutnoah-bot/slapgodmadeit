@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { BeatCard, BeatRow, TrackListHeader } from "./BeatRow";
 import { GridIcon, ListIcon, PlayIcon, SearchIcon } from "@/components/ui/Icons";
 import { PillTabs } from "@/components/ui/PillTabs";
-import { EASE } from "@/components/ui/motion";
+import { EASE, Stagger, StaggerItem, VIEWPORT } from "@/components/ui/motion";
 import { usePlayer } from "@/components/player/GlobalPlayer";
 import { beats, GENRES, KEYS, MOODS, toPlayerTrack, type Genre, type Mood } from "@/data/beats";
 import { licenseDeals } from "@/data/licenses";
@@ -97,7 +97,7 @@ export function BeatCatalog() {
                   aria-pressed={view === v}
                   aria-label={`${v} view`}
                   onClick={() => setView(v)}
-                  className={`grid h-9 w-9 place-items-center rounded-full transition-colors duration-300 ${view === v ? "bg-white text-deep" : "text-mute hover:text-bone"}`}
+                  className={`grid h-9 w-9 place-items-center rounded-full transition-colors duration-300 ${view === v ? "bg-coral text-deep" : "text-mute hover:text-bone"}`}
                 >
                   {v === "list" ? <ListIcon size={15} /> : <GridIcon size={15} />}
                 </button>
@@ -187,11 +187,13 @@ export function BeatCatalog() {
         ) : view === "list" ? (
           <motion.div key={`list-${genre}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>
             <TrackListHeader />
-            <ul className="mt-2 space-y-0.5">
+            <Stagger as="ul" stagger={0.04} className="mt-2 space-y-0.5">
               {results.map((b, i) => (
-                <BeatRow key={b.id} beat={b} queue={results} index={i} />
+                <StaggerItem as="li" key={b.id}>
+                  <BeatRow beat={b} queue={results} index={i} as="div" />
+                </StaggerItem>
               ))}
-            </ul>
+            </Stagger>
           </motion.div>
         ) : (
           <motion.div
@@ -202,8 +204,16 @@ export function BeatCatalog() {
             transition={{ duration: 0.35, ease: EASE }}
             className="grid grid-cols-1 gap-x-5 gap-y-10 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
           >
-            {results.map((b) => (
-              <BeatCard key={b.id} beat={b} queue={results} />
+            {results.map((b, i) => (
+              <motion.div
+                key={b.id}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={VIEWPORT}
+                transition={{ duration: 0.6, ease: EASE, delay: (i % 4) * 0.07 }}
+              >
+                <BeatCard beat={b} queue={results} />
+              </motion.div>
             ))}
           </motion.div>
         )}

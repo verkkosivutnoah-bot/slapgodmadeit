@@ -36,7 +36,7 @@ export function CartView() {
   if (cart.count === 0) {
     return (
       <div className="container-sg">
-        <Reveal className="mx-auto max-w-xl rounded-[24px] border border-line p-10 text-center sm:p-16">
+        <Reveal className="mx-auto max-w-xl rounded-[24px] border border-line bg-[radial-gradient(70%_80%_at_50%_0%,rgb(var(--coral-rgb)/0.12),transparent_70%)] p-10 text-center sm:p-16">
           <p className="display text-[36px]">Your cart is empty</p>
           <p className="mt-3 text-stone-400">Grab a beat lease or a pack — or start with 10 free guitar loops.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -76,11 +76,11 @@ export function CartView() {
                   </Link>
                   <p className="mt-0.5 text-[13px] text-mute">{i.variant ?? (i.kind === "beat" ? "Beat lease" : "Pack")}</p>
                 </div>
-                <p className="text-[17px] font-semibold tabular-nums">{format(i.priceEUR)}</p>
+                <p className="text-[17px] font-semibold tabular-nums text-coral">{format(i.priceEUR)}</p>
                 <button
                   type="button"
                   onClick={() => cart.remove(i.key)}
-                  className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-stone-300/[0.1] text-nav transition-colors duration-300 hover:bg-white hover:text-deep"
+                  className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-stone-300/[0.1] text-nav transition-colors duration-300 hover:bg-coral hover:text-deep"
                   aria-label={`Remove ${i.title} from cart`}
                 >
                   <CloseIcon size={14} />
@@ -95,7 +95,7 @@ export function CartView() {
         </p>
       </section>
 
-      <aside id="cart-summary" className="h-fit scroll-mt-24 rounded-[24px] border border-line p-6 sm:p-8 lg:sticky lg:top-28" aria-labelledby="summary-title">
+      <aside id="cart-summary" className="h-fit scroll-mt-24 rounded-[24px] border border-line bg-[radial-gradient(80%_60%_at_100%_0%,rgb(var(--lilac-rgb)/0.1),transparent_70%)] p-6 sm:p-8 lg:sticky lg:top-28" aria-labelledby="summary-title">
         <h2 id="summary-title" className="display text-[32px]">
           Summary
         </h2>
@@ -106,7 +106,7 @@ export function CartView() {
           </div>
           <AnimatePresence initial={false}>
             {discount > 0 && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="flex justify-between overflow-hidden text-stone-300">
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="flex justify-between overflow-hidden text-amber">
                 <dt>Buy 2 get 1 free</dt>
                 <dd className="tabular-nums">−{format(discount)}</dd>
               </motion.div>
@@ -114,24 +114,24 @@ export function CartView() {
           </AnimatePresence>
           <div className="flex items-baseline justify-between border-t border-line pt-4">
             <dt className="font-medium">Total</dt>
-            <dd className="text-[30px] font-semibold tracking-tight tabular-nums">{format(total)}</dd>
+            <dd className="text-grad text-[30px] font-semibold tracking-tight tabular-nums">{format(total)}</dd>
           </div>
         </dl>
         <p className="mt-1 text-right text-[12px] text-mute">{vatNote}</p>
 
         <label className="mt-6 flex cursor-pointer items-start gap-3 text-[13px] leading-snug text-mute">
-          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-[18px] w-[18px] shrink-0 accent-[var(--fg)]" />
+          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-[18px] w-[18px] shrink-0 accent-[var(--coral)]" />
           <span>
             I accept the{" "}
-            <Link href="/terms" className="text-bone underline underline-offset-2">
+            <Link href="/terms" className="text-bone underline decoration-coral underline-offset-2">
               Terms
             </Link>{" "}
             and{" "}
-            <Link href="/licenses" className="text-bone underline underline-offset-2">
+            <Link href="/licenses" className="text-bone underline decoration-coral underline-offset-2">
               License Agreements
             </Link>
             , and I understand digital downloads are delivered immediately (
-            <Link href="/refunds" className="text-bone underline underline-offset-2">
+            <Link href="/refunds" className="text-bone underline decoration-coral underline-offset-2">
               Refund Policy
             </Link>
             ).
@@ -153,7 +153,7 @@ export function CartView() {
 
       {/* mobile sticky checkout */}
       <div className="buybar fixed inset-x-3 z-40 lg:hidden">
-        <div className="flex items-center justify-between gap-3 rounded-full border border-line bg-deep py-2 pl-5 pr-2">
+        <div className="flex items-center justify-between gap-3 rounded-full border border-coral/30 bg-deep py-2 pl-5 pr-2 shadow-[0_14px_36px_-16px_var(--coral)]">
           <span className="text-[15px] font-semibold tabular-nums">
             {format(total)} <span className="text-[12px] font-normal text-mute">· {cart.count} item{cart.count === 1 ? "" : "s"}</span>
           </span>

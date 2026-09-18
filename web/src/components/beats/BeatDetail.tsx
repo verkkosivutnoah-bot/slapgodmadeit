@@ -46,7 +46,7 @@ export function BeatDetail({ slug }: { slug: string }) {
   return (
     <div>
       <section className="relative isolate pb-20 pt-28 md:pb-28 md:pt-40">
-        <CoverBackdrop />
+        <CoverBackdrop src={beat.cover} />
         <div className="container-sg">
           <Rise y={6}>
             <nav aria-label="Breadcrumb" className="mb-10 text-[13px] text-mute">
@@ -61,13 +61,15 @@ export function BeatDetail({ slug }: { slug: string }) {
             <div>
               <Rise y={8}>
                 <p className="eyebrow">
-                  {beat.genre} beat{beat.isNew ? " · New" : ""}
+                  <span className="text-lilac">{beat.genre}</span> beat{beat.isNew ? <span className="text-coral"> · New</span> : ""}
                 </p>
               </Rise>
               <LineReveal lines={[beat.title]} className="display mt-4 text-[clamp(44px,7vw,88px)]" delay={0.05} />
               <Rise delay={0.2}>
-                <p className="mt-5 text-[17px] tabular-nums text-stone-300">
-                  {beat.bpm} BPM · {beat.key} · {beat.duration}
+                <p className="mt-5 flex flex-wrap items-center gap-2 text-[17px] tabular-nums text-stone-300">
+                  <span className="tag tag-amber !h-8 !px-3.5 !text-[14px] font-semibold">{beat.bpm} BPM</span>
+                  <span className="tag tag-coral !h-8 !px-3.5 !text-[14px] font-semibold">{beat.key}</span>
+                  <span className="text-mute">{beat.duration}</span>
                 </p>
                 <ul className="mt-5 flex flex-wrap gap-2">
                   {[...beat.moods, ...beat.tags].map((t) => (
@@ -115,14 +117,14 @@ export function BeatDetail({ slug }: { slug: string }) {
                     {active && (
                       <motion.span
                         layoutId="tier-selected"
-                        className="absolute inset-0 rounded-[20px] bg-white/[0.07] ring-1 ring-white/40"
+                        className="absolute inset-0 rounded-[20px] bg-coral/[0.1] ring-1 ring-coral/70 shadow-[0_12px_36px_-18px_var(--coral)]"
                         transition={{ duration: 0.5, ease: EASE }}
                       />
                     )}
                     <span className="relative">
                       <span className="flex items-center gap-2 text-[15px] font-medium">
                         {t.name}
-                        {t.popular && <span className="bg-silver rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em]">Popular</span>}
+                        {t.popular && <span className="badge-amber rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em]">★ Popular</span>}
                       </span>
                       <span className="mt-0.5 block text-[13px] text-mute">
                         {t.files} · {t.streams} streams
@@ -130,7 +132,7 @@ export function BeatDetail({ slug }: { slug: string }) {
                     </span>
                     <span className="relative shrink-0 text-right">
                       {t.fromPrice && <span className="block text-[11px] text-mute">from</span>}
-                      <span className="text-[22px] font-semibold tabular-nums">{format(t.price)}</span>
+                      <span className={`text-[22px] font-semibold tabular-nums ${active ? "text-coral" : ""}`}>{format(t.price)}</span>
                     </span>
                   </button>
                 </StaggerItem>
@@ -168,7 +170,7 @@ export function BeatDetail({ slug }: { slug: string }) {
           <ul className="grid grid-cols-1 gap-x-10 gap-y-2 border-t border-line pt-8 text-[14px] text-stone-400 sm:grid-cols-2 lg:grid-cols-3">
             {leaseTerms.map((l) => (
               <li key={l} className="flex gap-2.5">
-                <CheckIcon size={14} className="mt-1 shrink-0 text-stone-500" /> {l}
+                <CheckIcon size={14} className="mt-1 shrink-0 text-lilac" /> {l}
               </li>
             ))}
           </ul>

@@ -102,7 +102,7 @@ export function Dialog({
             onDragEnd={(_, info) => {
               if (info.offset.y > 110 || info.velocity.y > 700) onClose();
             }}
-            className={`relative max-h-[90svh] w-full overflow-y-auto overscroll-contain rounded-t-[24px] border pb-[env(safe-area-inset-bottom)] sm:max-h-[92svh] sm:rounded-[24px] sm:pb-0 border-line bg-ink outline-none ${className}`}
+            className={`relative max-h-[90svh] w-full overflow-y-auto overscroll-contain rounded-t-[24px] border pb-[env(safe-area-inset-bottom)] sm:max-h-[92svh] sm:rounded-[24px] sm:pb-0 border-white/10 bg-ink shadow-[0_30px_80px_-30px_rgb(var(--coral-rgb)/0.45)] outline-none ${className}`}
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }}

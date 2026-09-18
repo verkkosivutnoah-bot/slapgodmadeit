@@ -44,7 +44,7 @@ export function PackDetail({ slug }: { slug: string }) {
   return (
     <div>
       <section className="relative isolate pb-20 pt-28 md:pb-28 md:pt-40">
-        <CoverBackdrop />
+        <CoverBackdrop src={pack.cover} />
         <div className="container-sg">
           <Rise y={6}>
             <nav aria-label="Breadcrumb" className="mb-10 text-[13px] text-mute">
@@ -61,7 +61,7 @@ export function PackDetail({ slug }: { slug: string }) {
             <div className="lg:pt-4">
               <Rise y={8}>
                 <p className="eyebrow">
-                  {pack.type}
+                  <span className="text-amber">{pack.type}</span>
                   {pack.soundLabel ? ` · ${pack.soundLabel}` : ""}
                   {pack.placeholder && <span className="ml-2 rounded-full bg-white/10 px-2 py-0.5 text-[10px] normal-case tracking-normal">placeholder</span>}
                 </p>
@@ -81,11 +81,11 @@ export function PackDetail({ slug }: { slug: string }) {
                   ) : (
                     <>
                       <p className="flex items-baseline gap-3">
-                        <span className="text-[40px] font-semibold tracking-tight tabular-nums">
+                        <span className="text-[40px] font-semibold tracking-tight tabular-nums text-coral">
                           {format(pack.price, { usd: pack.priceUSD, interval: pack.interval })}
                         </span>
                         {pack.compareAt && <s className="text-[17px] text-mute">{format(pack.compareAt)}</s>}
-                        {pack.deal && <span className="tag">{pack.deal}</span>}
+                        {pack.deal && <span className="tag tag-amber">{pack.deal}</span>}
                       </p>
                       <p className="mt-1 text-[13px] text-mute">{vatNote} · instant download</p>
                       <div className="mt-6 flex flex-wrap gap-3">{buyButton()}</div>
@@ -140,7 +140,7 @@ export function PackDetail({ slug }: { slug: string }) {
                     </span>
                     {expandable && (
                       <span
-                        className={`grid h-9 w-9 place-items-center rounded-full transition-[transform,background-color,color] duration-500 ${open ? "rotate-45 bg-white text-deep" : "bg-stone-300/[0.12] text-nav"}`}
+                        className={`grid h-9 w-9 place-items-center rounded-full transition-[transform,background-color,color] duration-500 ${open ? "rotate-45 bg-coral text-deep" : "bg-stone-300/[0.12] text-nav"}`}
                         aria-hidden
                       >
                         <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -204,7 +204,7 @@ export function PackDetail({ slug }: { slug: string }) {
             <ul className="mt-7 space-y-3 border-t border-line pt-7 text-[14px]">
               {loopLicenseSummary.points.map((p) => (
                 <li key={p} className="flex gap-3 text-stone-300">
-                  <CheckIcon size={14} className="mt-1 shrink-0 text-stone-500" /> {p}
+                  <CheckIcon size={14} className="mt-1 shrink-0 text-coral" /> {p}
                 </li>
               ))}
             </ul>

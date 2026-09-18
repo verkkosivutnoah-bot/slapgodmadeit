@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "License Agreements" };
 export default function LicensesPage() {
   return (
     <>
-      <PageHero eyebrow="Legal · Licensing" lines={["Licenses, in", "plain language"]}>
+      <PageHero eyebrow="Legal · Licensing" lines={["Licenses, in", <span key="2" className="text-grad pr-[0.06em] italic">plain language</span>]}>
         Beat lease tiers, exclusive rights and the loop license — summarized. The full agreement text is delivered with every purchase.
       </PageHero>
 

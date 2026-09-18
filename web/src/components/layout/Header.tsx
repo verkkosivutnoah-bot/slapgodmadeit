@@ -21,7 +21,11 @@ const MORE = [
 ];
 
 export function Logo({ className = "" }: { className?: string }) {
-  return <span className={`display text-[22px] tracking-[-0.01em] ${className}`}>SLAPGOD</span>;
+  return (
+    <span className={`display text-[22px] tracking-[-0.01em] ${className}`}>
+      SLAP<span className="text-grad">GOD</span>
+    </span>
+  );
 }
 
 export function Header() {
@@ -83,13 +87,13 @@ export function Header() {
                   href={n.href}
                   aria-current={pathname === n.href ? "page" : undefined}
                   className={`relative rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors duration-300 ${
-                    pathname.startsWith(n.href) ? "text-bone" : "text-stone-400 hover:text-bone"
+                    pathname.startsWith(n.href) ? "text-bone" : "text-stone-400 hover:text-coral"
                   }`}
                 >
                   {pathname.startsWith(n.href) && (
                     <motion.span
                       layoutId="nav-active"
-                      className="absolute inset-0 rounded-full bg-stone-300/[0.1]"
+                      className="absolute inset-0 rounded-full bg-coral/[0.14] shadow-[inset_0_0_0_1px_rgb(var(--coral-rgb)/0.35)]"
                       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     />
                   )}
@@ -111,7 +115,7 @@ export function Header() {
               <CartIcon size={18} />
               <span className="hidden sm:inline">Cart</span>
               {count > 0 && (
-                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-white px-1 text-[11px] font-semibold text-deep">{count}</span>
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-coral px-1 text-[11px] font-bold text-deep">{count}</span>
               )}
             </Link>
             <Link href="/free" className="btn btn-primary hidden sm:inline-flex">
@@ -141,7 +145,7 @@ export function Header() {
         >
           <nav aria-label="Mobile" className="flex flex-col">
             {[{ href: "/", label: "Home" }, ...NAV, ...MORE, { href: "/cart", label: "Cart" }].map((n) => (
-              <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="display block py-2 text-[34px] text-bone active:text-stone-400">
+              <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className={`display block py-2 text-[34px] active:text-coral ${pathname === n.href ? "text-grad" : "text-bone"}`}>
                 {n.label}
               </Link>
             ))}

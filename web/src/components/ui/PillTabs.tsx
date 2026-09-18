@@ -39,7 +39,7 @@ export function PillTabs<T extends string>({
             {active && (
               <motion.span
                 layoutId={`pill-${id}`}
-                className="absolute inset-0 rounded-full bg-white"
+                className="absolute inset-0 rounded-full bg-coral shadow-[0_6px_18px_-6px_rgb(var(--coral-rgb)/0.8)]"
                 transition={reduce ? { duration: 0 } : { duration: 0.5, ease: EASE }}
               />
             )}

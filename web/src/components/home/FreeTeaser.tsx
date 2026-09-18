@@ -5,18 +5,20 @@ export function FreeTeaser() {
   return (
     <section className="section relative overflow-hidden" aria-labelledby="free-title">
       <div
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(40%_55%_at_50%_50%,rgb(255_255_255/0.06),transparent_75%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(38%_50%_at_35%_50%,rgb(var(--coral-rgb)/0.14),transparent_75%),radial-gradient(38%_50%_at_65%_55%,rgb(var(--lilac-rgb)/0.14),transparent_75%)]"
         aria-hidden
       />
       <div className="container-sg flex flex-col items-center text-center">
         <Reveal y={8}>
-          <p className="eyebrow">Free download · Guitar Vault Lite</p>
+          <p className="eyebrow">
+            <span className="text-amber">Free download</span> · Guitar Vault Lite
+          </p>
         </Reveal>
         <LineReveal
           as="h2"
           id="free-title"
           inView
-          lines={["Ten loops.", <span key="2" className="text-silver">On the house.</span>]}
+          lines={["Ten loops.", <span key="2" className="text-grad pr-[0.05em] italic">On the house.</span>]}
           className="display mt-5 text-[clamp(44px,8vw,96px)] leading-[1]"
         />
         <Reveal delay={0.15}>

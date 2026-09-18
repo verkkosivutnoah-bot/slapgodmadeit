@@ -16,7 +16,9 @@ export function FreeDownloads() {
           <MusicPlayer id="free-lite" label="Guitar Vault Lite preview" tracks={lite.demo} />
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="eyebrow">Free · {lite.soundLabel}</p>
+          <p className="eyebrow">
+            <span className="text-amber">Free</span> · {lite.soundLabel}
+          </p>
           <h2 id="lite-title" className="display mt-4 text-[clamp(38px,5vw,60px)]">
             {lite.title}
           </h2>
@@ -43,7 +45,7 @@ export function FreeDownloads() {
         <Reveal>
           <p className="eyebrow">More</p>
           <h2 id="more-free" className="display mb-10 mt-4 text-[clamp(32px,4.4vw,48px)]">
-            Keep digging
+            Keep <span className="text-grad pr-[0.06em] italic">digging</span>
           </h2>
         </Reveal>
         <Stagger className="grid grid-cols-1 gap-x-5 gap-y-10 min-[520px]:grid-cols-2 lg:grid-cols-4">

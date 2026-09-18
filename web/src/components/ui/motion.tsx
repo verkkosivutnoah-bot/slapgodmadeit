@@ -3,8 +3,8 @@
  * SLAPGOD motion system — one small module. transform + opacity (and clip-path for image reveals) only.
  * ease [0.22, 1, 0.36, 1], 0.5–0.9s, stagger 0.06. Everything renders static under prefers-reduced-motion.
  */
-import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
-import type { ReactNode } from "react";
+import { animate, motion, useInView, useMotionValue, useReducedMotion, useSpring, type HTMLMotionProps } from "motion/react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type RefObject } from "react";
 
 export const EASE = [0.22, 1, 0.36, 1] as const;
 export const VIEWPORT = { once: true, margin: "0px 0px -10% 0px" } as const;
@@ -78,8 +78,9 @@ export function RevealImage({ children, className = "", delay = 0 }: { children:
   return (
     <motion.div
       className={className}
-      initial={{ clipPath: "inset(12% 0% 0% 0% round 24px)", opacity: 0 }}
-      whileInView={{ clipPath: "inset(0% 0% 0% 0% round 24px)", opacity: 1 }}
+      // sides/bottom stay negative so hover lift + glow shadows are never clipped
+      initial={{ clipPath: "inset(12% -12% -12% -12% round 24px)", opacity: 0 }}
+      whileInView={{ clipPath: "inset(-12% -12% -12% -12% round 24px)", opacity: 1 }}
       viewport={VIEWPORT}
       transition={{ duration: 0.9, ease: EASE, delay }}
     >
@@ -139,5 +140,95 @@ export function Rise({ children, className, delay = 0, y = 16 }: { children: Rea
     <motion.div className={className} initial={reduce ? false : { opacity: 0, y }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay }}>
       {children}
     </motion.div>
+  );
+}
+
+/** Toggles `.is-offscreen` on the element so its (and its children's) CSS animations pause while not visible. */
+export function useOffscreenPause<T extends HTMLElement>(ref: RefObject<T | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => el.classList.toggle("is-offscreen", !e.isIntersecting), { rootMargin: "80px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref]);
+}
+
+const finePointer = () => typeof window !== "undefined" && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+/** Cursor-follow spotlight: pair with the `.spotlight` class. Writes --mx/--my (desktop fine pointers only). */
+export function spotlightMove(e: ReactPointerEvent<HTMLElement>) {
+  if (e.pointerType !== "mouse") return;
+  const el = e.currentTarget;
+  const r = el.getBoundingClientRect();
+  el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+  el.style.setProperty("--my", `${e.clientY - r.top}px`);
+}
+
+/** Magnetic pull toward the cursor (desktop fine pointer only, springs back on leave). */
+export function Magnetic({ children, className, strength = 0.3 }: { children: ReactNode; className?: string; strength?: number }) {
+  const reduce = useReducedMotion();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 220, damping: 18, mass: 0.4 });
+  const sy = useSpring(y, { stiffness: 220, damping: 18, mass: 0.4 });
+  return (
+    <motion.div
+      className={`inline-block ${className ?? ""}`}
+      style={reduce ? undefined : { x: sx, y: sy }}
+      onPointerMove={(e) => {
+        if (reduce || e.pointerType !== "mouse" || !finePointer()) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        x.set((e.clientX - (r.left + r.width / 2)) * strength);
+        y.set((e.clientY - (r.top + r.height / 2)) * strength);
+      }}
+      onPointerLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** Number that counts up once when scrolled into view. */
+export function CountUp({ value, duration = 1.4, className, suffix = "" }: { value: number; duration?: number; className?: string; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -10% 0px" });
+  const reduce = useReducedMotion();
+  const [n, setN] = useState(value);
+  const started = useRef(false);
+  useEffect(() => {
+    if (reduce || started.current) return;
+    if (!inView) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setN(0);
+      return;
+    }
+    started.current = true;
+    const c = animate(0, value, { duration, ease: EASE, onUpdate: (v) => setN(Math.round(v)) });
+    return () => c.stop();
+  }, [inView, reduce, value, duration]);
+  return (
+    <span ref={ref} className={className}>
+      {n}
+      {suffix}
+    </span>
+  );
+}
+
+/** Gradient underline that draws in (scaleX) once in view. */
+export function GradUnderline({ className = "", delay = 0.2 }: { className?: string; delay?: number }) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.span
+      aria-hidden
+      className={`grad-underline ${className}`}
+      initial={reduce ? false : { scaleX: 0 }}
+      whileInView={{ scaleX: 1 }}
+      viewport={VIEWPORT}
+      transition={{ duration: 1, ease: EASE, delay }}
+    />
   );
 }

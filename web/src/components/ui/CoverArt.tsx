@@ -57,6 +57,14 @@ function hash(str: string) {
   return Math.abs(h);
 }
 
+// accent combos (coral #FF5A3C · orange #FF8A3D · amber #FFB547 · lilac #A98BFF)
+const FALLBACK_PALETTES = [
+  ["#FFB547", "#FF5A3C", "#A98BFF"],
+  ["#A98BFF", "#FF5A3C", "#1C1917"],
+  ["#FF8A3D", "#A98BFF", "#1C1917"],
+  ["#FFB547", "#A98BFF", "#FF5A3C"],
+];
+
 /** Generated fallback art in the brand palette. */
 export function FallbackCover({ title }: { title: string }) {
   const h = hash(title);
@@ -64,14 +72,15 @@ export function FallbackCover({ title }: { title: string }) {
   const cy = 25 + ((h >> 3) % 35);
   const rot = (h % 50) - 25;
   const id = `fb${h}`;
+  const pal = FALLBACK_PALETTES[h % FALLBACK_PALETTES.length];
   return (
     <div className="absolute inset-0" role="img" aria-label={`${title} (artwork coming soon)`}>
       <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full" aria-hidden>
         <defs>
           <radialGradient id={`${id}s`} cx={`${cx}%`} cy={`${cy}%`} r="60%">
-            <stop offset="0" stopColor="#E7E5E4" />
-            <stop offset=".35" stopColor="#78716C" />
-            <stop offset=".75" stopColor="#292524" />
+            <stop offset="0" stopColor={pal[0]} />
+            <stop offset=".4" stopColor={pal[1]} />
+            <stop offset=".8" stopColor={pal[2]} stopOpacity=".55" />
             <stop offset="1" stopColor="#0C0A09" />
           </radialGradient>
         </defs>

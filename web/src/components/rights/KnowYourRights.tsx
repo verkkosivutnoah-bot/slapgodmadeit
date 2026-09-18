@@ -33,8 +33,8 @@ function Block({ id, n, title, children }: { id: string; n: string; title: React
           className="group flex w-full items-center gap-4 py-6 text-left sm:gap-6 sm:py-8"
         >
           <span className="w-6 shrink-0 text-[13px] text-mute">{n}</span>
-          <span className="display flex-1 text-[clamp(24px,3.6vw,38px)] transition-colors duration-300 group-hover:text-stone-300">{title}</span>
-          <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full transition-[transform,background-color,color] duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${open ? "rotate-45 bg-white text-deep" : "bg-stone-300/[0.12] text-nav"}`} aria-hidden>
+          <span className="display flex-1 text-[clamp(24px,3.6vw,38px)] transition-colors duration-300 group-hover:text-coral">{title}</span>
+          <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-full transition-[transform,background-color,color] duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${open ? "rotate-45 bg-coral text-deep" : "bg-stone-300/[0.12] text-nav"}`} aria-hidden>
             <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M12 5v14M5 12h14" />
             </svg>
@@ -109,7 +109,7 @@ function TwoCopyrights() {
         <ul className="mt-6 space-y-2.5 text-[15px]">
           {c.points.map((p) => (
             <li key={p} className="flex gap-2.5">
-              <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-stone-500" aria-hidden />
+              <span className={`mt-2 h-1.5 w-1.5 shrink-0 rounded-full ${key === "composition" ? "bg-coral" : "bg-lilac"}`} aria-hidden />
               {p}
             </li>
           ))}
@@ -121,14 +121,14 @@ function TwoCopyrights() {
     <Block id="rights-copyrights" n="01" title={<>Every song = two copyrights</>}>
       <Reveal>
         <div className="mx-auto flex w-fit items-center gap-3 rounded-full border border-line px-6 py-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-white" />
+          <span className="h-2.5 w-2.5 rounded-full bg-coral" />
           <span className="display text-2xl">Your song</span>
         </div>
       </Reveal>
       <svg viewBox="0 0 800 90" className="mx-auto hidden h-[90px] w-full max-w-[800px] md:block" aria-hidden>
         {[
-          ["M400 0 C400 50 200 40 200 90", "var(--fg-2)"],
-          ["M400 0 C400 50 600 40 600 90", "var(--color-mute)"],
+          ["M400 0 C400 50 200 40 200 90", "var(--coral)"],
+          ["M400 0 C400 50 600 40 600 90", "var(--lilac)"],
         ].map(([d, col]) => (
           <motion.path
             key={d}
@@ -144,8 +144,8 @@ function TwoCopyrights() {
         ))}
       </svg>
       <div className="mt-6 grid gap-4 md:mt-0 md:grid-cols-2 grid-cols-1">
-        <Reveal>{card("composition", "border-line", "text-stone-400")}</Reveal>
-        <Reveal delay={0.1}>{card("master", "border-line", "text-stone-400")}</Reveal>
+        <Reveal>{card("composition", "border-coral/30 bg-coral/[0.05]", "text-coral")}</Reveal>
+        <Reveal delay={0.1}>{card("master", "border-lilac/30 bg-lilac/[0.05]", "text-lilac")}</Reveal>
       </div>
       <FullTerms className="mt-5" />
     </Block>
@@ -194,7 +194,7 @@ function CanCant() {
       {items.map((t) => (
         <StaggerItem as="li" key={t}>
           <div className="flex items-start gap-3 text-[15px]">
-            <span className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full ${ok ? "bg-white text-deep" : "bg-stone-300/[0.12] text-nav"}`}>
+            <span className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full ${ok ? "bg-coral text-deep" : "bg-stone-300/[0.12] text-nav"}`}>
               {ok ? <CheckIcon size={13} /> : <CloseIcon size={12} />}
             </span>
             {t}
@@ -262,11 +262,11 @@ function Splits() {
       <div className="grid gap-4 lg:grid-cols-[1fr_1.3fr] grid-cols-1">
         <div className="grid gap-6 rounded-[22px] border border-line bg-surface/40 p-6 sm:grid-cols-2 sm:p-8 grid-cols-1">
           <div>
-            <Donut share={splits.beats.share} color="var(--fg)" label={splits.beats.label} />
+            <Donut share={splits.beats.share} color="var(--coral)" label={splits.beats.label} />
             <p className="mt-3 text-center text-[13px] text-mute">{splits.beats.text}</p>
           </div>
           <div>
-            <Donut share={splits.loops.share} color="var(--fg-2)" label={splits.loops.label} />
+            <Donut share={splits.loops.share} color="var(--lilac)" label={splits.loops.label} />
             <p className="mt-3 text-center text-[13px] text-mute">{splits.loops.text}</p>
           </div>
         </div>
@@ -276,7 +276,7 @@ function Splits() {
             {registerSteps.map((s, i) => (
               <StaggerItem as="li" key={s.title}>
                 <div className="flex gap-4">
-                  <span className="display grid h-11 w-11 shrink-0 place-items-center rounded-full bg-stone-300/[0.12] text-xl text-bone">{i + 1}</span>
+                  <span className="display grid h-11 w-11 shrink-0 place-items-center rounded-full bg-coral/[0.14] text-xl text-coral">{i + 1}</span>
                   <div>
                     <p className="font-semibold">{s.title}</p>
                     <p className="mt-0.5 text-[14px] text-mute">{s.text}</p>
@@ -340,7 +340,7 @@ function CreditsClaims() {
         </Reveal>
         <Reveal delay={0.1}>
           <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-[22px] border border-line p-8 text-center">
-            <span className="grid h-16 w-16 place-items-center rounded-full bg-stone-300/[0.12] text-bone">
+            <span className="bg-grad grid h-16 w-16 place-items-center rounded-full">
               <CheckIcon size={26} />
             </span>
             <p className="display mt-6 text-[28px]">Sample-safe guarantee</p>
@@ -350,14 +350,14 @@ function CreditsClaims() {
         <Reveal className="lg:col-span-3">
           <div className="grid gap-6 rounded-[22px] border border-line p-6 sm:p-8 md:grid-cols-[1fr_1.4fr] md:items-center grid-cols-1">
             <div>
-              <p className="eyebrow text-stone-400">Got a Content ID claim?</p>
+              <p className="eyebrow !text-amber">Got a Content ID claim?</p>
               <p className="display mt-3 text-[32px]">Don&apos;t panic. We&apos;ll whitelist you.</p>
             </div>
             <div>
               <ol className="grid gap-3 text-[14px] sm:grid-cols-3 grid-cols-1">
                 {["Grab the video link + your order number", "Send them via the contact form (topic: Content ID)", "We clear it fast — usually within 48h"].map((s, i) => (
                   <li key={s} className="rounded-2xl border border-line p-4">
-                    <span className="text-xs text-stone-400">0{i + 1}</span>
+                    <span className="text-xs font-semibold text-coral">0{i + 1}</span>
                     <p className="mt-1">{s}</p>
                   </li>
                 ))}
@@ -397,7 +397,7 @@ function Caps() {
               </div>
               <div className="h-3 overflow-hidden rounded-full bg-bone/10">
                 <motion.div
-                  className="h-full origin-left rounded-full bg-stone-300"
+                  className="h-full origin-left rounded-full bg-grad"
                   style={{ width: "100%" }}
                   initial={reduce ? { scaleX: widths[i] / 100 } : { scaleX: 0 }}
                   whileInView={{ scaleX: widths[i] / 100 }}
@@ -431,11 +431,11 @@ function Faq() {
                   aria-expanded={isOpen}
                   aria-controls={`${base}-a${i}`}
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="flex w-full items-center justify-between gap-6 px-5 py-5 text-left text-[16px] font-semibold transition hover:text-white sm:px-7"
+                  className="flex w-full items-center justify-between gap-6 px-5 py-5 text-left text-[16px] font-semibold transition hover:text-coral sm:px-7"
                 >
                   {f.q}
                   <span
-                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line transition-transform duration-500 ${isOpen ? "rotate-45 border-white text-white" : ""}`}
+                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line transition-transform duration-500 ${isOpen ? "rotate-45 border-coral bg-coral text-deep" : ""}`}
                     aria-hidden
                   >
                     <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

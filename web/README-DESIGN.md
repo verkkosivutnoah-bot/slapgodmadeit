@@ -31,15 +31,18 @@ Next.js 16 (App Router, Turbopack) · Tailwind v4 · `motion`. Run `npm run dev`
 - `src/data/rights.ts` — "Know your rights" copy + FAQ
 - `src/data/seller.ts` — **fill in `[TBD]` Y-tunnus, street address, email**
 
-## Look & palette (monochrome stone)
+## Look & palette (stone base + accents)
 
-Editorial, calm, pill-shaped UI. All colors live in the `:root` block at the top of `src/app/globals.css`
-(`--ink-rgb` #1C1917 bg, `--deep-rgb` #0C0A09, `--surface-rgb` #292524, `--fg` #FAFAF9, `--fg-2` #D6D3D1, `--mute-rgb` #A8A29E,
-`--silver` gradient — the only accent: "Most popular" ring, NEW/Free/flagship badges, a few highlighted words via `.text-silver` / `.bg-silver`).
-Fonts: display = **Newsreader** (next/font, 700, tight tracking) via `.display`; UI = system stack (SF Pro, Inter fallback).
-Utilities: `.section` (vertical rhythm), `.eyebrow` (uppercase muted label), `.link-u` (underline-slide), `.frame` (rounded image frame, 1.03 hover scale),
-`.btn-primary` (white pill ↔ stone on hover), `.btn-ghost` (stone pill ↔ white on hover), `.snap-x-row` (horizontal snap scroll).
-No blurs, no backdrop filters, no grain. Placeholder covers are monochrome SVG art (`npm run covers:placeholders`).
+Editorial, pill-shaped UI on the warm stone base. All colors live in the `:root` block at the top of `src/app/globals.css`
+(`--ink-rgb` #1C1917 bg, `--deep-rgb` #0C0A09, `--surface-rgb` #292524, `--fg` #FAFAF9, `--fg-2` #D6D3D1, `--mute-rgb` #A8A29E).
+Accents (Tailwind: `bg-coral`, `text-lilac`, `text-amber`, …):
+- `--coral` #FF5A3C — primary: `.btn-primary`, play buttons (`.play-btn`), active pills/chips, prices, progress. Dark text #0C0A09 on coral = 6.4:1.
+- `--lilac` #A98BFF — secondary: tags (`.tag`), glows, selection.
+- `--amber` #FFB547 — tertiary: "Most popular", badges (`.badge-amber`), BPM chips (`.tag-amber`), stars.
+- `--grad` = linear-gradient(120deg, #FF5A3C, #FF8A3D 35%, #FFB547 55%, #A98BFF 100%) — `.text-grad` headline words, `.bg-grad`, `.hairline-grad`, `.grad-ring`, player progress.
+- Secondary CTA = white pill `.btn-light`; `.btn-ghost` stays stone.
+- `--track-accent` (from the cover, `src/lib/coverAccent.ts`) tints rows, cards, detail backdrops and the player; falls back to coral.
+Fonts: display = **Newsreader** via `.display`; UI = system stack. No blurs, no backdrop filters. Placeholder covers are colorful SVG art (`npm run covers:placeholders`).
 
 ## Motion system
 
@@ -53,7 +56,9 @@ One module: `src/components/ui/motion.tsx` (motion/react; transform + opacity + 
 - `StickyBuyBar` (`ui/StickyBuyBar.tsx`) — mobile buy bar on detail pages (sits above the player dock)
 - Page transition: `src/app/template.tsx` 240ms cross-fade. Header fades in; nav active pill slides.
 - "Wow" moments: hero vinyl (spins via CSS only while the preview plays; scales/fades on scroll via `useScroll`), packs carousel, footer wordmark rise.
-- Idle cost: zero continuous animation. The MusicPlayer rAF loops only run while it is visible AND playing (plus ~2s to settle); the equalizer and vinyl spin are CSS and paused when not playing.
+- Color/motion layer (bottom of `globals.css`): hero aurora (3 radial-gradient blobs drifting via transform, 2 on mobile), shimmering gradient word, vinyl glow ring (pulses while playing), `<Marquee>` ticker (`ui/Marquee.tsx`), rotating conic "Most popular" border, footer wordmark gradient drift. All continuous CSS animations pause offscreen via `useOffscreenPause` (`.is-offscreen`) and are static under prefers-reduced-motion (`MotionConfig reducedMotion="user"` in Providers).
+- Extra primitives in `motion.tsx`: `Magnetic` (hero "Browse beats", desktop only), `CountUp`, `GradUnderline` (section headers), `spotlightMove` + `.spotlight` (cursor spotlight, fine pointers only), `.card-lift` (hover lift + accent glow).
+- Idle cost (outside the home hero / marquees): no continuous animation. The MusicPlayer rAF loops only run while it is visible AND playing (plus ~2s to settle); the equalizer and vinyl spin are CSS and paused when not playing.
 
 ## Adding a beat / pack
 

@@ -68,10 +68,12 @@ export function EmailPopup() {
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} title="Get 10 free loops" className="max-w-[520px]">
-      <div className="p-7 pt-14 text-center sm:p-10 sm:pt-12">
-        <CoverArt src={coverFor("packs", "guitar-vault-lite")} title="Guitar Vault Lite" alt="" sizes="96px" className="mx-auto h-20 w-20 rounded-2xl" />
-        <p className="eyebrow mt-6">Free download</p>
-        <h2 className="display mt-2 text-[clamp(32px,7vw,44px)]">10 free loops</h2>
+      <div className="bg-[radial-gradient(70%_50%_at_30%_0%,rgb(var(--coral-rgb)/0.16),transparent_70%),radial-gradient(60%_45%_at_80%_10%,rgb(var(--lilac-rgb)/0.14),transparent_70%)] p-7 pt-14 text-center sm:p-10 sm:pt-12">
+        <CoverArt src={coverFor("packs", "guitar-vault-lite")} title="Guitar Vault Lite" alt="" sizes="96px" className="mx-auto h-20 w-20 rounded-2xl shadow-[0_16px_40px_-14px_var(--coral)]" />
+        <p className="eyebrow mt-6 !text-amber">Free download</p>
+        <h2 className="display mt-2 text-[clamp(32px,7vw,44px)]">
+          10 <span className="text-grad pr-[0.06em] italic">free</span> loops
+        </h2>
         <p className="mx-auto mt-3 max-w-sm text-[15px] leading-relaxed text-stone-300">
           Guitar Vault Lite — ten live guitar loops. Email required; confirm the link in your inbox (double opt-in) and the download is yours.
         </p>
