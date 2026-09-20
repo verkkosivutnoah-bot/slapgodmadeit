@@ -16,7 +16,7 @@ export function Footer() {
       <div className="hairline-grad" aria-hidden />
       <div className="container-sg flex flex-col gap-4 py-8 text-sm sm:flex-row sm:items-center sm:justify-between">
         <p className="font-medium text-bone">
-          {seller.name} ({seller.legalForm}) © {new Date().getFullYear()}
+          {seller.name} © {new Date().getFullYear()}
         </p>
         <nav aria-label="Footer" className="-mx-2 flex flex-wrap gap-x-1 gap-y-1">
           {links.map((l) => (

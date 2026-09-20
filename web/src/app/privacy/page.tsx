@@ -13,7 +13,7 @@ export default function PrivacyPage() {
       </p>
       <h3 className="mt-6 text-xs text-mute">Data controller</h3>
       <address className="mt-2 not-italic leading-relaxed text-bone/90">
-        {seller.name} ({seller.legalForm}) · Y-tunnus: {seller.businessId}
+        {seller.name} ({seller.legalForm}) · Business ID: {seller.businessId}
         <br />
         {seller.street}, {seller.postalCode} {seller.city}, {seller.country}
         <br />

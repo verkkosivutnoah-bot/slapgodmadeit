@@ -25,7 +25,7 @@ export default function ContactPage() {
               {seller.name} ({seller.legalForm})
             </strong>
             <br />
-            Y-tunnus: {seller.businessId}
+            Business ID: {seller.businessId}
             <br />
             {seller.street}
             <br />
