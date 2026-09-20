@@ -102,6 +102,27 @@ when the hero scrolls away and on `document.hidden`, renderer/geometry/material 
 rAF loop. Without WebGL, or on machines reporting `navigator.hardwareConcurrency <= 2`, `three` is never imported
 and only the CSS gradient shows — append `?shader=force` to the URL to override that check when testing.
 
+## Cover art direction
+
+Two shelves, one house style. Every cover: square (2000×2000+), dark, one warm light source, haze,
+deep black shadows, subject small with empty space, **no text / logos / signage / faces**.
+
+- **Beats → urban night scenes.** Alleys, underpasses, rooftops, car interiors, rain on asphalt, one
+  sodium streetlight. Same hour of night across the set so the catalog reads as a series.
+- **Loop & sample packs → instruments.** Guitars, drum machines, keys, tape — lit by a single warm
+  beam in a dark room (see `covers/packs/guitar-vault-vol-1.jpg` for the reference look).
+
+Prompt formulas (Gemini):
+- Beats: `Square album cover, <scene> at night, wet asphalt reflections, one warm sodium streetlight
+  glow, haze, deep black shadows, cinematic 35mm photo, high contrast, shallow depth of field, empty
+  space in the lower third, no text, no logos, no signage, no faces, no license plates, clean walls
+  (no graffiti).`
+- Packs: `Square album cover, <instrument> in a dark room, single dramatic warm light beam from upper
+  right, haze and smoke, deep black background, cinematic photo, high contrast, shallow depth of
+  field, no text, no logos.`
+
+Keep to the site accents (coral / amber / lilac) — reject covers that skew cold blue-green.
+
 ## Adding a beat / pack
 
 1. **Audio preview** → `public/audio/...` (MP3/M4A, tagged preview for beats). Path goes in `src` / `demo[].src`.
