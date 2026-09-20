@@ -99,7 +99,7 @@ Overall presence lives in the single `intensity` line (currently `… * 0.5`).
 Also: 4 fBm octaves (3 `fbm` calls per pixel), `powerPreference: "low-power"`, paused by `IntersectionObserver`
 when the hero scrolls away and on `document.hidden`, renderer/geometry/material disposed on unmount,
 `webglcontextlost`/`restored` handled. Under `prefers-reduced-motion` it renders **one** static frame and starts no
-rAF loop. Without WebGL, or on machines reporting `navigator.hardwareConcurrency <= 4`, `three` is never imported
+rAF loop. Without WebGL, or on machines reporting `navigator.hardwareConcurrency <= 2`, `three` is never imported
 and only the CSS gradient shows — append `?shader=force` to the URL to override that check when testing.
 
 ## Adding a beat / pack
