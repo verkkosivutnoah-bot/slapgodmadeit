@@ -46,7 +46,7 @@ export function BeatDetail({ slug }: { slug: string }) {
   return (
     <div>
       <section className="relative isolate pb-20 pt-28 md:pb-28 md:pt-40">
-        <CoverBackdrop src={beat.cover} />
+        <CoverBackdrop src={beat.cover} title={beat.title} />
         <div className="container-sg">
           <Rise y={6}>
             <nav aria-label="Breadcrumb" className="mb-10 text-[13px] text-mute">

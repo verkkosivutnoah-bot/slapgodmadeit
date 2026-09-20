@@ -44,7 +44,7 @@ export function PackDetail({ slug }: { slug: string }) {
   return (
     <div>
       <section className="relative isolate pb-20 pt-28 md:pb-28 md:pt-40">
-        <CoverBackdrop src={pack.cover} />
+        <CoverBackdrop src={pack.cover} title={pack.title} />
         <div className="container-sg">
           <Rise y={6}>
             <nav aria-label="Breadcrumb" className="mb-10 text-[13px] text-mute">
@@ -56,7 +56,7 @@ export function PackDetail({ slug }: { slug: string }) {
           </Rise>
 
           <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20">
-            <CoverShowcase src={pack.cover} title={pack.title} />
+            <CoverShowcase src={pack.cover} title={pack.title} badge={pack.badge ?? pack.type} />
 
             <div className="lg:pt-4">
               <Rise y={8}>
