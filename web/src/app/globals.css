@@ -547,7 +547,8 @@ body:has(.dock.is-visible) .buybar {
 
 /* ============================================================ COLOR + MOTION LAYER
    Perf rules: transform/opacity for continuous motion (plus tiny background-position / @property
-   angle on small elements), no filter blur, no backdrop-filter, no canvas loops. Continuous
+   angle on small elements), no filter blur, no backdrop-filter. The only canvas loop is the hero
+   shader (30fps, paused offscreen — see README-DESIGN.md). Continuous
    animations pause while offscreen via `.is-offscreen` (set by useOffscreenPause / <Marquee>). */
 
 @property --sg-angle {
@@ -569,59 +570,28 @@ body:has(.dock.is-visible) .buybar {
   animation-play-state: paused !important;
 }
 
-/* ---- aurora (hero): large radial-gradient blobs, softness from the gradient falloff only */
-.aurora {
+/* ---- hero background (shader canvas + fallback) ----
+   Layers inside the hero section: fallback gradient (-20) < WebGL canvas (-10) < dark scrim (-5) < vinyl (0) < copy (10).
+   The fallback is what you see before the canvas fades in, and the only background on
+   no-WebGL / low-core machines. Colors come from the accent tokens above. */
+.hero-bg-fallback {
   position: absolute;
   inset: 0;
-  overflow: hidden;
+  z-index: -20;
   pointer-events: none;
-  z-index: -1;
+  background:
+    radial-gradient(90% 70% at 18% 8%, rgb(var(--coral-rgb) / 0.22), transparent 62%),
+    radial-gradient(80% 65% at 86% 0%, rgb(var(--lilac-rgb) / 0.2), transparent 60%),
+    radial-gradient(70% 55% at 55% 30%, rgb(var(--amber-rgb) / 0.12), transparent 65%),
+    var(--color-ink);
 }
-.aurora-blob {
+.hero-bg-scrim {
   position: absolute;
-  width: 90vmax;
-  aspect-ratio: 1.5;
-  border-radius: 9999px;
-  will-change: transform;
-  animation: var(--anim) ease-in-out infinite alternate;
-}
-.aurora-blob.b1 {
-  left: -34vmax; top: -34vmax;
-  background: radial-gradient(closest-side, rgb(var(--coral-rgb) / 0.34), rgb(var(--coral-rgb) / 0.15) 38%, rgb(var(--coral-rgb) / 0.05) 68%, transparent 100%);
-  --anim: sg-drift-1 22s;
-}
-.aurora-blob.b2 {
-  right: -38vmax; top: -22vmax;
-  background: radial-gradient(closest-side, rgb(var(--lilac-rgb) / 0.32), rgb(var(--lilac-rgb) / 0.14) 38%, rgb(var(--lilac-rgb) / 0.04) 68%, transparent 100%);
-  --anim: sg-drift-2 27s;
-}
-.aurora-blob.b3 {
-  left: 5%; top: 38%;
-  width: 70vmax;
-  background: radial-gradient(closest-side, rgb(var(--amber-rgb) / 0.22), rgb(var(--amber-rgb) / 0.09) 40%, rgb(var(--amber-rgb) / 0.03) 70%, transparent 100%);
-  --anim: sg-drift-3 19s;
-}
-@keyframes sg-drift-1 {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(12vmax, 8vmax, 0) scale(1.15, 0.9); }
-  100% { transform: translate3d(4vmax, 16vmax, 0) scale(0.92, 1.1); }
-}
-@keyframes sg-drift-2 {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(-14vmax, 10vmax, 0) scale(0.9, 1.12); }
-  100% { transform: translate3d(-6vmax, -4vmax, 0) scale(1.12, 0.95); }
-}
-@keyframes sg-drift-3 {
-  0% { transform: translate3d(0, 0, 0) scale(0.9); }
-  100% { transform: translate3d(-18vmax, -10vmax, 0) scale(1.15); }
-}
-@media (max-width: 767px) {
-  .aurora-blob.b3 {
-    display: none;
-  }
-  .aurora-blob { width: 120vmax; }
-  .aurora-blob.b1 { left: -60vmax; top: -40vmax; }
-  .aurora-blob.b2 { right: -60vmax; top: 0; }
+  inset: 0;
+  z-index: -5;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(var(--ink-rgb) / 0.55) 0%, rgb(var(--ink-rgb) / 0) 26%, rgb(var(--ink-rgb) / 0) 48%, rgb(var(--ink-rgb) / 0.72) 84%, rgb(var(--ink-rgb) / 0.95) 100%);
 }
 
 /* ---- cursor spotlight (desktop only; --mx/--my set on pointermove) */
@@ -755,7 +725,6 @@ body:has(.dock.is-visible) .buybar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aurora-blob,
   .text-grad-anim,
   .grad-ring,
   .marquee-track,

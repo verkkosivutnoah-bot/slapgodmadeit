@@ -9,6 +9,7 @@ Next.js 16 (App Router, Turbopack) · Tailwind v4 · `motion`. Run `npm run dev`
 | Music player (owner spec, ported) | `src/components/player/MusicPlayer.tsx`, `music-player.css` |
 | One-at-a-time audio + keyboard shortcut owner | `src/components/player/audioFocus.ts` |
 | Global sticky dock player (mini bar ⇄ expanded card, persists across pages) | `src/components/player/GlobalPlayer.tsx` (`usePlayer().playQueue(tracks, i)`) |
+| Hero background (WebGL shader) | `src/components/hero/HeroBackground.tsx` (+ `.hero-bg-fallback` / `.hero-bg-scrim` in `globals.css`) |
 | Hero | `src/components/home/Hero.tsx` — line-reveal serif headline, pill search (→ `/beats?q=`), trust chips, spinning vinyl centerpiece (plays Guitar Vault previews) |
 | Cover art (next/image + fallback) / accent color | `src/components/ui/CoverArt.tsx`, `ui/CoverShowcase.tsx`, `src/lib/coverAccent.ts` |
 | Beat / pack detail | `src/components/beats/BeatDetail.tsx` (segmented license picker w/ animated selection + live summary), `src/components/packs/PackDetail.tsx`; both use `ui/CoverShowcase.tsx` + `StickyBuyBar` |
@@ -56,9 +57,50 @@ One module: `src/components/ui/motion.tsx` (motion/react; transform + opacity + 
 - `StickyBuyBar` (`ui/StickyBuyBar.tsx`) — mobile buy bar on detail pages (sits above the player dock)
 - Page transition: `src/app/template.tsx` 240ms cross-fade. Header fades in; nav active pill slides.
 - "Wow" moments: hero vinyl (spins via CSS only while the preview plays; scales/fades on scroll via `useScroll`), packs carousel, footer wordmark rise.
-- Color/motion layer (bottom of `globals.css`): hero aurora (3 radial-gradient blobs drifting via transform, 2 on mobile), shimmering gradient word, vinyl glow ring (pulses while playing), `<Marquee>` ticker (`ui/Marquee.tsx`), rotating conic "Most popular" border, footer wordmark gradient drift. All continuous CSS animations pause offscreen via `useOffscreenPause` (`.is-offscreen`) and are static under prefers-reduced-motion (`MotionConfig reducedMotion="user"` in Providers).
+- Color/motion layer (bottom of `globals.css`): shimmering gradient word, vinyl glow ring (pulses while playing), `<Marquee>` ticker (`ui/Marquee.tsx`), rotating conic "Most popular" border, footer wordmark gradient drift. All continuous CSS animations pause offscreen via `useOffscreenPause` (`.is-offscreen`) and are static under prefers-reduced-motion (`MotionConfig reducedMotion="user"` in Providers).
 - Extra primitives in `motion.tsx`: `Magnetic` (hero "Browse beats", desktop only), `CountUp`, `GradUnderline` (section headers), `spotlightMove` + `.spotlight` (cursor spotlight, fine pointers only), `.card-lift` (hover lift + accent glow).
 - Idle cost (outside the home hero / marquees): no continuous animation. The MusicPlayer rAF loops only run while it is visible AND playing (plus ~2s to settle); the equalizer and vinyl spin are CSS and paused when not playing.
+
+## Hero background (WebGL shader)
+
+`src/components/hero/HeroBackground.tsx` — one full-screen triangle, one GLSL fragment shader, plain `three`
+(no `@react-three/fiber`, no post-processing). Loaded from `Hero.tsx` via `next/dynamic` with `ssr: false`, so it
+never blocks first paint. It replaces the old drifting CSS aurora blobs and the hero cursor spotlight.
+
+**What it draws.** Domain-warped fBm value noise → smoky liquid ribbons of coral → orange → amber → lilac over the
+warm near-black base, with a squared vertical falloff (darkest at the bottom, where the copy sits), a gentle
+vignette, a "copy guard" that calms the middle column behind the headline/search pill, a faint in-shader film grain,
+and a very subtle "sound wave" horizontal displacement. On desktop the pointer gently warps and brightens the field
+near the cursor (`uPointer`/`uPointerAmt`, mouse pointers only — nothing on touch).
+
+**Layers in the hero** (`z-index` inside the section): `.hero-bg-fallback` (−20) → canvas (−10) → `.hero-bg-scrim`
+(−5) → vinyl (0) → copy (10). The fallback is an instant CSS radial-gradient painting; the canvas fades in over
+800ms on top of it, and it stays as-is on devices that skip the shader. The scrim is the dark bottom-to-top gradient
+that guarantees text contrast.
+
+**Loop period: 48s, exact.** All motion enters the shader through `uTheta` (0 → 2π over `LOOP_SECONDS`) and only as
+`sin`/`cos` of integer multiples of it, so the last frame equals the first — no visible restart. Change
+`LOOP_SECONDS` at the top of the file to slow down / speed up the whole thing (bigger = slower).
+
+**Colors.** Read at runtime from the `:root` tokens in `globals.css` (`--ink-rgb`, `--coral-rgb`, `--orange-rgb`,
+`--amber-rgb`, `--lilac-rgb`) and passed in as uniforms, so repalettes carry over with no shader edit. To change the
+mix, tune the ramp (`smoothstep` stops around `g`) and the spatial hue bias (`uv.x`/`uv.y` terms) in `main()`.
+Overall presence lives in the single `intensity` line (currently `… * 0.5`).
+
+**Perf switches** (constants at the top of the file):
+
+| Switch | Default | Notes |
+| --- | --- | --- |
+| `LOOP_SECONDS` | `48` | loop period / speed |
+| `FPS` | `30` | frame cap (time is accumulated, extra frames skipped) |
+| `RENDER_SCALE` | `0.75` | internal resolution multiplier, CSS-upscaled |
+| `MAX_DPR_DESKTOP` / `MAX_DPR_MOBILE` | `1.25` / `1` | DPR cap before `RENDER_SCALE` |
+
+Also: 4 fBm octaves (3 `fbm` calls per pixel), `powerPreference: "low-power"`, paused by `IntersectionObserver`
+when the hero scrolls away and on `document.hidden`, renderer/geometry/material disposed on unmount,
+`webglcontextlost`/`restored` handled. Under `prefers-reduced-motion` it renders **one** static frame and starts no
+rAF loop. Without WebGL, or on machines reporting `navigator.hardwareConcurrency <= 4`, `three` is never imported
+and only the CSS gradient shows — append `?shader=force` to the URL to override that check when testing.
 
 ## Adding a beat / pack
 
@@ -99,4 +141,4 @@ One module: `src/components/ui/motion.tsx` (motion/react; transform + opacity + 
 ## Notes
 
 - Keyboard shortcuts (Space, ←/→ seek, ⇧←/→ prev/next, S, L) only act on the player that last started playing (default: the dock), and are ignored in inputs/buttons/open dialogs.
-- Players pause their rAF DOM work while offscreen/idle; the hero canvas renders at DPR 1 with capped cells, adaptive cell size, pauses offscreen, and renders one static frame under `prefers-reduced-motion`.
+- Players pause their rAF DOM work while offscreen/idle; the hero shader canvas is capped at 30fps and 0.75× resolution, pauses offscreen and when the tab is hidden, and renders one static frame under `prefers-reduced-motion` (see "Hero background").

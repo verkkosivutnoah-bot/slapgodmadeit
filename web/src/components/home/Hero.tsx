@@ -1,13 +1,17 @@
 "use client";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowUpIcon, PauseIcon, PlayIcon, SearchIcon } from "@/components/ui/Icons";
 import { CoverArt } from "@/components/ui/CoverArt";
-import { EASE, LineReveal, Magnetic, Rise, spotlightMove, useOffscreenPause } from "@/components/ui/motion";
+import { EASE, LineReveal, Magnetic, Rise, useOffscreenPause } from "@/components/ui/motion";
 import { usePlayer } from "@/components/player/GlobalPlayer";
 import { guitarVault } from "@/data/packs";
+
+// shader background: client-only, never blocks first paint (CSS gradient shows underneath until it fades in)
+const HeroBackground = dynamic(() => import("@/components/hero/HeroBackground"), { ssr: false });
 
 const TRUST = ["100% original", "Instant download", "Clear licenses"];
 
@@ -37,16 +41,14 @@ export function Hero() {
   return (
     <section
       ref={ref}
-      onPointerMove={spotlightMove}
-      className="spotlight relative isolate flex h-[100svh] min-h-[640px] flex-col overflow-hidden"
+      className="relative isolate flex h-[100svh] min-h-[640px] flex-col overflow-hidden"
       aria-labelledby="hero-title"
     >
-      {/* aurora: drifting radial-gradient blobs (transform only; 2 on mobile) */}
-      <div className="aurora" aria-hidden>
-        <div className="aurora-blob b1" />
-        <div className="aurora-blob b2" />
-        <div className="aurora-blob b3" />
-      </div>
+      {/* instant CSS-gradient placeholder — stays visible until the shader canvas fades in (and on fallback devices) */}
+      <div className="hero-bg-fallback" aria-hidden />
+      <HeroBackground />
+      {/* readability: dark bottom-to-top scrim above the canvas, below the content */}
+      <div className="hero-bg-scrim" aria-hidden />
 
       <div className="container-sg relative z-10 flex flex-col items-center pt-[max(112px,15svh)] text-center">
         <LineReveal
