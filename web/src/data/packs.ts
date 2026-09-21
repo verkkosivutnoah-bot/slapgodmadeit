@@ -304,7 +304,7 @@ export const freePacks: Pack[] = [
     price: 0,
     tagline: "10 free live guitar loops from the Vault.",
     description:
-      "A free taste of SLAPGOD Guitar Vault Vol. 1 — ten original guitar loops. Enter your email, confirm the double opt-in link in your inbox, and the download is yours.",
+      "A free taste of SLAPGOD Guitar Vault Vol. 1 — ten original guitar loops. Enter your email and the download link lands in your inbox.",
     soundCount: 10,
     soundLabel: "10 loops",
     specs: ["WAV 24-bit / 48kHz", "BPM + key in filenames", "Royalty-free*"],

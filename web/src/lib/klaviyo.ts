@@ -1,8 +1,9 @@
 /**
  * Klaviyo (server-only). Two calls per signup:
  *  1. upsert the profile with our own properties (source, consent record, signed download URL)
- *  2. subscribe it to the list — when the list has double opt-in enabled in Klaviyo,
- *     Klaviyo sends the confirmation email and only then marks the profile SUBSCRIBED.
+ *  2. subscribe it to the list — the list uses single opt-in, so the profile is SUBSCRIBED
+ *     immediately and the welcome flow fires right away. Consent proof lives on the profile
+ *     (sg_consent_text / sg_consent_at / sg_consent_ip) since there is no confirmation click.
  *
  * Env: KLAVIYO_PRIVATE_KEY (pk_...), KLAVIYO_LIST_ID, optional KLAVIYO_REVISION.
  * Without a key configured, `subscribe()` reports `skipped` so local dev still works.
@@ -15,6 +16,7 @@ export interface SubscribeInput {
   source: string;
   consentText: string;
   consentAt: string;
+  consentIp?: string;
   downloadUrl?: string;
 }
 
@@ -45,7 +47,7 @@ export function klaviyoConfigured() {
   return Boolean(process.env.KLAVIYO_PRIVATE_KEY && process.env.KLAVIYO_LIST_ID);
 }
 
-export async function subscribe({ email, source, consentText, consentAt, downloadUrl }: SubscribeInput): Promise<SubscribeResult> {
+export async function subscribe({ email, source, consentText, consentAt, consentIp, downloadUrl }: SubscribeInput): Promise<SubscribeResult> {
   if (!klaviyoConfigured()) return { status: "skipped" };
 
   // 1. profile upsert — our own record of what they agreed to, plus the gated download link
@@ -58,6 +60,7 @@ export async function subscribe({ email, source, consentText, consentAt, downloa
           sg_source: source,
           sg_consent_text: consentText,
           sg_consent_at: consentAt,
+          ...(consentIp ? { sg_consent_ip: consentIp } : {}),
           ...(downloadUrl ? { sg_free_kit_url: downloadUrl } : {}),
         },
       },
@@ -65,7 +68,7 @@ export async function subscribe({ email, source, consentText, consentAt, downloa
   });
   if (!profile.ok) return { status: "error", message: profile.message };
 
-  // 2. list subscription — double opt-in is configured on the list inside Klaviyo
+  // 2. list subscription — list is single opt-in, so this subscribes them straight away
   const sub = await call("/profile-subscription-bulk-create-jobs/", {
     data: {
       type: "profile-subscription-bulk-create-job",

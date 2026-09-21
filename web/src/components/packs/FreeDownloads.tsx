@@ -28,8 +28,8 @@ export function FreeDownloads() {
             <EmailCaptureForm
               source="free_page_guitar_vault_lite"
               cta="Send me the loops"
-              successTitle="Check your inbox to confirm"
-              successText="Click the confirmation link (double opt-in) and Guitar Vault Lite is delivered to your inbox."
+              successTitle="You're in — check your inbox"
+              successText="Guitar Vault Lite is on its way to your inbox. Nothing arrives? Check spam."
             />
           </div>
           <p className="mt-6 text-[12px] leading-relaxed text-mute">

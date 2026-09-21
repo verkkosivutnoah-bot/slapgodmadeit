@@ -75,7 +75,7 @@ export function PackDetail({ slug }: { slug: string }) {
                 <div ref={buyRef} className="mt-8">
                   {isFree ? (
                     <div className="max-w-[540px]">
-                      <p className="mb-4 text-[14px] text-mute">Email required · confirm the double opt-in link in your inbox to get the download.</p>
+                      <p className="mb-4 text-[14px] text-mute">Email required · the download link lands in your inbox right away.</p>
                       <EmailCaptureForm source={`free_${pack.slug}`} cta="Get it free" />
                     </div>
                   ) : (

@@ -11,7 +11,7 @@ export function EmailCaptureForm({
   source,
   cta = "Send it",
   successTitle = "Check your inbox",
-  successText = "Confirm the link we just sent you (double opt-in) and your download unlocks right away.",
+  successText = "Your download is on its way to your inbox. Nothing there? Check spam.",
   compact = false,
   autoFocus = false,
   onSuccess,
@@ -132,7 +132,7 @@ export function EmailCaptureForm({
               .
             </span>
           </label>
-          <p className="text-[12px] text-mute/90">Double opt-in: we&apos;ll email you a link to confirm.</p>
+          <p className="text-[12px] text-mute/90">One email with your download, then the occasional drop. Unsubscribe anytime.</p>
           {error && (
             <p id={`${id}-err`} role="alert" className="text-sm text-coral">
               {error}

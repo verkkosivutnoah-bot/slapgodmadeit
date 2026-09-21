@@ -23,7 +23,7 @@ export function FreeTeaser() {
         />
         <Reveal delay={0.15}>
           <p className="mx-auto mt-6 max-w-md text-[17px] leading-relaxed text-stone-400">
-            Ten live guitar loops straight from the Vault. Drop your email, confirm the link, and they&apos;re yours.
+            Ten live guitar loops straight from the Vault. Drop your email and they&apos;re yours.
           </p>
         </Reveal>
         <Reveal delay={0.25} className="mt-10 w-full max-w-[540px] text-left">

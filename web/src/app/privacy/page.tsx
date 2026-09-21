@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     <StubPage eyebrow="Legal" title="Privacy">
       <h2 className="text-xl font-semibold">Privacy Policy</h2>
       <p className="mt-3 text-mute">
-        Full privacy policy coming soon. It will cover email marketing consent (double opt-in, unsubscribe anytime), order data, payment processing and cookies.
+        Full privacy policy coming soon. It will cover email marketing consent (explicit opt-in, unsubscribe anytime), order data, payment processing and cookies.
       </p>
       <h3 className="mt-6 text-xs text-mute">Data controller</h3>
       <address className="mt-2 not-italic leading-relaxed text-bone/90">

@@ -75,15 +75,15 @@ export function EmailPopup() {
           10 <span className="text-grad pr-[0.06em] italic">free</span> loops
         </h2>
         <p className="mx-auto mt-3 max-w-sm text-[15px] leading-relaxed text-stone-300">
-          Guitar Vault Lite — ten live guitar loops. Email required; confirm the link in your inbox (double opt-in) and the download is yours.
+          Guitar Vault Lite — ten live guitar loops. Email required; the download link lands in your inbox right away. The download is yours.
         </p>
         <div className="mt-7 text-left">
           <EmailCaptureForm
             source="popup_guitar_vault_lite"
             cta="Get the loops"
             autoFocus
-            successTitle="Check your inbox to confirm"
-            successText="We sent a confirmation link. Click it and Guitar Vault Lite lands in your inbox."
+            successTitle="You're in — check your inbox"
+            successText="Guitar Vault Lite is on its way. Nothing there? Check spam."
           />
         </div>
       </div>

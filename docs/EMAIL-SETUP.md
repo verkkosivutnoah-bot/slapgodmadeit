@@ -9,10 +9,10 @@ The site code is done. These are the steps only you can do — they need logins 
 2. The server validates the address, drops bots (honeypot), rate-limits (5 per IP / 10 min).
 3. It upserts a Klaviyo profile with:
    - `sg_source` — which form they came from (popup, free page, footer…)
-   - `sg_consent_text` + `sg_consent_at` — proof of consent (GDPR)
+   - `sg_consent_text` + `sg_consent_at` + `sg_consent_ip` — proof of consent (GDPR)
    - `sg_free_kit_url` — a signed download link, valid 30 days
-4. It subscribes the profile to your list. **Klaviyo sends the confirmation email** (double opt-in).
-5. After they confirm, your welcome flow emails the download link.
+4. It subscribes the profile to your list (single opt-in — subscribed immediately).
+5. Your welcome flow fires and emails the download link.
 6. The link hits `/api/download`, which checks the signature and expiry and streams
    `web/private/guitar-vault-lite.zip`. That file is **not** in `/public`, so it can't be found by URL.
 
@@ -20,8 +20,9 @@ The site code is done. These are the steps only you can do — they need logins 
 
 1. Sign up at klaviyo.com (free up to 250 contacts / 500 sends).
 2. **Lists & Segments → Create List** → name it `Newsletter`.
-3. Open the list → **Settings → Opt-in process → Double opt-in**. Turn it ON.
-   This is what makes Klaviyo send the confirmation email. Without it, people are subscribed instantly.
+3. Open the list → **Settings → Opt-in process → Single opt-in**.
+   People are subscribed the moment they submit the form and the welcome email goes out right away.
+   The consent proof (wording, timestamp, IP) is stored on the profile instead of a confirmation click.
 4. Copy the **List ID** (6 characters, in the list's URL or Settings).
 5. **Settings → API keys → Create private API key.** Give it *Full access* to Profiles, Lists and
    Subscriptions (or full access if simpler). Copy the key (starts with `pk_`).
@@ -58,7 +59,7 @@ Keep `DOWNLOAD_SECRET` identical everywhere — changing it invalidates download
 
 | # | Timing | Email |
 |---|---|---|
-| 1 | Immediately after confirming | "Here are your loops" — download button linking to `{{ person.sg_free_kit_url }}`, credit line, Instagram link |
+| 1 | Immediately | "Here are your loops" — download button linking to `{{ person.sg_free_kit_url }}`, credit line, Instagram link |
 | 2 | +2 days | Your story, how the loops are recorded, link to Guitar Vault Vol. 1 |
 | 3 | +4 days | How licensing works (link `/licenses` and `/#rights`), beats catalog |
 | 4 | +6 days | Discount code reminder before it expires |
@@ -76,8 +77,8 @@ This needs a real domain — worth buying `slapgod.com` or similar before the st
 ## 6. Test end to end
 
 1. Submit the form on the live site with your own address.
-2. Confirm the email Klaviyo sends.
-3. Check the profile in Klaviyo shows `sg_source`, `sg_consent_at`, `sg_free_kit_url`.
+2. The welcome email should arrive within a minute.
+3. Check the profile in Klaviyo shows `sg_source`, `sg_consent_at`, `sg_consent_ip`, `sg_free_kit_url`.
 4. Click the download link in the welcome email — the zip should download.
 
 ## Known gaps

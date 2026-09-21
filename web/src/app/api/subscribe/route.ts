@@ -2,9 +2,10 @@
  * Email capture → Klaviyo.
  *
  * Validates, drops bots, rate-limits per IP, then upserts the profile (with the consent record and
- * a signed 30-day download link) and subscribes it to the list. Double opt-in is switched on for the
- * list inside Klaviyo, so Klaviyo sends the confirmation mail and the welcome flow delivers the
- * download link ({{ person.sg_free_kit_url }}) only after the address is confirmed.
+ * a signed 30-day download link) and subscribes it to the list. The list uses single opt-in: the
+ * profile is subscribed immediately and Klaviyo's welcome flow delivers the download link
+ * ({{ person.sg_free_kit_url }}) straight away. The consent record on the profile
+ * (wording + timestamp + IP) is the GDPR proof, since there is no confirmation click.
  */
 import { NextResponse } from "next/server";
 import { klaviyoConfigured, subscribe } from "@/lib/klaviyo";
@@ -69,6 +70,7 @@ export async function POST(request: Request) {
     source: src,
     consentText: CONSENT_TEXT,
     consentAt: new Date().toISOString(),
+    consentIp: ip === "unknown" ? undefined : ip,
     downloadUrl: signedDownloadUrl("guitar-vault-lite"),
   });
 
@@ -80,5 +82,5 @@ export async function POST(request: Request) {
     console.warn(`[subscribe] Klaviyo not configured — ${address} (${src}) was NOT stored.`);
   }
 
-  return NextResponse.json({ ok: true, doubleOptIn: true, stored: klaviyoConfigured() });
+  return NextResponse.json({ ok: true, stored: klaviyoConfigured() });
 }
