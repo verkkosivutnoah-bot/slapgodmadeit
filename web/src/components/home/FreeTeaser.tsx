@@ -11,7 +11,7 @@ export function FreeTeaser() {
       <div className="container-sg flex flex-col items-center text-center">
         <Reveal y={8}>
           <p className="eyebrow">
-            <span className="text-amber">Free download</span> · Guitar Vault Lite
+            <span className="text-amber">Free download</span> · Vault Sampler
           </p>
         </Reveal>
         <LineReveal

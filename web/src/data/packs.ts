@@ -299,7 +299,7 @@ export const loopClub: Pack = withCover({
 export const freePacks: Pack[] = [
   withCover({
     slug: "guitar-vault-lite",
-    title: "Guitar Vault Lite",
+    title: "Vault Sampler",
     type: "Free Kit",
     price: 0,
     tagline: "10 free live guitar loops from the Vault.",
@@ -313,7 +313,7 @@ export const freePacks: Pack[] = [
     categories: [{ name: "Guitar loops", count: 10, unit: "loops" }],
     badge: "FREE",
     featured: true,
-    demo: [{ id: "guitar-vault-lite-01", title: "Vault Lite 01", artist: "SLAPGOD · 100 BPM · C min", cover: "", src: guitar(1) }],
+    demo: [{ id: "guitar-vault-lite-01", title: "Sampler 01", artist: "SLAPGOD · 100 BPM · C min", cover: "", src: guitar(1) }],
   }),
   withCover({
     placeholder: true,

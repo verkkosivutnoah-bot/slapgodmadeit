@@ -67,7 +67,7 @@ Why these numbers: market range 2026 for independent producers roughly MP3 $20�
 
 | Product | Content | Price |
 |---|---|---|
-| Free "Guitar Vault Lite" | 5 loops (email-gated teaser) | Free |
+| Free "Vault Sampler" | 5 loops (email-gated teaser) | Free |
 | Mini loop kit | 15–20 loops | €19 / $19 |
 | Drum kit | one-shots + drum loops | €24 / $24 |
 | Standard loop pack | 30–40 loops | €29 / $29 |

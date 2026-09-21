@@ -58,7 +58,7 @@ export const SPLIT_SHEET_URL = "/downloads/split-sheet.pdf"; // placeholder temp
 export const faqs: { q: string; a: string }[] = [
   {
     q: "Can I use a free loop commercially?",
-    a: "Yes. Free loops (like Guitar Vault Lite) follow the same loop license: royalty-free in your productions, with a 25% publishing split for SLAPGOD if a song using them is commercially released or placed.",
+    a: "Yes. Free loops (like Vault Sampler) follow the same loop license: royalty-free in your productions, with a 25% publishing split for SLAPGOD if a song using them is commercially released or placed.",
   },
   {
     q: "Do I own my song?",

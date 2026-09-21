@@ -13,7 +13,7 @@ export function FreeDownloads() {
     <div className="container-sg">
       <section aria-labelledby="lite-title" className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20">
         <Reveal>
-          <MusicPlayer id="free-lite" label="Guitar Vault Lite preview" tracks={lite.demo} />
+          <MusicPlayer id="free-lite" label="Vault Sampler preview" tracks={lite.demo} />
         </Reveal>
         <Reveal delay={0.1}>
           <p className="eyebrow">
@@ -29,7 +29,7 @@ export function FreeDownloads() {
               source="free_page_guitar_vault_lite"
               cta="Send me the loops"
               successTitle="You're in — check your inbox"
-              successText="Guitar Vault Lite is on its way to your inbox. Nothing arrives? Check spam."
+              successText="Vault Sampler is on its way to your inbox. Nothing arrives? Check spam."
             />
           </div>
           <p className="mt-6 text-[12px] leading-relaxed text-mute">
