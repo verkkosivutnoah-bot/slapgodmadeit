@@ -75,7 +75,7 @@ export function EmailPopup() {
           10 <span className="text-grad pr-[0.06em] italic">free</span> loops
         </h2>
         <p className="mx-auto mt-3 max-w-sm text-[15px] leading-relaxed text-stone-300">
-          Vault Sampler — ten live guitar loops. Email required; the download link lands in your inbox right away. The download is yours.
+          Vault Sampler — ten original sounds. Email required; the download link lands in your inbox right away. The download is yours.
         </p>
         <div className="mt-7 text-left">
           <EmailCaptureForm

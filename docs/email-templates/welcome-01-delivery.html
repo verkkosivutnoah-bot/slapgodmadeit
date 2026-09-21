@@ -1,7 +1,6 @@
-<!-- SLAPGOD — welcome email 1 (delivery). Paste into Klaviyo: Templates → Create → Code/HTML.
-     Klaviyo tags: {{ person.sg_free_kit_url }}, {% unsubscribe %}, {{ organization.* }}.
-     Gradients: CSS gradient + solid fallback everywhere, VML gradient for Outlook desktop.
-     Tables + inline styles on purpose — Outlook and Gmail ignore most modern CSS. -->
+<!-- SLAPGOD — welcome email 1 (delivery of the free Vault Sampler).
+     Klaviyo: Templates → Create → Code/HTML. Tags: {{ person.sg_free_kit_url }}, {% unsubscribe %}, {{ organization.* }}.
+     Tables + inline styles on purpose. Gradients always ship with a solid fallback; Outlook gets VML. -->
 <!doctype html>
 <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
   <head>
@@ -10,7 +9,7 @@
     <meta name="x-apple-disable-message-reformatting" />
     <meta name="color-scheme" content="dark" />
     <meta name="supported-color-schemes" content="dark" />
-    <title>Your guitar loops</title>
+    <title>Your sounds are ready</title>
     <!--[if mso]>
       <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
     <![endif]-->
@@ -19,10 +18,10 @@
       body { margin: 0; padding: 0; width: 100% !important; background: #1c1917; }
       a { color: #ff8a3d; }
       @media only screen and (max-width: 620px) {
-        .sg-card { padding: 28px 22px !important; }
-        .sg-h1 { font-size: 34px !important; line-height: 1.08 !important; }
+        .sg-pad { padding: 30px 24px !important; }
+        .sg-h1 { font-size: 36px !important; }
+        .sg-num { font-size: 64px !important; }
         .sg-btn a { display: block !important; }
-        .sg-specs td { display: block !important; width: 100% !important; padding: 6px 0 !important; }
       }
     </style>
   </head>
@@ -30,138 +29,152 @@
   <body style="margin:0;padding:0;background:#1c1917;">
     <!-- preview text -->
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">
-      Download link inside · 100 BPM · C minor · royalty-free in your beats
+      Your download link is inside — royalty-free, ready to drop into your next beat.
       &#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;
     </div>
 
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#1c1917;">
       <tr>
-        <td align="center" style="padding:32px 12px 48px;">
+        <td align="center" style="padding:36px 12px 52px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;max-width:600px;">
 
             <!-- wordmark -->
             <tr>
-              <td align="center" style="padding:8px 0 20px;">
-                <span style="font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:22px;font-weight:700;letter-spacing:0.14em;color:#faf9f7;text-transform:uppercase;">
-                  SLAP<span style="color:#ff5a3c;">G</span><span style="color:#ff8a3d;">O</span><span style="color:#ffb547;">D</span>
+              <td align="center" style="padding:0 0 26px;">
+                <span style="font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:20px;font-weight:700;letter-spacing:0.3em;color:#faf9f7;text-transform:uppercase;">
+                  SLAPGOD
                 </span>
+              </td>
+            </tr>
+
+            <!-- hero card -->
+            <tr>
+              <td bgcolor="#0c0a09" class="sg-pad" style="background-color:#0c0a09;background-image:linear-gradient(155deg,#1b100e 0%,#0c0a09 58%);border:1px solid rgba(255,255,255,0.07);border-radius:26px;padding:44px 44px 12px;">
+
+                <!-- oversized numeral -->
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                  <tr>
+                    <td valign="top" width="120" style="padding:0 18px 0 0;">
+                      <div class="sg-num" style="font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:86px;line-height:0.82;font-weight:700;color:#ff5a3c;">10</div>
+                      <div style="font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#a8a29e;padding-top:10px;">
+                        sounds
+                      </div>
+                    </td>
+                    <td valign="top">
+                      <p style="margin:0 0 10px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:#ffb547;">
+                        Vault Sampler
+                      </p>
+                      <h1 class="sg-h1" style="margin:0 0 14px;font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:40px;line-height:1.04;font-weight:700;color:#faf9f7;">
+                        They're <span style="color:#ff8a3d;">yours</span>.
+                      </h1>
+                      <p style="margin:0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#d6d3d1;">
+                        A free cut from the Vault — original sounds, made from scratch.
+                        Nothing sampled, nothing to clear.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- button -->
+                <table role="presentation" class="sg-btn" cellpadding="0" cellspacing="0" border="0" style="margin:30px 0 4px;">
+                  <tr>
+                    <td align="center" bgcolor="#ff5a3c" style="border-radius:999px;background-color:#ff5a3c;background-image:linear-gradient(110deg,#ff5a3c 0%,#ff8a3d 55%,#ffb547 100%);">
+                      <!--[if mso]>
+                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+                          href="{{ person.sg_free_kit_url }}" style="height:54px;v-text-anchor:middle;width:250px;" arcsize="50%" stroke="f">
+                          <v:fill type="gradient" color="#ff5a3c" color2="#ffb547" angle="270" />
+                          <w:anchorlock/>
+                          <center style="color:#0c0a09;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;">Download now</center>
+                        </v:roundrect>
+                      <![endif]-->
+                      <!--[if !mso]><!-- -->
+                      <a href="{{ person.sg_free_kit_url }}"
+                         style="display:inline-block;padding:17px 38px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;font-weight:600;color:#0c0a09;text-decoration:none;border-radius:999px;">
+                        Download now
+                      </a>
+                      <!--<![endif]-->
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin:0 0 30px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;color:#78716c;">
+                  Your personal link — good for 30 days.
+                </p>
+              </td>
+            </tr>
+
+            <!-- three points -->
+            <tr>
+              <td style="padding:14px 6px 0;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                  <tr>
+                    <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#d6d3d1;">
+                      <span style="color:#ff5a3c;font-weight:700;">&#9656;</span>&nbsp;&nbsp;Use them in anything you make — released, sold or licensed.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#d6d3d1;">
+                      <span style="color:#ff8a3d;font-weight:700;">&#9656;</span>&nbsp;&nbsp;Credit me as <span style="color:#faf9f7;">Prod. by SLAPGOD</span> and tag <span style="color:#faf9f7;">@slapgodmadeit</span>.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#d6d3d1;">
+                      <span style="color:#ffb547;font-weight:700;">&#9656;</span>&nbsp;&nbsp;Release a song built on them and 25% of the publishing comes back to me —
+                      <a href="https://slapgodmadeit.vercel.app/licenses" style="color:#ff8a3d;">the terms</a>.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- upsell -->
+            <tr>
+              <td style="padding:30px 0 0;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#3a2420;background-image:linear-gradient(120deg,rgba(255,90,60,0.5),rgba(169,139,255,0.45));border-radius:22px;">
+                  <tr>
+                    <td style="padding:1px;">
+                      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                        <tr>
+                          <td bgcolor="#140f0e" class="sg-pad" style="background-color:#140f0e;background-image:linear-gradient(150deg,#1d1311 0%,#0f0b0a 60%);border-radius:21px;padding:30px 32px;">
+                            <p style="margin:0 0 10px;font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:26px;line-height:1.15;font-weight:700;color:#faf9f7;">
+                              The rest of the <span style="color:#ffb547;">Vault</span>
+                            </p>
+                            <p style="margin:0 0 20px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#d6d3d1;">
+                              Guitar Vault Vol. 1 — 50 loops and one-shots, wet and dry, every file labelled and ready to drag in.
+                            </p>
+                            <a href="https://slapgodmadeit.vercel.app/packs/guitar-vault-vol-1"
+                               style="display:inline-block;padding:13px 28px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#faf9f7;text-decoration:none;border:1px solid rgba(255,255,255,0.22);border-radius:999px;">
+                              Take a listen →
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- sign-off -->
+            <tr>
+              <td style="padding:30px 6px 0;">
+                <p style="margin:0;font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:19px;line-height:1.5;color:#d6d3d1;font-style:italic;">
+                  Make something with them and send it my way — I listen to everything.
+                </p>
+                <p style="margin:10px 0 0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;color:#a8a29e;">
+                  — SLAPGOD
+                </p>
               </td>
             </tr>
 
             <!-- gradient hairline -->
             <tr>
-              <td bgcolor="#ff5a3c" height="3" style="height:3px;line-height:3px;font-size:0;border-radius:3px;background-color:#ff5a3c;background-image:linear-gradient(120deg,#ff5a3c 0%,#ff8a3d 35%,#ffb547 55%,#a98bff 100%);">&nbsp;</td>
-            </tr>
-
-            <!-- gradient card border: outer cell paints the gradient, inner table is the dark card -->
-            <tr>
-              <td style="padding:0;background-color:#3a2420;background-image:linear-gradient(140deg,rgba(255,90,60,0.55),rgba(255,181,71,0.35) 45%,rgba(169,139,255,0.5));border-radius:24px;">
-                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:1px;width:calc(100% - 2px);">
-                  <tr>
-                    <td class="sg-card" bgcolor="#0c0a09" style="background-color:#0c0a09;background-image:linear-gradient(160deg,#150e0d 0%,#0c0a09 55%);border-radius:23px;padding:40px 40px 36px;">
-
-                      <p style="margin:0 0 18px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:#ffb547;">
-                        Vault Sampler
-                      </p>
-
-                      <h1 class="sg-h1" style="margin:0 0 18px;font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:42px;line-height:1.05;font-weight:700;color:#faf9f7;">
-                        Your <span style="color:#ff5a3c;">loops</span><br />are <span style="color:#ffb547;">ready</span>.
-                      </h1>
-
-                      <p style="margin:0 0 14px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.65;color:#d6d3d1;">
-                        Ten live guitar loops, played by hand and recorded this week. No samples, nothing to clear —
-                        drop them in, chop them, pitch them, make them yours.
-                      </p>
-
-                      <p style="margin:0 0 30px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.65;color:#d6d3d1;">
-                        The link below is yours and works for 30 days.
-                      </p>
-
-                      <!-- gradient button -->
-                      <table role="presentation" class="sg-btn" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
-                        <tr>
-                          <td align="center" bgcolor="#ff5a3c" style="border-radius:999px;background-color:#ff5a3c;background-image:linear-gradient(110deg,#ff5a3c 0%,#ff8a3d 55%,#ffb547 100%);">
-                            <!--[if mso]>
-                              <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
-                                href="{{ person.sg_free_kit_url }}" style="height:52px;v-text-anchor:middle;width:268px;" arcsize="50%" stroke="f">
-                                <v:fill type="gradient" color="#ff5a3c" color2="#ffb547" angle="270" />
-                                <w:anchorlock/>
-                                <center style="color:#0c0a09;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:bold;">Download the loops</center>
-                              </v:roundrect>
-                            <![endif]-->
-                            <!--[if !mso]><!-- -->
-                            <a href="{{ person.sg_free_kit_url }}"
-                               style="display:inline-block;padding:16px 34px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;font-weight:600;color:#0c0a09;text-decoration:none;border-radius:999px;">
-                              Download the loops
-                            </a>
-                            <!--<![endif]-->
-                          </td>
-                        </tr>
-                      </table>
-
-                      <!-- specs -->
-                      <table role="presentation" class="sg-specs" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-top:1px solid rgba(255,255,255,0.08);">
-                        <tr>
-                          <td width="33%" style="padding:18px 8px 0 0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;color:#a8a29e;">
-                            <span style="color:#ff5a3c;font-weight:600;">10 loops</span><br />WAV, tempo-synced
-                          </td>
-                          <td width="33%" style="padding:18px 8px 0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;color:#a8a29e;">
-                            <span style="color:#ff8a3d;font-weight:600;">100 BPM</span><br />C minor
-                          </td>
-                          <td width="33%" style="padding:18px 0 0 8px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;color:#a8a29e;">
-                            <span style="color:#ffb547;font-weight:600;">Royalty-free</span><br />in your productions
-                          </td>
-                        </tr>
-                      </table>
-
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-
-            <!-- terms -->
-            <tr>
-              <td style="padding:22px 6px 0;">
-                <p style="margin:0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.7;color:#a8a29e;">
-                  <span style="color:#faf9f7;font-weight:600;">Credit:</span> Prod. by SLAPGOD (@slapgodmadeit)<br />
-                  <span style="color:#faf9f7;font-weight:600;">Publishing:</span> release a song built on these loops and 25% of the
-                  composition comes back to me — <a href="https://slapgodmadeit.vercel.app/licenses" style="color:#ff8a3d;">full terms</a>.
-                </p>
-              </td>
-            </tr>
-
-            <!-- upsell, gradient edge -->
-            <tr>
-              <td style="padding:26px 0 0;">
-                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#3a2420;background-image:linear-gradient(120deg,rgba(255,90,60,0.5),rgba(169,139,255,0.45));border-radius:20px;">
-                  <tr>
-                    <td style="padding:1px;">
-                      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                        <tr>
-                          <td bgcolor="#140f0e" style="background-color:#140f0e;background-image:linear-gradient(150deg,#1d1311 0%,#0f0b0a 60%);border-radius:19px;padding:26px 28px;">
-                            <p style="margin:0 0 8px;font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;color:#faf9f7;">
-                              Want the <span style="color:#ffb547;">whole Vault</span>?
-                            </p>
-                            <p style="margin:0 0 16px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#d6d3d1;">
-                              Guitar Vault Vol. 1 — 50 loops plus one-shots, wet and dry, every key labelled.
-                            </p>
-                            <a href="https://slapgodmadeit.vercel.app/packs/guitar-vault-vol-1"
-                               style="display:inline-block;padding:13px 26px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#faf9f7;text-decoration:none;border:1px solid rgba(255,255,255,0.22);border-radius:999px;">
-                              See the pack →
-                            </a>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </td>
+              <td bgcolor="#ff5a3c" height="2" style="height:2px;line-height:2px;font-size:0;margin-top:30px;border-radius:2px;background-color:#ff5a3c;background-image:linear-gradient(120deg,#ff5a3c 0%,#ff8a3d 35%,#ffb547 55%,#a98bff 100%);">&nbsp;</td>
             </tr>
 
             <!-- footer -->
             <tr>
-              <td align="center" style="padding:34px 10px 0;">
+              <td align="center" style="padding:26px 10px 0;">
                 <p style="margin:0 0 12px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;color:#a8a29e;">
                   <a href="https://instagram.com/slapgodmadeit" style="color:#d6d3d1;text-decoration:none;">Instagram</a>
                   &nbsp;·&nbsp;
@@ -170,7 +183,7 @@
                   <a href="https://slapgodmadeit.vercel.app/packs" style="color:#d6d3d1;text-decoration:none;">Packs</a>
                 </p>
                 <p style="margin:0 0 8px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#78716c;">
-                  You're getting this because you asked for the free loops at slapgodmadeit.com.<br />
+                  You asked for the free sounds at slapgodmadeit.com.<br />
                   {{ organization.name }} · {{ organization.full_address }}
                 </p>
                 <p style="margin:0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;color:#78716c;">
