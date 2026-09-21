@@ -18,7 +18,7 @@ body copy, button and the block above the footer. Everything else (wordmark, car
 |---|---|
 | `{{ person.sg_free_kit_url }}` | The signed 30-day download link generated per subscriber by the site |
 | `{% unsubscribe %}` | Unsubscribe link (legally required) |
-| `{{ organization.name }}` / `{{ organization.full_address }}` | Pulled from Klaviyo account settings — fill those in or the footer renders empty |
+| `{{ organization.name }}` | Pulled from Klaviyo account settings |
 
 ## Swap the domain later
 
@@ -53,4 +53,6 @@ The file links to `slapgodmadeit.vercel.app`. When the real domain is live, find
   to block.
 - Never send a single big image with the text baked in.
 - Keep the unsubscribe link visible; don't shrink it to 8px grey-on-grey.
-- The footer address is not optional (CAN-SPAM, and EU rules for commercial mail).
+- **Postal address:** removed from the template at the owner's request. A physical address in
+  commercial email is legally required (US CAN-SPAM; EU e-commerce/consumer rules) and Klaviyo may
+  append or demand one anyway. Use the Tampere business-address service — never the home address.
