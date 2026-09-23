@@ -265,6 +265,42 @@ def append_to_catalog(entry: str) -> None:
     BEATS_TS.write_text(src[:at] + "\n" + entry + src[at:])
 
 
+def write_all(i: Ingest, extras: dict[str, Path], cover: Path | None,
+              conf: float, alts: list[str]) -> dict:
+    """Encode the preview, copy the private files, write meta.json, append the catalog entry."""
+    preview = PUBLIC_AUDIO / f"{i.slug}.m4a"
+    build_preview(i.master, preview, TAG_FILE)
+
+    priv = PRIVATE_BEATS / i.slug
+    priv.mkdir(parents=True, exist_ok=True)
+    for f in extras.values():
+        shutil.copy2(f, priv / f.name)
+
+    cover_out = None
+    if cover:
+        dest = WEB / "public" / "covers" / "beats" / f"{i.slug}{cover.suffix.lower()}"
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(cover, dest)
+        cover_out = str(dest.relative_to(WEB))
+
+    meta = {
+        "slug": i.slug, "title": i.title, "bpm": i.bpm, "bpmSource": i.bpm_source,
+        "key": i.key, "keyConfidence": round(conf, 3), "keyAlternatives": alts,
+        "genre": i.genre, "moods": i.moods, "tags": i.tags,
+        "hashtags": i.hashtags, "caption": i.caption,
+        "sourceFiles": {k: v.name for k, v in extras.items()},
+    }
+    (priv / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
+
+    append_to_catalog(ts_entry(i))
+    return {
+        "published": True,
+        "preview": str(preview.relative_to(WEB)),
+        "private": str(priv.relative_to(WEB)),
+        "coverWritten": cover_out,
+    }
+
+
 # ------------------------------------------------------------------- main
 
 def main() -> None:
@@ -277,6 +313,10 @@ def main() -> None:
     ap.add_argument("--moods", help="comma-separated, e.g. Dark,Hypnotic")
     ap.add_argument("--tags", help="comma-separated descriptors, e.g. bells,808 glide")
     ap.add_argument("--yes", action="store_true", help="don't ask anything, take the defaults")
+    ap.add_argument("--json", action="store_true", help="machine-readable output, never prompts (used by the admin dashboard)")
+    ap.add_argument("--key", help="override the detected key, e.g. 'F min'")
+    ap.add_argument("--bpm", type=int, help="override the BPM")
+    ap.add_argument("--price", type=int, default=29, help="lease price floor shown on the card")
     args = ap.parse_args()
 
     folder = Path(os.path.expanduser(args.folder)).resolve()
@@ -306,7 +346,14 @@ def main() -> None:
     moods = [m.strip() for m in args.moods.split(",")] if args.moods else ["Dark"]
     tags = [t.strip() for t in args.tags.split(",")] if args.tags else []
 
-    if not args.yes and sys.stdin.isatty():
+    if args.key:
+        key = args.key
+        conf = 1.0
+    if args.bpm:
+        bpm = args.bpm
+        bpm_source = "override"
+
+    if not args.yes and not args.json and sys.stdin.isatty():
         genre = pick("Genre?", GENRES, genre)
         moods = pick_many("Moods?", MOODS, moods)
         raw = input("\nDescriptors (comma-separated, e.g. bells, 808 glide)\n> ").strip()
@@ -315,6 +362,22 @@ def main() -> None:
 
     ing = Ingest(folder, master, slug, title, bpm, bpm_source, key, conf, alts, duration,
                  genre, moods, tags or ["beat"], extras, cover)
+
+    if args.json:
+        payload = {
+            "slug": ing.slug, "title": ing.title, "bpm": ing.bpm, "bpmSource": ing.bpm_source,
+            "key": ing.key, "keyConfidence": round(conf, 3), "keyAlternatives": alts,
+            "duration": round(duration, 2), "durationLabel": fmt_duration(min(duration, PREVIEW_SECONDS)),
+            "genre": ing.genre, "moods": ing.moods, "tags": ing.tags,
+            "hashtags": ing.hashtags, "caption": ing.caption,
+            "files": {k: v.name for k, v in extras.items()},
+            "cover": cover.name if cover else None,
+            "entry": ts_entry(ing),
+        }
+        if args.publish:
+            payload.update(write_all(ing, extras, cover, conf, alts))
+        print(json.dumps(payload, ensure_ascii=False))
+        return
 
     conf_note = "" if conf >= 0.6 else "  ⚠ low confidence — check this one"
     print(f"""
@@ -340,29 +403,8 @@ def main() -> None:
         print("Dry run. Nothing written. Re-run with --publish when it looks right.\n")
         return
 
-    # --- write
-    preview = PUBLIC_AUDIO / f"{ing.slug}.m4a"
     print("  encoding preview…")
-    build_preview(master, preview, TAG_FILE)
-
-    priv = PRIVATE_BEATS / ing.slug
-    priv.mkdir(parents=True, exist_ok=True)
-    for f in extras.values():
-        shutil.copy2(f, priv / f.name)
-    if cover:
-        dest = WEB / "public" / "covers" / "beats" / f"{ing.slug}{cover.suffix.lower()}"
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(cover, dest)
-
-    (priv / "meta.json").write_text(json.dumps({
-        "slug": ing.slug, "title": ing.title, "bpm": ing.bpm, "bpmSource": ing.bpm_source,
-        "key": ing.key, "keyConfidence": round(conf, 3), "keyAlternatives": alts,
-        "genre": ing.genre, "moods": ing.moods, "tags": ing.tags,
-        "hashtags": ing.hashtags, "caption": ing.caption,
-        "sourceFiles": {k: v.name for k, v in extras.items()},
-    }, indent=2, ensure_ascii=False))
-
-    append_to_catalog(ts_entry(ing))
+    write_all(ing, extras, cover, conf, alts)
 
     print(f"""
 ✓ Published locally.

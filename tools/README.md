@@ -67,47 +67,21 @@ Vercel deploys on push.
 
 ---
 
-# Beat bot (Telegram)
+# Admin dashboard (recommended)
 
-Same idea, no terminal: send the beat to a bot, answer two taps, it's on the site.
+Same pipeline with a UI: **http://localhost:3000/admin** while `npm run dev` is running.
 
-```
-you ──mp3──▶ bot ──▶ key detected ──▶ [genre?] ──▶ [moods?] ──▶ [Publish]
-                                                                  │
-                        preview + catalog entry + build + push ◀──┘
-                                                                  │
-                        live URL + caption to paste ◀─────────────┘
-```
+Drop a beat in → it shows the detected key (with confidence), the BPM and the file list →
+edit anything → tap genre and moods → **Publish & deploy**.
 
-## Setup (once)
-
-1. **@BotFather** → `/newbot` → make a *separate* bot from the loop bot, e.g. `@slapgod_beats_bot`.
-   Copy the token.
-2. `cp tools/.env.example tools/.env` and paste the token into `BEAT_BOT_TOKEN`.
-3. Start the bot, send it `/id`, put the number in `OWNER_IDS`.
-4. Leave `TEST_MODE=true` until you have published one beat happily — it builds but never pushes.
-
-## Run
+It's a local tool: the page and its API routes 404 in production, because publishing writes
+into the repo, shells out to Python and uses your git credentials.
 
 ```bash
-cd "/Users/noahtuokkola/Desktop/Slapgod Website"
-telegram-loop-bot/.venv/bin/python tools/beat_bot.py
+cd "/Users/noahtuokkola/Desktop/Slapgod Website/web" && npm run dev
+# then open http://localhost:3000/admin
 ```
 
-It runs on your Mac, because publishing needs the repo, `npm run build` and your git
-credentials. Close the terminal and the bot stops.
+Leave "Commit and push" unticked to publish locally and look before deploying.
 
-## Using it
-
-Send an mp3 **with the BPM in the filename** — `Midnight Ritual 140bpm.mp3`. Without it the
-bot refuses rather than guessing. Then tap a genre, tap any moods, tap Publish.
-
-## Limits worth knowing
-
-- **20 MB.** Telegram won't hand a bot anything bigger, so send mp3s. The bot replies with the
-  folder to drop the WAV and stems into (`web/private/beats/<slug>/`) — they never need to
-  travel through Telegram.
-- **Title comes from the filename.** Rename before sending if you want something else.
-- **Descriptors default to "beat".** Edit the line in `beats.ts` if you want better ones.
-- **Key detection is good, not perfect.** Under 0.60 confidence the bot shows a warning and its
-  next guesses.
+---
