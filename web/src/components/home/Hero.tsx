@@ -46,9 +46,9 @@ export function Hero() {
         <LineReveal
           id="hero-title"
           lines={[
-            "Guitar loops and beats,",
+            "Loops and beats",
             <>
-              made <span className="text-grad-anim pr-[0.04em] italic">by hand</span>
+              by <span className="text-grad-anim pr-[0.04em] italic">SLAPGOD</span>
             </>,
           ]}
           className="display text-[clamp(40px,6.6vw,80px)] leading-[1.02]"
