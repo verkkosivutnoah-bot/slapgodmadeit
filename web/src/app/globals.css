@@ -836,3 +836,60 @@ body:has(.dock.is-visible) .buybar {
 }
 .legal th { color: var(--color-bone); font-weight: 600; }
 .legal .table-wrap { overflow-x: auto; }
+
+/* ------------------------------------------------------------ scroll row (mouse-friendly) */
+.scroll-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  padding: 16px 4px 18px;
+  cursor: grab;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--coral-rgb) / 0.55) transparent;
+}
+.scroll-row::-webkit-scrollbar { height: 6px; }
+.scroll-row::-webkit-scrollbar-track { background: transparent; }
+.scroll-row::-webkit-scrollbar-thumb { background: rgb(var(--coral-rgb) / 0.45); border-radius: 999px; }
+.scroll-row::-webkit-scrollbar-thumb:hover { background: rgb(var(--coral-rgb) / 0.8); }
+.scroll-row > * { scroll-snap-align: start; flex-shrink: 0; }
+.scroll-row.is-dragging { scroll-snap-type: none; cursor: grabbing; }
+.scroll-row.is-dragging * { pointer-events: none; user-select: none; }
+.scroll-row:focus-visible { outline: 2px solid var(--color-coral); outline-offset: 4px; border-radius: 24px; }
+
+/* fade the edge that still has content behind it */
+.scroll-row-wrap::before,
+.scroll-row-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 18px;
+  width: 56px;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.3s;
+}
+.scroll-row-wrap::before { left: 0; background: linear-gradient(90deg, var(--color-ink), transparent); }
+.scroll-row-wrap::after { right: 0; background: linear-gradient(270deg, var(--color-ink), transparent); }
+.scroll-row-wrap[data-start="true"]::before,
+.scroll-row-wrap[data-end="true"]::after { opacity: 0; }
+
+.scroll-row-btn {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  border-radius: 999px;
+  border: 1px solid var(--color-line);
+  background: rgb(var(--surface-rgb) / 0.95);
+  color: var(--color-bone);
+  box-shadow: 0 10px 30px -10px rgb(0 0 0 / 0.8);
+  transition: background-color 0.25s, color 0.25s, transform 0.25s;
+}
+.scroll-row-btn:hover { background: var(--color-coral); color: #0c0a09; transform: scale(1.06); }
+@media (hover: none) { .scroll-row-btn { display: none; } }

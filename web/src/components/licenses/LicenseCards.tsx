@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { CountUp, EASE, VIEWPORT, useOffscreenPause } from "@/components/ui/motion";
 import { PillTabs } from "@/components/ui/PillTabs";
+import { ScrollRow } from "@/components/ui/ScrollRow";
 import { CheckIcon } from "@/components/ui/Icons";
 import { licenseDeals, leaseTerms, licenseTiers, loopLicenseSummary, TABLE_ROWS } from "@/data/licenses";
 import { useCurrency } from "@/lib/currency";
@@ -27,8 +28,8 @@ export function LicenseCards({ ctaHref = "/beats", withTabs = true }: { ctaHref?
       <AnimatePresence mode="wait" initial={false}>
         {tab === "beats" ? (
           <motion.div key="beats" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.4, ease: EASE }}>
-            {/* mobile: horizontal snap row · desktop: 5 columns */}
-            <div className="snap-x-row -mx-4 scroll-px-4 px-4 pb-2 pt-4 lg:mx-0 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-visible lg:px-0">
+            {/* one horizontal row at every width: swipe, drag, arrows or scrollbar */}
+            <ScrollRow label="Beat license tiers">
               {licenseTiers.map((t, i) => (
                 <motion.div
                   key={t.id}
@@ -36,7 +37,7 @@ export function LicenseCards({ ctaHref = "/beats", withTabs = true }: { ctaHref?
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={VIEWPORT}
                   transition={{ duration: 0.7, ease: EASE, delay: i * 0.07 }}
-                  className="w-[78vw] max-w-[300px] shrink-0 sm:w-[280px] lg:w-auto lg:max-w-none"
+                  className="w-[78vw] max-w-[300px] shrink-0 sm:w-[290px]"
                 >
                 <div className={`card-lift h-full rounded-[24px] ${t.popular ? "grad-ring" : ""}`}>
                   <article
@@ -82,7 +83,7 @@ export function LicenseCards({ ctaHref = "/beats", withTabs = true }: { ctaHref?
                 </div>
                 </motion.div>
               ))}
-            </div>
+            </ScrollRow>
             <div className="mt-8 flex flex-col gap-5 border-t border-line pt-8 md:flex-row md:items-start md:justify-between">
               <ul className="grid grid-cols-1 gap-x-10 gap-y-2 text-[14px] text-stone-400 sm:grid-cols-2">
                 {leaseTerms.map((l) => (
