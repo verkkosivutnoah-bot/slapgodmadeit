@@ -23,6 +23,21 @@ function sign(kit: string, exp: number) {
   return createHmac("sha256", secret()).update(`${kit}.${exp}`).digest("hex");
 }
 
+/**
+ * Full-length tagged beat, free after an email. Lives in web/private/beats/<slug>/,
+ * so it is only reachable through a signed link like the free kits.
+ */
+export const TAGGED_PREFIX = "beat:";
+export const TAGGED_TTL_DAYS = 7;
+
+export function taggedKitId(slug: string) {
+  return `${TAGGED_PREFIX}${slug}`;
+}
+
+export function taggedFileFor(slug: string) {
+  return { file: `beats/${slug}/${slug}-tagged.m4a`, filename: `${slug}-tagged-SLAPGOD.m4a` };
+}
+
 export function signedDownloadPath(kit: string, ttlDays = LINK_TTL_DAYS) {
   const exp = Math.floor(Date.now() / 1000) + ttlDays * DAY;
   return `/api/download?kit=${encodeURIComponent(kit)}&exp=${exp}&sig=${sign(kit, exp)}`;
@@ -31,6 +46,15 @@ export function signedDownloadPath(kit: string, ttlDays = LINK_TTL_DAYS) {
 export function signedDownloadUrl(kit: string, ttlDays = LINK_TTL_DAYS) {
   const base = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/, "");
   return `${base}${signedDownloadPath(kit, ttlDays)}`;
+}
+
+/** Free kits by id, plus any beat's tagged file. */
+export function resolveKit(kit: string) {
+  if (kit.startsWith(TAGGED_PREFIX)) {
+    const slug = kit.slice(TAGGED_PREFIX.length);
+    return /^[a-z0-9-]+$/.test(slug) ? taggedFileFor(slug) : undefined;
+  }
+  return KITS[kit];
 }
 
 export function verify(kit: string, exp: string | null, sig: string | null): { ok: true } | { ok: false; reason: "bad" | "expired" } {

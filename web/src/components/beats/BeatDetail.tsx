@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import { MusicPlayer } from "@/components/player/MusicPlayer";
 import { CoverBackdrop, CoverShowcase } from "@/components/ui/CoverShowcase";
 import { StickyBuyBar } from "@/components/ui/StickyBuyBar";
+import { FreeTaggedDownload } from "./FreeTaggedDownload";
 import { EASE, LineReveal, Reveal, Rise, Stagger, StaggerItem } from "@/components/ui/motion";
 import { CheckIcon } from "@/components/ui/Icons";
 import { BeatRow, TrackListHeader } from "./BeatRow";
@@ -81,6 +82,7 @@ export function BeatDetail({ slug }: { slug: string }) {
               </Rise>
               <Rise delay={0.3} className="mt-10">
                 <MusicPlayer id={`beat-${beat.slug}`} label={`${beat.title} preview`} tracks={tracks} />
+                <FreeTaggedDownload slug={beat.slug} title={beat.title} />
               </Rise>
             </div>
           </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
+import { cartTotals } from "@/lib/pricing";
 import { useCurrency } from "@/lib/currency";
 import { licenseDeals } from "@/data/licenses";
 import { ArrowIcon, CloseIcon } from "@/components/ui/Icons";
@@ -15,11 +16,8 @@ export function CartView() {
   const [agree, setAgree] = useState(false);
   const [notice, setNotice] = useState("");
 
-  // "Buy 2 leases get 1 free": cheapest lease free for every 3 leases (display only — enforce server-side).
-  const leases = cart.items.filter((i) => i.kind === "beat").sort((a, b) => a.priceEUR - b.priceEUR);
-  const freeCount = Math.floor(leases.length / 3);
-  const discount = leases.slice(0, freeCount).reduce((s, i) => s + i.priceEUR, 0);
-  const total = cart.subtotalEUR - discount;
+  // "Buy 2 leases get 1 free" — shared with the checkout route so both agree (lib/pricing).
+  const { discount, total, freeKeys, leasesToNextFree } = cartTotals(cart.items);
 
   async function checkout() {
     if (!agree) {
@@ -55,6 +53,11 @@ export function CartView() {
   return (
     <div className="container-sg grid grid-cols-1 gap-10 pb-24 lg:grid-cols-[1.5fr_1fr] lg:gap-14 lg:pb-0">
       <section aria-label="Cart items">
+        {leasesToNextFree > 0 && (
+          <p className="mb-5 rounded-2xl border border-amber/30 bg-amber/[0.06] px-5 py-3 text-[14px] text-amber">
+            Add {leasesToNextFree} more lease{leasesToNextFree === 1 ? "" : "s"} and the cheapest one is free.
+          </p>
+        )}
         <ul className="border-t border-line">
           <AnimatePresence initial={false}>
             {cart.items.map((i) => (
@@ -76,7 +79,14 @@ export function CartView() {
                   </Link>
                   <p className="mt-0.5 text-[13px] text-mute">{i.variant ?? (i.kind === "beat" ? "Beat lease" : "Pack")}</p>
                 </div>
-                <p className="text-[17px] font-semibold tabular-nums text-coral">{format(i.priceEUR)}</p>
+                {freeKeys.includes(i.key) ? (
+                  <p className="text-right">
+                    <span className="block text-[12px] font-semibold uppercase tracking-[0.14em] text-amber">Free</span>
+                    <s className="text-[14px] tabular-nums text-mute">{format(i.priceEUR)}</s>
+                  </p>
+                ) : (
+                  <p className="text-[17px] font-semibold tabular-nums text-coral">{format(i.priceEUR)}</p>
+                )}
                 <button
                   type="button"
                   onClick={() => cart.remove(i.key)}
@@ -89,10 +99,7 @@ export function CartView() {
             ))}
           </AnimatePresence>
         </ul>
-        <p className="mt-5 text-[13px] text-mute">
-          {licenseDeals.bundle}.{" "}
-          {leases.length > 0 && leases.length % 3 !== 0 && `Add ${3 - (leases.length % 3)} more lease${3 - (leases.length % 3) > 1 ? "s" : ""} to unlock a free one.`}
-        </p>
+        <p className="mt-5 text-[13px] text-mute">{licenseDeals.bundle}.</p>
       </section>
 
       <aside id="cart-summary" className="h-fit scroll-mt-24 rounded-[24px] border border-line bg-[radial-gradient(80%_60%_at_100%_0%,rgb(var(--lilac-rgb)/0.1),transparent_70%)] p-6 sm:p-8 lg:sticky lg:top-28" aria-labelledby="summary-title">

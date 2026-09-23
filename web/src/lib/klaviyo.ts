@@ -47,6 +47,35 @@ export function klaviyoConfigured() {
   return Boolean(process.env.KLAVIYO_PRIVATE_KEY && process.env.KLAVIYO_LIST_ID);
 }
 
+/** Create or update a profile with our own sg_* properties. */
+export async function upsertProfile(email: string, properties: Record<string, unknown>): Promise<SubscribeResult> {
+  if (!klaviyoConfigured()) return { status: "skipped" };
+  const r = await call("/profile-import/", {
+    data: { type: "profile", attributes: { email, properties } },
+  });
+  return r.ok ? { status: "ok" } : { status: "error", message: r.message };
+}
+
+/** Record a custom event (e.g. "Contact Request") you can build Klaviyo flows on. */
+export async function track(
+  metric: string,
+  email: string,
+  properties: Record<string, unknown>
+): Promise<SubscribeResult> {
+  if (!klaviyoConfigured()) return { status: "skipped" };
+  const r = await call("/events/", {
+    data: {
+      type: "event",
+      attributes: {
+        properties,
+        metric: { data: { type: "metric", attributes: { name: metric } } },
+        profile: { data: { type: "profile", attributes: { email } } },
+      },
+    },
+  });
+  return r.ok ? { status: "ok" } : { status: "error", message: r.message };
+}
+
 export async function subscribe({ email, source, consentText, consentAt, consentIp, downloadUrl }: SubscribeInput): Promise<SubscribeResult> {
   if (!klaviyoConfigured()) return { status: "skipped" };
 

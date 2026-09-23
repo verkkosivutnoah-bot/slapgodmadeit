@@ -212,13 +212,14 @@ def analyse(master: Path) -> tuple[str, float, list[str], int | None, float]:
 
 # ------------------------------------------------------------ audio output
 
-def build_preview(master: Path, out_m4a: Path, tag: Path | None) -> None:
-    """Preview with the producer tag mixed in every TAG_EVERY seconds → AAC .m4a."""
+def build_preview(master: Path, out_m4a: Path, tag: Path | None, seconds: float | None = PREVIEW_SECONDS) -> None:
+    """Tagged audio → AAC .m4a. `seconds=None` keeps the full length (free download)."""
     import numpy as np
     import soundfile as sf
 
     data, sr = sf.read(str(master), always_2d=True, dtype="float32")
-    data = data[: int(PREVIEW_SECONDS * sr)]
+    if seconds is not None:
+        data = data[: int(seconds * sr)]
 
     if tag and tag.exists():
         t, tsr = sf.read(str(tag), always_2d=True, dtype="float32")
@@ -273,6 +274,9 @@ def write_all(i: Ingest, extras: dict[str, Path], cover: Path | None,
 
     priv = PRIVATE_BEATS / i.slug
     priv.mkdir(parents=True, exist_ok=True)
+
+    # full-length tagged file: the free download people write their song on
+    build_preview(i.master, priv / f"{i.slug}-tagged.m4a", TAG_FILE, seconds=None)
     for f in extras.values():
         shutil.copy2(f, priv / f.name)
 
@@ -296,6 +300,7 @@ def write_all(i: Ingest, extras: dict[str, Path], cover: Path | None,
     return {
         "published": True,
         "preview": str(preview.relative_to(WEB)),
+        "taggedFull": str((priv / f"{i.slug}-tagged.m4a").relative_to(WEB)),
         "private": str(priv.relative_to(WEB)),
         "coverWritten": cover_out,
     }

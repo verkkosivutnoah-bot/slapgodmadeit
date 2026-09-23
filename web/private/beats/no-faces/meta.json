@@ -1,0 +1,36 @@
+{
+  "slug": "no-faces",
+  "title": "No Faces",
+  "bpm": 100,
+  "bpmSource": "override",
+  "key": "C# maj",
+  "keyConfidence": 1.0,
+  "keyAlternatives": [
+    "F minor",
+    "A# minor"
+  ],
+  "genre": "Drill",
+  "moods": [
+    "Dark",
+    "Aggressive"
+  ],
+  "tags": [
+    "ebk young joc type beat",
+    "piano",
+    "808"
+  ],
+  "hashtags": [
+    "slapgod",
+    "slapgodmadeit",
+    "drillbeat",
+    "ukdrill",
+    "darkbeats",
+    "hardbeats",
+    "100bpm",
+    "csharpmaj"
+  ],
+  "caption": "\"No Faces\" — 100 BPM · C# maj\nProd. by SLAPGOD (@slapgodmadeit)\nLease it: slapgodmadeit.vercel.app/beats/no-faces\n\n#slapgod #slapgodmadeit #drillbeat #ukdrill #darkbeats #hardbeats #100bpm #csharpmaj",
+  "sourceFiles": {
+    "mp3": "cali bounce 100bpm.mp3"
+  }
+}

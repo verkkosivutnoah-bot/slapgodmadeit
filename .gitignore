@@ -6,5 +6,10 @@ node_modules/
 !.env.example
 *.tsbuildinfo
 
-# ingested beat masters/stems stay local
-web/private/beats/
+# Ingested beat masters and stems stay local; the tagged free-download file ships
+# (it's the tagged version, and production needs it to serve /api/free-download).
+web/private/beats/*
+!web/private/beats/*/
+web/private/beats/*/*
+!web/private/beats/*/*-tagged.m4a
+!web/private/beats/*/meta.json

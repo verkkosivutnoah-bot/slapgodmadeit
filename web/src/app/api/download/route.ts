@@ -3,7 +3,7 @@ import { createReadStream, statSync } from "node:fs";
 import { join } from "node:path";
 import { Readable } from "node:stream";
 import type { ReadableStream as WebReadableStream } from "node:stream/web";
-import { KITS, verify } from "@/lib/downloads";
+import { resolveKit, verify } from "@/lib/downloads";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const kit = url.searchParams.get("kit") ?? "";
-  const entry = KITS[kit];
+  const entry = resolveKit(kit);
   if (!entry) return new Response("Not found", { status: 404 });
 
   const check = verify(kit, url.searchParams.get("exp"), url.searchParams.get("sig"));
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
   const stream = Readable.toWeb(createReadStream(path)) as WebReadableStream<Uint8Array>;
   return new Response(stream as unknown as BodyInit, {
     headers: {
-      "Content-Type": "application/zip",
+      "Content-Type": entry.file.endsWith(".zip") ? "application/zip" : "audio/mp4",
       "Content-Length": String(size),
       "Content-Disposition": `attachment; filename="${entry.filename}"`,
       "Cache-Control": "private, no-store",
