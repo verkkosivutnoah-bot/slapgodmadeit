@@ -9,10 +9,20 @@ export const seller = {
   city: "Tampere",
   country: "Finland",
   email: "[email TBD]",
+  handle: "@slapgodmadeit",
   instagram: "@slapgodmadeit",
   instagramUrl: "https://instagram.com/slapgodmadeit",
+  tiktokUrl: "https://tiktok.com/@slapgodmadeit",
+  youtubeUrl: "https://youtube.com/@slapgodmadeit",
 };
 
 export const sellerLine = `${seller.name} (${seller.legalForm}) · Business ID: ${seller.businessId} · ${seller.street}, ${seller.postalCode} ${seller.city}, ${seller.country} · ${seller.email}`;
 
 export const isTBD = (v: string) => v.includes("TBD");
+
+/** Social links — same handle everywhere. */
+export const socials = [
+  { name: "Instagram", href: seller.instagramUrl },
+  { name: "TikTok", href: seller.tiktokUrl },
+  { name: "YouTube", href: seller.youtubeUrl },
+] as const;

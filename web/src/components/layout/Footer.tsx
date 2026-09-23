@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FooterWordmark } from "./FooterWordmark";
-import { seller } from "@/data/seller";
+import { seller, socials } from "@/data/seller";
 
 const links = [
   { href: "/licenses", label: "Licenses" },
@@ -24,9 +24,11 @@ export function Footer() {
               {l.label}
             </Link>
           ))}
-          <a href={seller.instagramUrl} target="_blank" rel="noreferrer" className="link-u mx-2 py-2 text-mute transition-colors hover:text-coral">
-            Instagram {seller.instagram}
-          </a>
+          {socials.map((s) => (
+            <a key={s.name} href={s.href} target="_blank" rel="noreferrer" className="link-u mx-2 py-2 text-mute transition-colors hover:text-coral">
+              {s.name}
+            </a>
+          ))}
         </nav>
       </div>
       <FooterWordmark />

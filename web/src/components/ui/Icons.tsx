@@ -65,12 +65,6 @@ export const InstagramIcon = ({ size, ...p }: P) => (
     <circle cx="17.5" cy="6.5" r=".6" fill="currentColor" />
   </svg>
 );
-export const YoutubeIcon = ({ size, ...p }: P) => (
-  <svg {...base(size)} {...p}>
-    <rect x="2.5" y="5" width="19" height="14" rx="4" />
-    <path d="M10 9l5 3-5 3z" fill="currentColor" />
-  </svg>
-);
 export const MailIcon = ({ size, ...p }: P) => (
   <svg {...base(size)} {...p}>
     <rect x="3" y="5" width="18" height="14" rx="3" />
@@ -102,5 +96,18 @@ export const SearchIcon = ({ size, ...p }: P) => (
 export const ArrowUpIcon = ({ size, ...p }: P) => (
   <svg {...base(size)} {...p}>
     <path d="M12 19V5M6 11l6-6 6 6" />
+  </svg>
+);
+
+/* ---- social (brand marks, filled) ---- */
+export const TikTokIcon = ({ size = 18, ...p }: P) => (
+  <svg {...base(size)} fill="currentColor" stroke="none" {...p}>
+    <path d="M16.5 3c.4 1.9 1.6 3.3 3.5 3.6v2.6c-1.3.1-2.6-.3-3.7-1v5.6c0 3.6-2.6 6.2-6 6.2A5.9 5.9 0 0 1 4.5 14c0-3.3 2.7-6 6-6 .3 0 .6 0 .9.1v2.9a3 3 0 1 0 2.1 2.9V3h3z" />
+  </svg>
+);
+
+export const YouTubeIcon = ({ size = 18, ...p }: P) => (
+  <svg {...base(size)} fill="currentColor" stroke="none" {...p}>
+    <path d="M21.6 7.2c-.2-.9-.9-1.5-1.8-1.7C18.2 5.1 12 5.1 12 5.1s-6.2 0-7.8.4c-.9.2-1.6.8-1.8 1.7C2 8.8 2 12 2 12s0 3.2.4 4.8c.2.9.9 1.5 1.8 1.7 1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4c.9-.2 1.6-.8 1.8-1.7.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15.2V8.8L15.5 12 10 15.2z" />
   </svg>
 );

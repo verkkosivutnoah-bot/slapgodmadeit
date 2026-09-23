@@ -5,8 +5,34 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { useCart } from "@/lib/cart";
 import { CurrencyToggle } from "@/lib/currency";
-import { CartIcon, CloseIcon, MenuIcon } from "@/components/ui/Icons";
+import { CartIcon, CloseIcon, InstagramIcon, MenuIcon, TikTokIcon, YouTubeIcon } from "@/components/ui/Icons";
+import { socials } from "@/data/seller";
 import { scrollLock } from "@/components/ui/SmoothScroll";
+
+const SOCIAL_ICON = { Instagram: InstagramIcon, TikTok: TikTokIcon, YouTube: YouTubeIcon } as const;
+
+function SocialLinks({ className = "", size = 17 }: { className?: string; size?: number }) {
+  return (
+    <div className={`flex items-center ${className}`}>
+      {socials.map((s) => {
+        const Icon = SOCIAL_ICON[s.name];
+        return (
+          <a
+            key={s.name}
+            href={s.href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`${s.name} — @slapgodmadeit`}
+            title={`${s.name} @slapgodmadeit`}
+            className="grid h-11 w-11 place-items-center rounded-full text-stone-400 transition-colors duration-300 hover:text-coral"
+          >
+            <Icon size={size} />
+          </a>
+        );
+      })}
+    </div>
+  );
+}
 
 export const NAV = [
   { href: "/beats", label: "Beats" },
@@ -104,6 +130,7 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+            <SocialLinks className="hidden lg:flex" />
             <div className="hidden sm:block">
               <CurrencyToggle />
             </div>
@@ -150,6 +177,7 @@ export function Header() {
               </Link>
             ))}
           </nav>
+          <SocialLinks className="mt-8 -ml-3" size={20} />
           <div className="mt-auto flex items-center justify-between gap-4 pt-8">
             <CurrencyToggle />
             <Link href="/free" className="btn btn-primary">
