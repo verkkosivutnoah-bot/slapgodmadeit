@@ -46,17 +46,19 @@ export default function TermsPage() {
                 <li>
                   <strong>Beat leases</strong> (Basic, Premium, Trackout, Unlimited) are non-exclusive licenses to make
                   one new song. The beat stays available to other buyers. Each tier has its own file formats and
-                  distribution limits, set out in the license agreement delivered with your order.
+                  distribution limits, set out in the license agreement delivered with your order. {seller.name} owns
+                  50% of the composition of every song made with a beat (writer and publisher share).
                 </li>
                 <li>
                   <strong>Exclusive rights</strong> are negotiated individually through the{" "}
                   <Link href="/contact?topic=exclusive">offer form</Link> and are covered by a separate written
-                  agreement.
+                  agreement. They are an exclusive license, not a transfer of copyright, and include a 5% master
+                  royalty to {seller.name}.
                 </li>
                 <li>
                   <strong>Loop and sample packs</strong> come with a royalty-free license to use the sounds in your
-                  own productions. A 25% share of the composition applies to commercially released songs built on
-                  them.
+                  own productions. {seller.name} owns 25% of the composition of any commercially released song built
+                  on them.
                 </li>
               </ul>
               <p>
@@ -73,9 +75,9 @@ export default function TermsPage() {
           body: (
             <>
               <p>
-                Prices in euros include value added tax (VAT) where it applies. US dollar prices are shown for
-                convenience; you are charged in the currency you check out in. The total, including any tax, is shown
-                before you pay.
+                {seller.name} is not registered for value added tax (a small business under the Finnish VAT
+                threshold), so <strong>no VAT is charged</strong> and prices are final. US dollar prices are shown
+                for convenience; you are charged in the currency you check out in. The total is shown before you pay.
               </p>
               <p>
                 Payments are processed by <strong>Stripe</strong>. Card details go directly to Stripe and are never
@@ -137,11 +139,15 @@ export default function TermsPage() {
                 <li>resell, share or redistribute the files, or include them in any sample pack or library;</li>
                 <li>register the beat, loops or your song in YouTube Content ID or a similar system;</li>
                 <li>use the music to train AI models or include it in any dataset;</li>
+                <li>
+                  place your song in film, TV, advertising or games (&ldquo;sync&rdquo;) without written permission;
+                </li>
                 <li>claim you wrote or produced the beat or sounds.</li>
               </ul>
               <p>
-                Credit &ldquo;Prod. by SLAPGOD&rdquo; wherever you release, and register the publishing split agreed in
-                your license.
+                Credit &ldquo;Prod. by SLAPGOD&rdquo; wherever you release, register {seller.name}&apos;s composition
+                share with your PRO and distributor, and tell {seller.name} within 14 days of a commercial release
+                (release date, ISRC and distributor).
               </p>
             </>
           ),

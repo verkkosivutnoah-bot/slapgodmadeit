@@ -95,7 +95,7 @@ All non-exclusive leases share these terms:
 - **Non-exclusive.** You keep selling the beat to others.
 - **You keep copyright** in the beat (composition + sound recording). The licensee gets the right to make *one* new song with it.
 - **Credit** is required: "Prod. by SLAPGOD".
-- **Publishing split:** you keep **50% of the writer share** of the new song's composition. The artist registers the split with their PRO or publisher. Some producers take a smaller split on cheap leases. Pick one and put it in the contract.
+- **Composition share (decided 2026-09-23):** you own **50% of the new song's composition — writer AND publisher share**. The artist registers the split with their PRO or publisher. Some producers take a smaller split on cheap leases. Pick one and put it in the contract.
 - **No Content ID by licensee.** The artist may not register the song in YouTube Content ID, Facebook Rights Manager, or similar systems. Other licensees of the same beat would get claimed. This is the #1 source of producer disputes.
 - **No resale** or redistribution of the beat alone. No use of the beat for **AI training**.
 - **Stream caps.** When the licensee hits a cap, they must upgrade. Licenses have **no time limit** (decided 2026-09-23) — caps are the only ceiling, so there is no renewal revenue.
@@ -353,3 +353,12 @@ Next.js app in `web/`, ASCII-stars hero, MusicPlayer demos, catalog, pack pages,
 - Final tier prices: suggestions in §2.2 / §2.2b, awaiting confirmation.
 - Business address: **address service, 33610 Tampere, Finland** — need full street address from provider, plus Y-tunnus and contact email, for Terms/Privacy/footer (`web/src/data/seller.ts`).
 - Mixed-in third-party sounds in future beats: audit per product before listing.
+
+
+## 11. Decisions (2026-09-23)
+
+- **VAT:** not registered (small business under the €20k threshold). No VAT charged or stated; site shows "No VAT · small business". Once EU cross-border B2C sales pass €10k/yr, VAT becomes due in the buyer's country — register for OSS at that point.
+- **Beats:** SLAPGOD owns 50% of the composition (writer + publisher) of every song made with a beat.
+- **Exclusives:** 5% master royalty to SLAPGOD, statements every six months; exclusive = licence, not copyright transfer.
+- **Loops:** 25% of the composition on commercially released songs; own licence PDF per pack.
+- **All licences:** no sync without written consent; licensee notifies within 14 days of release (ISRC + distributor); SLAPGOD may use the work for promotion; no sublicensing.

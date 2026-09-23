@@ -1,5 +1,5 @@
 "use client";
-// EUR is primary (incl. VAT). USD prices are set explicitly per product (priceUSD) and currently equal
+// EUR is primary. Seller is not VAT-registered (small business), so no VAT is charged. USD prices are set explicitly per product (priceUSD) and currently equal
 // the EUR number (€39 / $39). Preference persists in localStorage.
 // TODO: Stripe — create one Price per currency per product and pick by `currency` at checkout.
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
@@ -49,13 +49,12 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     return {
       currency,
       setCurrency,
-      vatNote: currency === "EUR" ? "Prices incl. VAT" : "USD prices · taxes calculated at checkout",
+      vatNote: "No VAT · small business, not VAT-registered",
       format: (eur, opts) => {
         if (eur === 0) return "Free";
         const amount = currency === "EUR" ? eur : opts?.usd ?? eur;
         let s = nf.format(amount);
         if (opts?.interval) s += "/mo";
-        if (opts?.vat && currency === "EUR") s += " incl. VAT";
         return s;
       },
     };

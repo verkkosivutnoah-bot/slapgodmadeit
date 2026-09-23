@@ -98,7 +98,7 @@ export function LicenseCards({ ctaHref = "/beats", withTabs = true }: { ctaHref?
                     {licenseDeals.customBeat.label} from {format(licenseDeals.customBeat.from)}
                   </Link>
                 </p>
-                <p>{vatNote} · SLAPGOD writer share 50%</p>
+                <p>{vatNote} · SLAPGOD keeps 50% of the composition</p>
               </div>
             </div>
           </motion.div>

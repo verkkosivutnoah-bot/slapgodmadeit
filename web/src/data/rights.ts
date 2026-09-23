@@ -19,7 +19,8 @@ export const leaseVsExclusive: { label: string; lease: string; exclusive: string
   { label: "Can others license it?", lease: "Yes — non-exclusive", exclusive: "No — removed from the store" },
   { label: "Caps", lease: "Streams / sales / videos per tier", exclusive: "Unlimited" },
   { label: "On exclusive sale", lease: "Your lease stays valid", exclusive: "Earlier leases stay valid — disclosed up front" },
-  { label: "Writer share", lease: "SLAPGOD 50%", exclusive: "SLAPGOD 50%" },
+  { label: "Composition share", lease: "SLAPGOD 50%", exclusive: "SLAPGOD 50%" },
+  { label: "Master royalty", lease: "None", exclusive: "5% to SLAPGOD" },
 ];
 
 export const canDo = [
@@ -27,8 +28,8 @@ export const canDo = [
   "Monetize your song on YouTube (without Content ID)",
   "Perform it live (paid shows from Premium WAV up)",
   "Shoot music videos (per tier)",
-  "Sync within your tier's limits",
-  "Register YOUR lyrics / topline share with your PRO",
+  "Register your share of the song (lyrics, topline) with your PRO",
+  "Post it on TikTok, Reels and Shorts",
 ];
 
 export const cantDo = [
@@ -38,30 +39,40 @@ export const cantDo = [
   "Put the loops inside your own sample packs",
   "Use any SLAPGOD audio for AI training or datasets",
   "Go past your tier's caps without upgrading",
+  "Place it in film, TV, ads or games without written permission",
+  "Release without telling SLAPGOD within 14 days",
 ];
 
 export const splits = {
-  beats: { label: "Beats", share: 50, text: "SLAPGOD keeps 50% of the writer share on songs made with a leased or exclusive beat." },
-  loops: { label: "Loops", share: 25, text: "On commercially released songs that use SLAPGOD loops, SLAPGOD receives a 25% publishing split." },
+  beats: { label: "Beats", share: 50, text: "SLAPGOD keeps 50% of the composition — writer and publisher side — on songs made with a leased or exclusive beat." },
+  loops: { label: "Loops", share: 25, text: "On commercially released songs that use SLAPGOD loops, SLAPGOD receives 25% of the composition." },
 };
 
 export const registerSteps = [
-  { title: "Fill in the split sheet", text: "List every writer and their % — include SLAPGOD's share (50% beats / 25% loops)." },
-  { title: "Register with your PRO", text: "Teosto, BMI, ASCAP, PRS, GEMA, SOCAN… list SLAPGOD as co-writer with the agreed share." },
+  { title: "Fill in the split sheet", text: "List every writer and their % of the composition — SLAPGOD gets 50% on beats, 25% on loops." },
+  { title: "Register with your PRO", text: "Teosto, BMI, ASCAP, PRS, GEMA, SOCAN… list SLAPGOD as co-writer and co-publisher with that share." },
   { title: "Add distributor credits", text: 'In DistroKid / TuneCore metadata add the credit "Prod. by SLAPGOD".' },
-  { title: "Email us the split sheet", text: "Send the signed sheet via the contact form so we can register our side too." },
+  { title: "Tell SLAPGOD within 14 days", text: "Send the signed split sheet, the ISRC and your distributor via the contact form — it's part of the license." },
 ];
 
 export const SPLIT_SHEET_URL = "/downloads/split-sheet.pdf"; // placeholder template
 
 export const faqs: { q: string; a: string }[] = [
   {
+    q: "Can my song be used in a film, ad or game?",
+    a: "Not under a lease on its own. Sync needs separate written permission and a fee split — ask through the contact form and it's usually quick to agree.",
+  },
+  {
+    q: "What's the 5% master royalty on exclusives?",
+    a: "With exclusive rights you own and earn from your recording; SLAPGOD receives 5% of the net income from it (streams, sales, sync), reported twice a year. Leases have no master royalty.",
+  },
+  {
     q: "Can I use a free loop commercially?",
-    a: "Yes. Free loops (like Vault Sampler) follow the same loop license: royalty-free in your productions, with a 25% publishing split for SLAPGOD if a song using them is commercially released or placed.",
+    a: "Yes. Free loops (like Vault Sampler) follow the same loop license: royalty-free in your productions, with 25% of the composition to SLAPGOD if a song using them is commercially released or placed.",
   },
   {
     q: "Do I own my song?",
-    a: "You own your master recording and your lyrics/topline. SLAPGOD keeps the copyright in the beat or loops and the agreed writer/publishing share of the composition.",
+    a: "You own your master recording and your lyrics/topline. SLAPGOD keeps the copyright in the beat or loops and 50% of the composition (25% for loops). On exclusives SLAPGOD also takes a 5% master royalty.",
   },
   {
     q: "What happens if the beat is sold exclusively after my lease?",

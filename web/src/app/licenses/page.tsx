@@ -33,8 +33,8 @@ export default function LicensesPage() {
         <SectionHeader id="splits" eyebrow="Publishing" title="Splits & credit" href="/#rights" hrefLabel="Know your rights" />
         <Reveal className="grid grid-cols-1 border-y border-line sm:grid-cols-3">
           {[
-            { k: `${splits.beats.share}%`, v: "Writer share to SLAPGOD on songs made with a beat" },
-            { k: `${splits.loops.share}%`, v: "Publishing split on released songs that use the loops" },
+            { k: `${splits.beats.share}%`, v: "Of the composition to SLAPGOD on songs made with a beat" },
+            { k: `${splits.loops.share}%`, v: "Of the composition on released songs that use the loops" },
             { k: "Credit", v: `“${CREDIT_FORMAT}”` },
           ].map((x, i) => (
             <div key={x.k} className={`py-10 sm:px-8 ${i > 0 ? "border-t border-line sm:border-l sm:border-t-0" : "sm:pl-0"}`}>

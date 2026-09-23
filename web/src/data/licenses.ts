@@ -1,5 +1,5 @@
 // Beat license tiers + loop license summary.
-// Prices: EUR incl. VAT; USD same number. Wording is a SUMMARY — binding text is the agreement
+// Prices: EUR, no VAT (seller not VAT-registered — small business); USD same number. Wording is a SUMMARY — binding text is the agreement
 // delivered with each purchase (see docs/PLAN.md and /licenses).
 
 export type LicenseId = "basic" | "premium" | "trackout" | "unlimited" | "exclusive";
@@ -17,7 +17,10 @@ export interface LicenseTier {
   videos: string;
   paidPerformances: string;
   radio: string;
-  writerShare: string;
+  /** SLAPGOD's share of the new song's composition (writer + publisher side). */
+  compositionShare: string;
+  /** SLAPGOD's share of the licensee's master income. */
+  masterRoyalty: string;
   popular?: boolean;
   extra?: string[];
 }
@@ -34,7 +37,8 @@ export const licenseTiers: LicenseTier[] = [
     videos: "1",
     paidPerformances: "Non-profit only",
     radio: "No",
-    writerShare: "50%",
+    compositionShare: "50%",
+    masterRoyalty: "None",
   },
   {
     id: "premium",
@@ -47,7 +51,8 @@ export const licenseTiers: LicenseTier[] = [
     videos: "1",
     paidPerformances: "Yes",
     radio: "2 stations",
-    writerShare: "50%",
+    compositionShare: "50%",
+    masterRoyalty: "None",
     popular: true,
   },
   {
@@ -61,7 +66,8 @@ export const licenseTiers: LicenseTier[] = [
     videos: "3",
     paidPerformances: "Yes",
     radio: "Yes",
-    writerShare: "50%",
+    compositionShare: "50%",
+    masterRoyalty: "None",
   },
   {
     id: "unlimited",
@@ -74,7 +80,8 @@ export const licenseTiers: LicenseTier[] = [
     videos: "Unlimited",
     paidPerformances: "Yes",
     radio: "Yes",
-    writerShare: "50%",
+    compositionShare: "50%",
+    masterRoyalty: "None",
   },
   {
     id: "exclusive",
@@ -88,9 +95,12 @@ export const licenseTiers: LicenseTier[] = [
     videos: "Unlimited",
     paidPerformances: "Yes",
     radio: "Yes",
-    writerShare: "50%",
+    compositionShare: "50%",
+    masterRoyalty: "5%",
     extra: [
       "Beat removed from the store — only you from now on",
+      "Exclusive licence — SLAPGOD keeps the copyright",
+      "5% master royalty to SLAPGOD",
       "Leases sold before your purchase stay valid (disclosed at checkout)",
     ],
   },
@@ -103,7 +113,8 @@ export const TABLE_ROWS: { key: keyof LicenseTier; label: string }[] = [
   { key: "videos", label: "Music videos" },
   { key: "paidPerformances", label: "Paid performances" },
   { key: "radio", label: "Radio" },
-  { key: "writerShare", label: "SLAPGOD writer share" },
+  { key: "compositionShare", label: "SLAPGOD composition share" },
+  { key: "masterRoyalty", label: "SLAPGOD master royalty" },
 ];
 
 /** Applies to every lease tier. */
@@ -114,6 +125,8 @@ export const leaseTerms = [
   "Monetize on YouTube — but no Content ID registration",
   "No resale or redistribution of the beat",
   "No use in AI training or datasets",
+  "No sync (film, TV, ads, games) without written permission",
+  "Tell SLAPGOD within 14 days of release — ISRC + distributor",
   "No expiry — your license never runs out",
 ];
 
@@ -128,7 +141,9 @@ export const loopLicenseSummary = {
   points: [
     "Royalty-free for beats, songs and content — use them in unlimited productions.",
     "Beats you make with the loops can be sold or leased — the placement split still applies to the final song.",
-    "Commercially released songs using the loops: SLAPGOD receives a 25% publishing split.",
+    "Commercially released songs using the loops: SLAPGOD receives 25% of the composition.",
+    "Tell SLAPGOD within 14 days of a commercial release — ISRC + distributor.",
+    "No sync (film, TV, ads, games) without written permission.",
     'Credit: "Prod. by SLAPGOD" / "loops by @slapgodmadeit".',
     "No Content ID registration, no reselling loops as-is or inside other sample packs, no AI training.",
   ],

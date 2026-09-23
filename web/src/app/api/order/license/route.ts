@@ -6,7 +6,7 @@
  */
 import type { LicenseId } from "@/data/licenses";
 import { beats } from "@/data/beats";
-import { renderLicensePdf } from "@/lib/licensePdf";
+import { renderLicensePdf, renderLoopLicensePdf } from "@/lib/licensePdf";
 import { loadPaidOrder, orderLicenseNumber } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -18,12 +18,30 @@ export async function GET(request: Request) {
   if (!order) return new Response("Order not found or not paid.", { status: 404 });
 
   const line = order.lines.find((l) => l.index === Number(q.get("line")));
-  if (!line || line.kind !== "beat" || !line.tier) {
-    return new Response("No licence for that line.", { status: 404 });
+  if (!line) return new Response("No licence for that line.", { status: 404 });
+  const number = orderLicenseNumber(order, line.index);
+
+  if (line.kind === "pack") {
+    const pdf = await renderLoopLicensePdf({
+      licenseNumber: number,
+      packTitle: line.title,
+      licenseeName: order.name || order.email,
+      licenseeEmail: order.email,
+      issuedAt: order.createdAt,
+      orderRef: order.sessionId.slice(-12),
+      amountLabel: `${line.amount.toFixed(2)} ${order.currency}`,
+    });
+    return new Response(new Uint8Array(pdf), {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="SLAPGOD Loop License ${number}.pdf"`,
+        "Cache-Control": "private, no-store",
+      },
+    });
   }
+  if (!line.tier) return new Response("No licence for that line.", { status: 404 });
 
   const beat = beats.find((b) => b.slug === line.slug);
-  const number = orderLicenseNumber(order, line.index);
   const pdf = await renderLicensePdf({
     licenseNumber: number,
     tierId: line.tier as LicenseId,

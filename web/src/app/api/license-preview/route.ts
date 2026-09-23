@@ -7,7 +7,7 @@
  */
 import { NextResponse } from "next/server";
 import { licenseTiers, type LicenseId } from "@/data/licenses";
-import { licenseNumber, renderLicensePdf } from "@/lib/licensePdf";
+import { licenseNumber, renderLicensePdf, renderLoopLicensePdf } from "@/lib/licensePdf";
 
 export const runtime = "nodejs";
 
@@ -17,6 +17,17 @@ export async function GET(request: Request) {
   }
 
   const q = new URL(request.url).searchParams;
+  if (q.get("tier") === "loop") {
+    const pdf = await renderLoopLicensePdf({
+      licenseNumber: licenseNumber("preview"),
+      packTitle: q.get("pack") ?? "Guitar Vault Vol. 1",
+      licenseeName: q.get("name") ?? "Sample Buyer",
+      licenseeEmail: q.get("email") ?? "buyer@example.com",
+      orderRef: "PREVIEW",
+      amountLabel: "39.00 EUR",
+    });
+    return new NextResponse(new Uint8Array(pdf), { headers: { "Content-Type": "application/pdf" } });
+  }
   const tier = (q.get("tier") ?? "premium") as LicenseId;
   if (!licenseTiers.some((t) => t.id === tier)) {
     return NextResponse.json({ error: `Unknown tier. Try: ${licenseTiers.map((t) => t.id).join(", ")}` }, { status: 400 });

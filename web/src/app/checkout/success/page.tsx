@@ -63,25 +63,22 @@ export default async function SuccessPage({ searchParams }: { searchParams: Prom
                   {FILE_LABEL[f]}
                 </a>
               ))}
-              {l.kind === "beat" && (
-                <a href={`/api/order/license?${q(l.index)}`} className="btn btn-ghost btn-sm">
-                  License PDF
-                </a>
-              )}
+              <a href={`/api/order/license?${q(l.index)}`} className="btn btn-ghost btn-sm">
+                License PDF
+              </a>
             </div>
 
-            {l.kind === "beat" && (
-              <p className="mt-4 text-[13px] leading-relaxed text-mute">
-                License {orderLicenseNumber(order, l.index)} · Credit &ldquo;Prod. by SLAPGOD&rdquo; · no Content ID
-                registration · keep the PDF with your release paperwork.
-              </p>
-            )}
+            <p className="mt-4 text-[13px] leading-relaxed text-mute">
+              License {orderLicenseNumber(order, l.index)} · Credit &ldquo;Prod. by SLAPGOD&rdquo; ·{" "}
+              {l.kind === "beat" ? "50%" : "25%"} of the composition to SLAPGOD on released songs · tell SLAPGOD
+              within 14 days of release · no Content ID · keep the PDF with your release paperwork.
+            </p>
           </li>
         ))}
       </ul>
 
       <p className="mt-10 max-w-xl text-[14px] leading-relaxed text-mute">
-        Releasing a song on one of these? Register the writer split with your PRO and{" "}
+        Releasing a song on one of these? Register SLAPGOD's composition share with your PRO and{" "}
         <Link href="/contact?topic=split-sheet" className="link-u text-bone">
           send the split sheet
         </Link>

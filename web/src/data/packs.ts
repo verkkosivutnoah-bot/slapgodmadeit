@@ -1,5 +1,5 @@
 // Sample / loop pack catalog.
-// Prices are set per currency (EUR incl. VAT; USD currently the same number) — see src/lib/currency.tsx.
+// Prices are set per currency (EUR, no VAT — small business; USD currently the same number) — see src/lib/currency.tsx.
 // FLAGSHIP (real): "guitar-vault-vol-1" — demo previews are the owner's real loops in
 // public/audio/packs/spanish-guitar/. Everything marked `placeholder: true` is mock data.
 import type { Track } from "@/components/player/MusicPlayer";
@@ -27,7 +27,7 @@ export interface Pack {
   slug: string;
   title: string;
   type: PackType;
-  /** Amount in the store currency (EUR incl. VAT). USD uses `priceUSD` or the same number. 0 = free. */
+  /** Amount in the store currency (EUR, no VAT). USD uses `priceUSD` or the same number. 0 = free. */
   price: number;
   priceUSD?: number;
   compareAt?: number;
