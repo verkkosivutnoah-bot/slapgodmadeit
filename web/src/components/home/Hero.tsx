@@ -43,19 +43,24 @@ export function Hero() {
       <div className="hero-bg-scrim" aria-hidden />
 
       <div className="container-sg relative z-10 flex flex-col items-center pt-[max(112px,15svh)] text-center">
+        <Rise delay={0.05} className="mb-6">
+          <span className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-stone-400">
+            <span className="text-coral">&#9834;</span> &ldquo;Slapgod bringin&apos; the hits on &apos;em&rdquo;
+          </span>
+        </Rise>
         <LineReveal
           id="hero-title"
           lines={[
             "Loops and beats",
             <>
-              by <span className="text-grad-anim pr-[0.04em] italic">SLAPGOD</span>
+              by <span className="text-grad-anim inline-block pr-[0.14em] italic">SLAPGOD</span>
             </>,
           ]}
           className="display text-[clamp(40px,6.6vw,80px)] leading-[1.02]"
           delay={0.1}
         />
         <Rise delay={0.35} className="mt-5 max-w-md text-[16px] leading-relaxed text-stone-400 [text-wrap:balance] sm:text-[17px]">
-          Original beats, live guitar and sample packs by SLAPGOD — with licenses you can actually read.
+          SLAPGOD makes the beats slap — original loops, beats and sample packs, with licenses you can actually read.
         </Rise>
 
         <Rise delay={0.45} className="mt-8 w-full max-w-[480px]">
