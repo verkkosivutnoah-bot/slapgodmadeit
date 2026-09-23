@@ -150,7 +150,8 @@ export function CartView() {
             <Link href="/licenses" className="text-bone underline decoration-coral underline-offset-2">
               License Agreements
             </Link>
-            , and I understand digital downloads are delivered immediately (
+            . I want the files delivered immediately and I understand that I lose my 14-day right of withdrawal
+            once the download is available (
             <Link href="/refunds" className="text-bone underline decoration-coral underline-offset-2">
               Refund Policy
             </Link>
