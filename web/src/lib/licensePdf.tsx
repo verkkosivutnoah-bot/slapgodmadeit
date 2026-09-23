@@ -101,7 +101,7 @@ function LicenseDoc(d: LicenseDetails) {
             <Text style={{ color: MUTE }}>
               {seller.legalForm} · Business ID {seller.businessId}
               {"\n"}
-              {seller.street}, {seller.postalCode} {seller.city}, {seller.country}
+              {seller.street ? `${seller.street}, ` : ""}{seller.postalCode} {seller.city}, {seller.country}
             </Text>
           </View>
           <View style={s.cell}>
@@ -246,7 +246,7 @@ function LoopLicenseDoc(d: LoopLicenseDetails) {
             <Text style={{ color: MUTE }}>
               {seller.legalForm} · Business ID {seller.businessId}
               {"\n"}
-              {seller.street}, {seller.postalCode} {seller.city}, {seller.country}
+              {seller.street ? `${seller.street}, ` : ""}{seller.postalCode} {seller.city}, {seller.country}
             </Text>
           </View>
           <View style={s.cell}>
