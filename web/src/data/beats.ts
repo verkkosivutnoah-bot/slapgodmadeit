@@ -66,7 +66,7 @@ function beat(
 }
 
 export const beats: Beat[] = [
-  beat("No-Faces", "EBK Young Joc Type Beat | No faces", "beats/No-Faces", "Drill", 100, "C# maj", ["Dark", "Aggressive"], ["piano", "808"], { isNew: true, duration: "0:45" }),
+  beat("no-faces", "No Faces", "beats/no-faces", "Drill", 100, "C# maj", ["Dark", "Aggressive"], ["ebk young joc type beat", "piano", "808"], { isNew: true, duration: "0:45" }),
   beat("midnight-ritual", "Midnight Ritual", "midnight-ritual", "Trap", 142, "F min", ["Dark", "Hypnotic"], ["bells", "808 glide"], { featured: true, isNew: true }),
   beat("glass-teeth", "Glass Teeth", "glass-teeth", "Drill", 144, "C# min", ["Aggressive", "Dark"], ["uk drill", "sliding 808"], { featured: true }),
   beat("velvet-static", "Velvet Static", "velvet-static", "R&B", 96, "D# min", ["Sensual", "Moody"], ["pads", "late night"], { featured: true, isNew: true }),
