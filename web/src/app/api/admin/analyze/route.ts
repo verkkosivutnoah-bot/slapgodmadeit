@@ -19,17 +19,21 @@ export async function POST(request: Request) {
   if (blocked) return blocked;
 
   const form = await request.formData();
-  const file = form.get("file");
-  if (!(file instanceof File)) {
+  const files = form.getAll("file").filter((f): f is File => f instanceof File);
+  if (files.length === 0) {
     return NextResponse.json({ ok: false, error: "No file uploaded." }, { status: 400 });
   }
-  if (file.size > 200 * 1024 * 1024) {
-    return NextResponse.json({ ok: false, error: "File over 200 MB." }, { status: 413 });
+  const tooBig = files.find((f) => f.size > 200 * 1024 * 1024);
+  if (tooBig) {
+    return NextResponse.json({ ok: false, error: `${tooBig.name} is over 200 MB.` }, { status: 413 });
   }
 
+  // Everything lands in one folder — the Python side works out which file is which
+  // (master / tagged / stems / cover).
   const dir = await mkdtemp(join(tmpdir(), "sg-admin-"));
-  const safeName = file.name.replace(/[^\w.\- ]/g, "_");
-  await writeFile(join(dir, safeName), Buffer.from(await file.arrayBuffer()));
+  for (const f of files) {
+    await writeFile(join(dir, f.name.replace(/[^\w.\- ]/g, "_")), Buffer.from(await f.arrayBuffer()));
+  }
 
   const result = await runIngest([dir, "--json"]);
   if (!result.ok) return NextResponse.json({ ok: false, error: result.error }, { status: 500 });

@@ -341,7 +341,7 @@ def main() -> None:
     bpm_source = "filename" if name_bpm else "detected"
 
     title = args.title or title_from(master.stem)
-    slug = args.slug or slugify(title)
+    slug = slugify(args.slug or title)   # always lowercase, even when overridden
     genre = args.genre or GENRES[0]
     moods = [m.strip() for m in args.moods.split(",")] if args.moods else ["Dark"]
     tags = [t.strip() for t in args.tags.split(",")] if args.tags else []

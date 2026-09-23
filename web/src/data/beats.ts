@@ -67,18 +67,6 @@ function beat(
 
 export const beats: Beat[] = [
   beat("no-faces", "No Faces", "beats/no-faces", "Drill", 100, "C# maj", ["Dark", "Aggressive"], ["ebk young joc type beat", "piano", "808"], { isNew: true, duration: "0:45" }),
-  beat("midnight-ritual", "Midnight Ritual", "midnight-ritual", "Trap", 142, "F min", ["Dark", "Hypnotic"], ["bells", "808 glide"], { featured: true, isNew: true }),
-  beat("glass-teeth", "Glass Teeth", "glass-teeth", "Drill", 144, "C# min", ["Aggressive", "Dark"], ["uk drill", "sliding 808"], { featured: true }),
-  beat("velvet-static", "Velvet Static", "velvet-static", "R&B", 96, "D# min", ["Sensual", "Moody"], ["pads", "late night"], { featured: true, isNew: true }),
-  beat("lagos-neon", "Lagos Neon", "lagos-neon", "Afrobeats", 108, "G min", ["Bouncy", "Energetic"], ["percs", "summer"], { featured: true }),
-  beat("dusty-halo", "Dusty Halo", "dusty-halo", "Boom Bap", 90, "A min", ["Nostalgic", "Moody"], ["swing", "keys"]),
-  beat("plum-smoke", "Plum Smoke", "plum-smoke", "Dark Trap", 130, "B min", ["Dark", "Moody"], ["pads", "ambient"], { isNew: true }),
-  beat("chrome-halo", "Chrome Halo", "midnight-ritual", "Trap", 150, "F min", ["Energetic", "Hypnotic"], ["bells", "rage"]),
-  beat("no-signal", "No Signal", "glass-teeth", "Drill", 142, "C# min", ["Aggressive"], ["ny drill", "choir"]),
-  beat("cigarette-sunday", "Cigarette Sunday", "dusty-halo", "Boom Bap", 88, "A min", ["Nostalgic"], ["dusty", "jazz"]),
-  beat("silk-alarm", "Silk Alarm", "velvet-static", "R&B", 98, "D# min", ["Sensual"], ["guitar", "slow jam"]),
-  beat("heatwave-mirage", "Heatwave Mirage", "lagos-neon", "Afrobeats", 110, "G min", ["Bouncy"], ["amapiano", "log drum"]),
-  beat("ghost-parade", "Ghost Parade", "plum-smoke", "Dark Trap", 132, "B min", ["Dark", "Hypnotic"], ["horror", "choir"]),
 ];
 
 export const GENRES: Genre[] = ["Trap", "Drill", "Dark Trap", "R&B", "Boom Bap", "Afrobeats"];

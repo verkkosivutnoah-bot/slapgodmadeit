@@ -49,6 +49,8 @@ export function AdminUploader() {
   const [moods, setMoods] = useState<string[]>(["Dark"]);
   const [tags, setTags] = useState("");
   const [deploy, setDeploy] = useState(true);
+  const [cover, setCover] = useState<{ name: string; url: string } | null>(null);
+  const coverRef = useRef<HTMLInputElement>(null);
 
   const analyze = useCallback(async (files: FileList | File[]) => {
     const list = Array.from(files);
@@ -62,11 +64,13 @@ export function AdminUploader() {
     setBusy("analyzing");
     try {
       const fd = new FormData();
-      fd.append("file", audio);
+      for (const f of list) fd.append("file", f);
       const res = await fetch("/api/admin/analyze", { method: "POST", body: fd });
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error(data.error || "Analysis failed.");
       setA(data);
+      const img = list.find((f) => /\.(jpe?g|png|webp)$/i.test(f.name));
+      setCover(img ? { name: img.name, url: URL.createObjectURL(img) } : null);
       setTitle(data.title);
       setSlug(data.slug);
       setBpm(data.bpm);
@@ -78,6 +82,22 @@ export function AdminUploader() {
       setBusy("");
     }
   }, []);
+
+  async function addCover(file: File) {
+    if (!a) return;
+    setError("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("jobDir", a.jobDir);
+      const res = await fetch("/api/admin/cover", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || "Couldn't attach that cover.");
+      setCover({ name: file.name, url: URL.createObjectURL(file) });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    }
+  }
 
   async function publish() {
     if (!a) return;
@@ -239,6 +259,46 @@ export function AdminUploader() {
               <span className="mb-2 block text-[13px] text-mute">Descriptors (comma-separated)</span>
               <input className={field} placeholder="bells, 808 glide" value={tags} onChange={(e) => setTags(e.target.value)} />
             </label>
+
+            <div className="mt-6">
+              <span className="mb-3 block text-[13px] text-mute">Cover art</span>
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => coverRef.current?.click()}
+                  className="grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-2xl border border-dashed border-line text-[12px] text-mute transition-colors hover:border-coral hover:text-coral"
+                >
+                  {cover ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={cover.url} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    "Add"
+                  )}
+                </button>
+                <div className="text-[13px] leading-relaxed text-mute">
+                  {cover ? (
+                    <>
+                      <span className="text-bone">{cover.name}</span>
+                      <br />
+                      Saved as <span className="text-bone">covers/beats/{slug}</span>
+                    </>
+                  ) : (
+                    <>
+                      Square JPG, 2000×2000 or larger.
+                      <br />
+                      Without one, generated placeholder art is used.
+                    </>
+                  )}
+                </div>
+              </div>
+              <input
+                ref={coverRef}
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp"
+                className="hidden"
+                onChange={(e) => e.target.files?.[0] && void addCover(e.target.files[0])}
+              />
+            </div>
 
             <label className="mt-6 flex cursor-pointer items-center gap-3 text-[14px] text-stone-300">
               <input
