@@ -83,12 +83,16 @@ export async function POST(request: Request) {
 
   const session = await stripe().checkout.sessions.create({
     mode: "payment",
+    // Managed Payments makes Stripe the merchant of record (it files VAT for you) but forbids
+    // custom checkout text — which is where the withdrawal waiver lives. You chose to file VAT
+    // yourself, so it's off. Set STRIPE_MANAGED_PAYMENTS=true to hand VAT to Stripe instead.
+    managed_payments: { enabled: process.env.STRIPE_MANAGED_PAYMENTS === "true" },
     line_items,
     customer_creation: "always",
     billing_address_collection: "auto",
     allow_promotion_codes: true,
     ...(automaticTax ? { automatic_tax: { enabled: true } } : {}),
-    custom_text: { submit: { message: WAIVER } },
+    ...(process.env.STRIPE_MANAGED_PAYMENTS === "true" ? {} : { custom_text: { submit: { message: WAIVER } } }),
     metadata: {
       source: "slapgod-web",
       withdrawal_waiver: "accepted",
