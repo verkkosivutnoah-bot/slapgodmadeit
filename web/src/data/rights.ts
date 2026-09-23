@@ -18,8 +18,7 @@ export const leaseVsExclusive: { label: string; lease: string; exclusive: string
   { label: "Who owns the beat", lease: "SLAPGOD", exclusive: "SLAPGOD keeps copyright — you get exclusive usage rights" },
   { label: "Can others license it?", lease: "Yes — non-exclusive", exclusive: "No — removed from the store" },
   { label: "Caps", lease: "Streams / sales / videos per tier", exclusive: "Unlimited" },
-  { label: "Term", lease: "3–10 years depending on tier", exclusive: "Perpetual" },
-  { label: "On exclusive sale", lease: "Your lease stays valid until it expires", exclusive: "Earlier leases run out their term — disclosed up front" },
+  { label: "On exclusive sale", lease: "Your lease stays valid", exclusive: "Earlier leases stay valid — disclosed up front" },
   { label: "Writer share", lease: "SLAPGOD 50%", exclusive: "SLAPGOD 50%" },
 ];
 
@@ -66,7 +65,7 @@ export const faqs: { q: string; a: string }[] = [
   },
   {
     q: "What happens if the beat is sold exclusively after my lease?",
-    a: "Your lease stays valid for its full term. You can keep your song up — you just can't renew or buy another lease on that beat afterwards.",
+    a: "Your lease stays valid. You can keep your song up — you just can't buy another lease on that beat afterwards.",
   },
   {
     q: "Do I need to register with a PRO?",

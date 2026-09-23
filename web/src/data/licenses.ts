@@ -17,7 +17,6 @@ export interface LicenseTier {
   videos: string;
   paidPerformances: string;
   radio: string;
-  term: string;
   writerShare: string;
   popular?: boolean;
   extra?: string[];
@@ -35,7 +34,6 @@ export const licenseTiers: LicenseTier[] = [
     videos: "1",
     paidPerformances: "Non-profit only",
     radio: "No",
-    term: "3 years",
     writerShare: "50%",
   },
   {
@@ -49,7 +47,6 @@ export const licenseTiers: LicenseTier[] = [
     videos: "1",
     paidPerformances: "Yes",
     radio: "2 stations",
-    term: "3 years",
     writerShare: "50%",
     popular: true,
   },
@@ -64,7 +61,6 @@ export const licenseTiers: LicenseTier[] = [
     videos: "3",
     paidPerformances: "Yes",
     radio: "Yes",
-    term: "5 years",
     writerShare: "50%",
   },
   {
@@ -78,7 +74,6 @@ export const licenseTiers: LicenseTier[] = [
     videos: "Unlimited",
     paidPerformances: "Yes",
     radio: "Yes",
-    term: "10 years",
     writerShare: "50%",
   },
   {
@@ -93,11 +88,10 @@ export const licenseTiers: LicenseTier[] = [
     videos: "Unlimited",
     paidPerformances: "Yes",
     radio: "Yes",
-    term: "Perpetual",
     writerShare: "50%",
     extra: [
       "Beat removed from the store — only you from now on",
-      "Leases sold before your purchase stay valid until they expire (disclosed at checkout)",
+      "Leases sold before your purchase stay valid (disclosed at checkout)",
     ],
   },
 ];
@@ -109,7 +103,6 @@ export const TABLE_ROWS: { key: keyof LicenseTier; label: string }[] = [
   { key: "videos", label: "Music videos" },
   { key: "paidPerformances", label: "Paid performances" },
   { key: "radio", label: "Radio" },
-  { key: "term", label: "Term" },
   { key: "writerShare", label: "SLAPGOD writer share" },
 ];
 
@@ -121,6 +114,7 @@ export const leaseTerms = [
   "Monetize on YouTube — but no Content ID registration",
   "No resale or redistribution of the beat",
   "No use in AI training or datasets",
+  "No expiry — your license never runs out",
 ];
 
 export const licenseDeals = {

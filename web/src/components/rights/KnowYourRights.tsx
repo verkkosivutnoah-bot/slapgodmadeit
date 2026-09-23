@@ -382,7 +382,7 @@ function Caps() {
     <Block id="rights-caps" n="06" title={<>Stream caps &amp; upgrades</>}>
       <div className="grid gap-8 rounded-[22px] border border-line p-6 sm:p-8 lg:grid-cols-[1fr_1.5fr] grid-cols-1">
         <div className="space-y-4 text-[15px] text-bone/85">
-          <p>Each lease covers your song up to a stream + sales cap, for a set term. Caps count across all platforms combined.</p>
+          <p>Each lease covers your song up to a stream + sales cap. No time limit — caps count across all platforms combined.</p>
           <p>
             Getting close? <strong className="text-white">Upgrade anytime and just pay the difference</strong> — your release stays up, nothing resets.
           </p>
