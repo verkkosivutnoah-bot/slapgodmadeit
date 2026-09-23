@@ -22,11 +22,22 @@ if [[ -z "$KEY" ]]; then
   echo "  Add a line:  STRIPE_SECRET_KEY=sk_test_...   then run this again."
   exit 1
 fi
-if [[ "$KEY" != sk_test_* ]]; then
-  echo "✗ That isn't a test key (sk_test_...). Set up in test mode first."
+MODE="test"
+if [[ "$KEY" == sk_live_* ]]; then
+  MODE="live"
+  echo "⚠ This is a LIVE key — real cards, real money."
+  echo "  Before going live: a test purchase worked, paid files are in Blob storage,"
+  echo "  and Terms / Privacy / Refunds + seller details are filled in."
+  read -r -p "  Type LIVE to continue: " ok
+  [[ "$ok" == "LIVE" ]] || { echo "✗ cancelled"; exit 1; }
+elif [[ "$KEY" == rk_live_* || "$KEY" == rk_test_* ]]; then
+  echo "✗ That's a restricted key. Use the secret key (sk_...) for now."
+  exit 1
+elif [[ "$KEY" != sk_test_* ]]; then
+  echo "✗ That doesn't look like a Stripe secret key (sk_test_... or sk_live_...)."
   exit 1
 fi
-echo "✓ found test secret key"
+echo "✓ found $MODE secret key"
 
 # --- account check -----------------------------------------------------------
 ACCT="$(curl -s https://api.stripe.com/v1/account -u "$KEY:")"
@@ -72,7 +83,12 @@ done
 
 # --- redeploy ----------------------------------------------------------------
 cd "$ROOT"
-git commit -q --allow-empty -m "Redeploy with Stripe keys" && git push -q origin main
-echo "✓ redeploy triggered — checkout is live in test mode in about a minute"
+git commit -q --allow-empty -m "Redeploy with Stripe keys ($MODE)" && git push -q origin main
+echo "✓ redeploy triggered — checkout runs in $MODE mode in about a minute"
 echo
-echo "Test it: add a lease to the cart on $SITE, checkout, pay with 4242 4242 4242 4242."
+if [[ "$MODE" == "live" ]]; then
+  echo "Do one real purchase with a 100% promo code (Stripe → Products → Coupons), check the"
+  echo "downloads and licence PDF, then you're open."
+else
+  echo "Test it: add a lease to the cart on $SITE, checkout, pay with 4242 4242 4242 4242."
+fi
