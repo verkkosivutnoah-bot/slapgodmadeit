@@ -6,8 +6,36 @@
  * copies masters to web/private, appends the entry to beats.ts. Optionally commits + pushes,
  * which Vercel then deploys.
  */
+import { createReadStream, existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import type { FileKind } from "@/lib/catalog";
+import { blobConfigured, blobPath } from "@/lib/deliverables";
 import { REPO, devOnly, run, runIngest } from "../shared";
+
+/** Push the paid files (never the tagged one) to the private Blob store. */
+async function uploadMasters(slug: string) {
+  const dir = join(REPO, "web", "private", "beats", slug);
+  const metaPath = join(dir, "meta.json");
+  if (!existsSync(metaPath)) return { uploaded: [] as string[], skipped: "no meta.json" };
+  const meta = JSON.parse(readFileSync(metaPath, "utf8")) as { sourceFiles?: Record<string, string> };
+
+  const uploaded: string[] = [];
+  for (const kind of ["mp3", "wav", "stems"] as FileKind[]) {
+    const name = meta.sourceFiles?.[kind];
+    if (!name || !existsSync(join(dir, name))) continue;
+    const pathname = blobPath("beat", slug, kind);
+    await put(pathname, createReadStream(join(dir, name)), {
+      access: "private",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      multipart: true,
+    });
+    uploaded.push(pathname);
+  }
+  return { uploaded, skipped: null };
+}
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -45,6 +73,18 @@ export async function POST(request: Request) {
   if (!result.ok) return NextResponse.json({ ok: false, error: result.error }, { status: 500 });
 
   const slug = String(result.data.slug ?? "");
+
+  // Paid files go to private storage — the repo is public, so they can't ship with git.
+  let storage: { uploaded: string[]; skipped: string | null } = { uploaded: [], skipped: "BLOB_READ_WRITE_TOKEN not set" };
+  if (blobConfigured()) {
+    try {
+      storage = await uploadMasters(slug);
+    } catch (err) {
+      storage = { uploaded: [], skipped: `upload failed: ${(err as Error).message}` };
+    }
+  }
+  Object.assign(result.data, { storage });
+
   if (!body.deploy) {
     return NextResponse.json({ ok: true, deployed: false, ...result.data });
   }

@@ -19,17 +19,30 @@ export function CartView() {
   // "Buy 2 leases get 1 free" — shared with the checkout route so both agree (lib/pricing).
   const { discount, total, freeKeys, leasesToNextFree } = cartTotals(cart.items);
 
+  const [paying, setPaying] = useState(false);
+
   async function checkout() {
     if (!agree) {
       setNotice("Please accept the terms and license agreements to continue.");
       return;
     }
-    // TODO: Stripe Checkout
-    //   POST /api/checkout { items: cart.items.map(i => ({ key: i.key })), currency }
-    //   → server builds line items from trusted prices, applies the lease deal, creates a Checkout Session,
-    //     returns { url }, then: window.location.href = url
-    setNotice(`Checkout isn't connected yet (${currency}). Stripe Checkout hook point: CartView.checkout().`);
+    setPaying(true);
+    setNotice("");
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keys: cart.items.map((i) => i.key), currency, waiver: agree }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok || !data.url) throw new Error(data.error || "Couldn't start checkout.");
+      window.location.href = data.url; // Stripe-hosted checkout
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : "Couldn't start checkout.");
+      setPaying(false);
+    }
   }
+
 
   if (cart.count === 0) {
     return (
@@ -145,8 +158,8 @@ export function CartView() {
           </span>
         </label>
 
-        <button type="button" onClick={checkout} className="btn btn-primary mt-6 !h-12 w-full">
-          Checkout <ArrowIcon size={16} />
+        <button type="button" onClick={checkout} disabled={paying} className="btn btn-primary mt-6 !h-12 w-full">
+          {paying ? "Opening secure checkout…" : "Checkout"} {!paying && <ArrowIcon size={16} />}
         </button>
         {notice && (
           <p role="status" className="mt-4 rounded-2xl border border-line p-3 text-[13px] text-mute">
