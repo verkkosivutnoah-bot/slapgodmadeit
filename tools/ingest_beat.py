@@ -353,12 +353,16 @@ def main() -> None:
         bpm = args.bpm
         bpm_source = "override"
 
+    # Only ask about what you didn't already pass on the command line.
     if not args.yes and not args.json and sys.stdin.isatty():
-        genre = pick("Genre?", GENRES, genre)
-        moods = pick_many("Moods?", MOODS, moods)
-        raw = input("\nDescriptors (comma-separated, e.g. bells, 808 glide)\n> ").strip()
-        if raw:
-            tags = [t.strip() for t in raw.split(",") if t.strip()]
+        if not args.genre:
+            genre = pick("Genre?", GENRES, genre)
+        if not args.moods:
+            moods = pick_many("Moods?", MOODS, moods)
+        if not args.tags:
+            raw = input("\nDescriptors (comma-separated, e.g. bells, 808 glide)\n> ").strip()
+            if raw:
+                tags = [t.strip() for t in raw.split(",") if t.strip()]
 
     ing = Ingest(folder, master, slug, title, bpm, bpm_source, key, conf, alts, duration,
                  genre, moods, tags or ["beat"], extras, cover)
