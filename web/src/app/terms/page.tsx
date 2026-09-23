@@ -21,7 +21,7 @@ export default function TermsPage() {
             <>
               <p>
                 The seller is <strong>{seller.name}</strong>, a {seller.legalForm} registered in {seller.country}{" "}
-                (Business ID {seller.businessId}), {seller.street}, {seller.postalCode} {seller.city}. Contact:{" "}
+                (Business ID {seller.businessId}), {seller.postalCode} {seller.city}. Contact:{" "}
                 {seller.email}.
               </p>
               <p>

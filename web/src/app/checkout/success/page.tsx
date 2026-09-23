@@ -78,7 +78,7 @@ export default async function SuccessPage({ searchParams }: { searchParams: Prom
       </ul>
 
       <p className="mt-10 max-w-xl text-[14px] leading-relaxed text-mute">
-        Releasing a song on one of these? Register SLAPGOD's composition share with your PRO and{" "}
+        Releasing a song on one of these? Register SLAPGOD&apos;s composition share with your PRO and{" "}
         <Link href="/contact?topic=split-sheet" className="link-u text-bone">
           send the split sheet
         </Link>

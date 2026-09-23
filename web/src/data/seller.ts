@@ -1,14 +1,14 @@
 // Seller / business identity — shown in footer, /contact, /terms, /privacy.
-// TODO(owner): fill in the [TBD] fields before launch.
 export const seller = {
   name: "SLAPGOD",
   legalForm: "sole trader",
-  businessId: "[Business ID TBD]", // Finnish Business ID (Y-tunnus), e.g. 1234567-8
-  street: "[Street address TBD]",
+  businessId: "3535677-9", // Finnish Business ID (Y-tunnus)
+  /** PRIVATE — never rendered on the website. Only printed inside licence PDFs sent to buyers. */
+  street: "Tasanteenkatu 23 E",
   postalCode: "33610",
   city: "Tampere",
   country: "Finland",
-  email: "[email TBD]",
+  email: "slapgodmadeit@gmail.com",
   handle: "@slapgodmadeit",
   instagram: "@slapgodmadeit",
   instagramUrl: "https://instagram.com/slapgodmadeit",
@@ -16,7 +16,10 @@ export const seller = {
   youtubeUrl: "https://youtube.com/@slapgodmadeit",
 };
 
-export const sellerLine = `${seller.name} (${seller.legalForm}) · Business ID: ${seller.businessId} · ${seller.street}, ${seller.postalCode} ${seller.city}, ${seller.country} · ${seller.email}`;
+/** What the public website shows as the address: town only, no street. */
+export const publicAddress = `${seller.postalCode} ${seller.city}, ${seller.country}`;
+
+export const sellerLine = `${seller.name} (${seller.legalForm}) · Business ID: ${seller.businessId} · ${publicAddress} · ${seller.email}`;
 
 export const isTBD = (v: string) => v.includes("TBD");
 

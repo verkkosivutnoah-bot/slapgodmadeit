@@ -20,7 +20,7 @@ export default function PrivacyPage() {
           body: (
             <p>
               The data controller is <strong>{seller.name}</strong> ({seller.legalForm}, Business ID{" "}
-              {seller.businessId}), {seller.street}, {seller.postalCode} {seller.city}, {seller.country}. For anything
+              {seller.businessId}), {seller.postalCode} {seller.city}, {seller.country}. For anything
               about your data, email {seller.email}.
             </p>
           ),

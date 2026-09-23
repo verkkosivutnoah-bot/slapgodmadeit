@@ -27,8 +27,6 @@ export default function ContactPage() {
             <br />
             Business ID: {seller.businessId}
             <br />
-            {seller.street}
-            <br />
             {seller.postalCode} {seller.city}, {seller.country}
             <br />
             Email: {seller.email}

@@ -51,7 +51,7 @@ export function LegalPage({
                 <br />
                 Business ID {seller.businessId}
                 <br />
-                {seller.street}, {seller.postalCode} {seller.city}, {seller.country}
+                {seller.postalCode} {seller.city}, {seller.country}
                 <br />
                 {seller.email}
               </address>
