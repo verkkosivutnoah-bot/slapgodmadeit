@@ -51,13 +51,13 @@ What we keep conceptually, and what we add:
 
 ### 2.2 Beat license tiers (suggested prices, EUR incl. VAT / USD)
 
-| Tier | Price | Files | Streams | Sales/downloads | Music videos | Paid perf. | Radio | Term |
-|---|---|---|---|---|---|---|---|---|
-| Basic MP3 Lease | €29 / $29 | MP3 320 untagged | 100k | 2,500 | 1 | Non-profit | No | 3 yrs |
-| **Premium WAV Lease** (most popular) | €49 / $49 | MP3 + WAV | 500k | 10,000 | 1 | Yes | 2 stations | 3 yrs |
-| Trackout (Stems) Lease | €99 / $99 | MP3 + WAV + stems | 1M | 50,000 | 3 | Yes | Yes | 5 yrs |
-| Unlimited Lease | €199 / $199 | MP3 + WAV + stems | Unlimited | Unlimited | Unlimited | Yes | Yes | 10 yrs |
-| Exclusive Rights | from €999 / $999 (Make an Offer) | All + project notes | Unlimited | Unlimited | Unlimited | Yes | Yes | Perpetual |
+| Tier | Price | Files | Streams | Sales/downloads | Music videos | Paid perf. | Radio |
+|---|---|---|---|---|---|---|---|
+| Basic MP3 Lease | €29 / $29 | MP3 320 untagged | 100k | 2,500 | 1 | Non-profit | No |
+| **Premium WAV Lease** (most popular) | €49 / $49 | MP3 + WAV | 500k | 10,000 | 1 | Yes | 2 stations |
+| Trackout (Stems) Lease | €99 / $99 | MP3 + WAV + stems | 1M | 50,000 | 3 | Yes | Yes |
+| Unlimited Lease | €199 / $199 | MP3 + WAV + stems | Unlimited | Unlimited | Unlimited | Yes | Yes |
+| Exclusive Rights | from €999 / $999 (Make an Offer) | All + project notes | Unlimited | Unlimited | Unlimited | Yes | Yes |
 
 Extras: **Buy 2 leases get 1 free**, **upgrade anytime by paying the difference**, **Custom beat** from €400, **exclusive offers** via form (negotiate, invoice with Stripe Payment Link).
 
@@ -98,8 +98,8 @@ All non-exclusive leases share these terms:
 - **Publishing split:** you keep **50% of the writer share** of the new song's composition. The artist registers the split with their PRO or publisher. Some producers take a smaller split on cheap leases. Pick one and put it in the contract.
 - **No Content ID by licensee.** The artist may not register the song in YouTube Content ID, Facebook Rights Manager, or similar systems. Other licensees of the same beat would get claimed. This is the #1 source of producer disputes.
 - **No resale** or redistribution of the beat alone. No use of the beat for **AI training**.
-- **Stream caps.** When the licensee hits a cap, they must upgrade.
-- **Exclusive sale.** Existing non-exclusive licenses stay valid until they expire. You **must disclose this** in the exclusive contract. The beat gets removed from the store after an exclusive sale.
+- **Stream caps.** When the licensee hits a cap, they must upgrade. Licenses have **no time limit** (decided 2026-09-23) — caps are the only ceiling, so there is no renewal revenue.
+- **Exclusive sale.** Existing non-exclusive licenses stay valid **forever** (no expiry). You **must disclose this** in the exclusive contract. The beat gets removed from the store after an exclusive sale.
 - **Governing law:** Finland (or wherever you're based). Name a venue.
 
 ### 2.3 Sample pack / loop license (royalty-free EULA)
