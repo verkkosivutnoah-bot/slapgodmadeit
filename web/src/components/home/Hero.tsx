@@ -88,7 +88,18 @@ export function Hero() {
           </form>
         </Rise>
 
-        <Rise delay={0.55} className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[13px] text-mute">
+        <Rise delay={0.5} className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          <Magnetic>
+            <Link href="/beats" className="btn btn-primary">
+              Browse beats
+            </Link>
+          </Magnetic>
+          <Link href="/packs" className="btn btn-ghost">
+            Packs
+          </Link>
+        </Rise>
+
+        <Rise delay={0.55} className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[13px] text-mute">
           {TRUST.map((t, i) => (
             <span key={t} className="flex items-center gap-5">
               {i > 0 && <span className={`h-1.5 w-1.5 rounded-full ${i === 1 ? "bg-amber" : "bg-lilac"}`} aria-hidden />}
@@ -108,16 +119,6 @@ export function Hero() {
           </span>
           Now spinning: <span className="text-grad font-semibold">Guitar Vault Vol. 1</span>
         </Link>
-        <div className="ml-auto flex items-center gap-2">
-          <Link href="/packs" className="btn btn-ghost btn-sm">
-            Packs
-          </Link>
-          <Magnetic>
-            <Link href="/beats" className="btn btn-primary btn-sm">
-              Browse beats
-            </Link>
-          </Magnetic>
-        </div>
       </Rise>
     </section>
   );
