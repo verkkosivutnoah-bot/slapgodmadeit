@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   const price = (l: CatalogLine) => (currency === "usd" ? l.priceUSD : l.priceEUR);
   const { freeKeys } = cartTotals(lines.map((l) => ({ key: l.key, kind: l.kind, priceEUR: price(l) })));
 
-  const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "https://slapgodmadeit.vercel.app";
+  const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "https://slapgodmadeit.com";
   const automaticTax = process.env.STRIPE_AUTOMATIC_TAX === "true";
 
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = lines.map((l) => {

@@ -161,7 +161,7 @@ class Ingest:
         return (
             f'"{self.title}" — {self.bpm} BPM · {self.key}\n'
             f"Prod. by SLAPGOD (@slapgodmadeit)\n"
-            f"Lease it: slapgodmadeit.vercel.app/beats/{self.slug}\n\n"
+            f"Lease it: slapgodmadeit.com/beats/{self.slug}\n\n"
             + " ".join(f"#{t}" for t in self.hashtags)
         )
 

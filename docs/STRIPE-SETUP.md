@@ -32,7 +32,7 @@ Paid files live in **Vercel Blob (private)**, because the GitHub repo is public.
 ## 2. Webhook
 
 **Developers → Webhooks → Add endpoint**
-- URL: `https://slapgodmadeit.vercel.app/api/stripe/webhook`
+- URL: `https://slapgodmadeit.com/api/stripe/webhook`
 - Events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`
 - Copy the **Signing secret** (`whsec_…`).
 

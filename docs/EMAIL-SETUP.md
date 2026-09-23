@@ -35,7 +35,7 @@ Open the file `web/.env.local` (create it if missing — `.env*` is gitignored) 
 KLAVIYO_PRIVATE_KEY=pk_your_key_here
 KLAVIYO_LIST_ID=YourListId
 DOWNLOAD_SECRET=paste_a_long_random_string
-NEXT_PUBLIC_SITE_URL=https://slapgodmadeit.vercel.app
+NEXT_PUBLIC_SITE_URL=https://slapgodmadeit.com
 ```
 
 Generate the download secret with:
@@ -66,7 +66,7 @@ Keep `DOWNLOAD_SECRET` identical everywhere — changing it invalidates download
 
 In email 1, add a button and set its link to `{{ person.sg_free_kit_url }}` — that's the signed link the
 site generated for that person. Add a fallback line: "Link expired? Grab a fresh one at
-slapgodmadeit.vercel.app/free".
+slapgodmadeit.com/free".
 
 ## 5. Verify the domain (important)
 

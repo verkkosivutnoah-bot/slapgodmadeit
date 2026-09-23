@@ -11,7 +11,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ENV="$ROOT/web/.env.local"
-SITE="https://slapgodmadeit.vercel.app"
+SITE="https://slapgodmadeit.com"
 HOOK_URL="$SITE/api/stripe/webhook"
 
 val() { grep -E "^$1=" "$ENV" 2>/dev/null | tail -1 | cut -d= -f2-; }

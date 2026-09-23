@@ -22,7 +22,7 @@ body copy, button and the block above the footer. Everything else (wordmark, car
 
 ## Swap the domain later
 
-The file links to `slapgodmadeit.vercel.app`. When the real domain is live, find and replace it.
+The file links to `slapgodmadeit.com`. When the real domain is live, find and replace it.
 
 ## Emails 2–4 copy
 
