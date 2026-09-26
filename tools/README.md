@@ -37,7 +37,7 @@ sparse material.
 |---|---|
 | BPM | From the filename; detection only as fallback |
 | Key | `telegram-loop-bot/analyze.py` (librosa, chord-aware). Prints a confidence score and flags anything under 0.60 |
-| Preview | First 45s, your producer tag mixed in every 20s, normalised, faded, encoded to AAC `.m4a` |
+| Preview | The full beat with your producer tag every 20s, encoded to 192 kbps MP3 — streamed on the site and free to download |
 | Private files | wav / mp3 / tagged / stems → `web/private/beats/<slug>/` — never served publicly |
 | Cover | Copied to `web/public/covers/beats/<slug>.jpg` if present |
 | Catalog | Entry appended to `web/src/data/beats.ts` |

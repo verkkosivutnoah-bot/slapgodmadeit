@@ -19,7 +19,7 @@ export default function AdminPage() {
       <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-stone-400">
         Drop the files for one beat. The key comes from the audio, the BPM from the filename — put it
         in there, like <span className="text-bone">Midnight Ritual 140bpm.wav</span>. Only a tagged
-        45-second preview becomes public; masters and stems stay private.
+        full-length tagged MP3 becomes public (streamed and free to download); masters and stems stay private.
       </p>
       <AdminUploader />
     </div>

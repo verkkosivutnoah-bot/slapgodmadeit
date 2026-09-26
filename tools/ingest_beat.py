@@ -10,8 +10,8 @@ touches nothing. Add --publish to actually write files and the catalog entry.
 What it does
   1. BPM from the filename (140bpm / 140 bpm / _140_); falls back to detection.
   2. Key from the audio, via telegram-loop-bot/analyze.py (librosa).
-  3. Tagged preview: your producer tag mixed in every ~20s, encoded to AAC (.m4a)
-     with afconvert — the ONLY audio that lands in web/public.
+  3. Tagged preview: the FULL beat with your producer tag every ~20s, encoded to MP3
+     with lameenc (no ffmpeg) — the ONLY audio that lands in web/public.
   4. Master / untagged / stems copied to web/private/beats/<slug>/ (never public).
   5. Hashtags + a social caption.
   6. Appends the entry to web/src/data/beats.ts.
@@ -40,7 +40,8 @@ BEATS_TS = WEB / "src" / "data" / "beats.ts"
 TAG_FILE = WEB / "public" / "audio" / "tag" / "slapgod-tag.mp3"
 
 AUDIO_EXT = {".wav", ".aif", ".aiff", ".flac", ".mp3", ".m4a"}
-PREVIEW_SECONDS = 45          # length of the public preview
+PREVIEW_SECONDS = None        # public preview length in seconds; None = the full beat
+PREVIEW_KBPS = 192            # tagged MP3 bitrate (stream + free download)
 TAG_EVERY = 20.0              # seconds between producer-tag drops
 TAG_GAIN = 0.85               # tag loudness relative to the beat
 FADE = 0.8                    # fade-out at the end of the preview
@@ -212,8 +213,8 @@ def analyse(master: Path) -> tuple[str, float, list[str], int | None, float]:
 
 # ------------------------------------------------------------ audio output
 
-def build_preview(master: Path, out_m4a: Path, tag: Path | None, seconds: float | None = PREVIEW_SECONDS) -> None:
-    """Tagged audio → AAC .m4a. `seconds=None` keeps the full length (free download)."""
+def build_preview(master: Path, out: Path, tag: Path | None, seconds: float | None = PREVIEW_SECONDS) -> None:
+    """Tagged audio → MP3 (or AAC if `out` ends in .m4a). `seconds=None` keeps the full length."""
     import numpy as np
     import soundfile as sf
 
@@ -240,11 +241,25 @@ def build_preview(master: Path, out_m4a: Path, tag: Path | None, seconds: float 
     if len(data) > fade:
         data[-fade:] *= np.linspace(1.0, 0.0, fade)[:, None]
 
+    out.parent.mkdir(parents=True, exist_ok=True)
+    if out.suffix.lower() == ".mp3":
+        # lameenc: pure-Python LAME, no ffmpeg needed. Opens in every DAW.
+        import lameenc
+        pcm = (np.clip(data, -1.0, 1.0) * 32767).astype("<i2")
+        if pcm.shape[1] > 2:
+            pcm = pcm[:, :2]
+        enc = lameenc.Encoder()
+        enc.set_bit_rate(PREVIEW_KBPS)
+        enc.set_in_sample_rate(sr)
+        enc.set_channels(pcm.shape[1])
+        enc.set_quality(2)
+        out.write_bytes(bytes(enc.encode(pcm.tobytes()) + enc.flush()))
+        return
+
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
         sf.write(tmp.name, data, sr)
-        out_m4a.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(
-            ["afconvert", "-f", "m4af", "-d", "aac", "-b", "128000", tmp.name, str(out_m4a)],
+            ["afconvert", "-f", "m4af", "-d", "aac", "-b", "128000", tmp.name, str(out)],
             check=True, capture_output=True,
         )
     os.unlink(tmp.name)
@@ -255,8 +270,8 @@ def build_preview(master: Path, out_m4a: Path, tag: Path | None, seconds: float 
 def ts_entry(i: Ingest) -> str:
     moods = ", ".join(f'"{m}"' for m in i.moods)
     tags = ", ".join(f'"{t}"' for t in i.tags[:3])
-    return (f'  beat("{i.slug}", "{i.title}", "beats/{i.slug}", "{i.genre}", {i.bpm}, '
-            f'"{i.key}", [{moods}], [{tags}], {{ isNew: true, duration: "{fmt_duration(min(i.duration, PREVIEW_SECONDS))}" }}),')
+    return (f'  beat("{i.slug}", "{i.title}", "beats/{i.slug}.mp3", "{i.genre}", {i.bpm}, '
+            f'"{i.key}", [{moods}], [{tags}], {{ isNew: true, duration: "{fmt_duration(i.duration if PREVIEW_SECONDS is None else min(i.duration, PREVIEW_SECONDS))}" }}),')
 
 
 def append_to_catalog(entry: str) -> None:
@@ -269,14 +284,12 @@ def append_to_catalog(entry: str) -> None:
 def write_all(i: Ingest, extras: dict[str, Path], cover: Path | None,
               conf: float, alts: list[str]) -> dict:
     """Encode the preview, copy the private files, write meta.json, append the catalog entry."""
-    preview = PUBLIC_AUDIO / f"{i.slug}.m4a"
+    # full-length tagged MP3: streamed on the site AND the free download people write their song on
+    preview = PUBLIC_AUDIO / f"{i.slug}.mp3"
     build_preview(i.master, preview, TAG_FILE)
 
     priv = PRIVATE_BEATS / i.slug
     priv.mkdir(parents=True, exist_ok=True)
-
-    # full-length tagged file: the free download people write their song on
-    build_preview(i.master, priv / f"{i.slug}-tagged.m4a", TAG_FILE, seconds=None)
     for f in extras.values():
         shutil.copy2(f, priv / f.name)
 
@@ -300,7 +313,6 @@ def write_all(i: Ingest, extras: dict[str, Path], cover: Path | None,
     return {
         "published": True,
         "preview": str(preview.relative_to(WEB)),
-        "taggedFull": str((priv / f"{i.slug}-tagged.m4a").relative_to(WEB)),
         "private": str(priv.relative_to(WEB)),
         "coverWritten": cover_out,
     }
@@ -376,7 +388,7 @@ def main() -> None:
         payload = {
             "slug": ing.slug, "title": ing.title, "bpm": ing.bpm, "bpmSource": ing.bpm_source,
             "key": ing.key, "keyConfidence": round(conf, 3), "keyAlternatives": alts,
-            "duration": round(duration, 2), "durationLabel": fmt_duration(min(duration, PREVIEW_SECONDS)),
+            "duration": round(duration, 2), "durationLabel": fmt_duration(duration if PREVIEW_SECONDS is None else min(duration, PREVIEW_SECONDS)),
             "genre": ing.genre, "moods": ing.moods, "tags": ing.tags,
             "hashtags": ing.hashtags, "caption": ing.caption,
             "files": {k: v.name for k, v in extras.items()},
@@ -400,7 +412,7 @@ def main() -> None:
   genre      {ing.genre}   moods: {', '.join(ing.moods)}
 
   ── would write ─────────────────────────────
-  preview    web/public/audio/beats/{ing.slug}.m4a   (tagged, {PREVIEW_SECONDS}s)""")
+  preview    web/public/audio/beats/{ing.slug}.mp3   (tagged, full length — streamed + free download)""")
     for kind, f in extras.items():
         print(f"  {kind:<10} web/private/beats/{ing.slug}/{f.name}")
     if cover:

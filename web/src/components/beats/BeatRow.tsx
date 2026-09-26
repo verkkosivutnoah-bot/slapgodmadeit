@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePlayer } from "@/components/player/GlobalPlayer";
 import { useLicenseModal } from "./LicenseModal";
 import { useCurrency } from "@/lib/currency";
-import { PauseIcon, PlayIcon } from "@/components/ui/Icons";
+import { DownloadIcon, PauseIcon, PlayIcon } from "@/components/ui/Icons";
 import { CoverArt } from "@/components/ui/CoverArt";
 import { toPlayerTrack, type Beat } from "@/data/beats";
 import { accentStyle, useCoverAccent } from "@/lib/coverAccent";
@@ -106,15 +106,27 @@ export function BeatRow({ beat, queue, index = 0, as: Tag = "li" }: { beat: Beat
       </p>
       <p className="hidden text-right text-[14px] tabular-nums text-mute md:block">{beat.duration}</p>
 
-      <button
-        type="button"
-        onClick={() => openLicense(beat)}
-        className="btn btn-sm btn-ghost shrink-0 md:w-[150px]"
-        aria-label={`License ${beat.title}, from ${format(beat.priceFrom)}`}
-      >
-        <span className="hidden sm:inline">License</span>
-        <span>{format(beat.priceFrom)}</span>
-      </button>
+      <div className="flex shrink-0 items-center justify-end gap-2">
+        <a
+          href={beat.src}
+          download={`SLAPGOD - ${beat.title} (tagged).mp3`}
+          onClick={(e) => e.stopPropagation()}
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-mute transition-colors hover:bg-white/[0.06] hover:text-coral"
+          aria-label={`Download ${beat.title} tagged MP3 (free)`}
+          title="Free tagged download"
+        >
+          <DownloadIcon size={15} />
+        </a>
+        <button
+          type="button"
+          onClick={() => openLicense(beat)}
+          className="btn btn-sm btn-ghost shrink-0 md:w-[150px]"
+          aria-label={`License ${beat.title}, from ${format(beat.priceFrom)}`}
+        >
+          <span className="hidden sm:inline">License</span>
+          <span>{format(beat.priceFrom)}</span>
+        </button>
+      </div>
     </Tag>
   );
 }

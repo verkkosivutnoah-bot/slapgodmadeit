@@ -33,7 +33,8 @@ export interface Beat {
   featured?: boolean;
 }
 
-const a = (f: string) => `/audio/${f}.m4a`;
+/** Public tagged audio. Pass "beats/<slug>.mp3"; a bare name keeps the old .m4a placeholders working. */
+const a = (f: string) => `/audio/${/\.(mp3|m4a)$/.test(f) ? f : `${f}.m4a`}`;
 const c = (slug: string) => coverFor("beats", slug);
 
 function beat(
@@ -66,7 +67,7 @@ function beat(
 }
 
 export const beats: Beat[] = [
-  beat("no-faces", "No Faces", "beats/no-faces", "Drill", 100, "C# maj", ["Dark", "Aggressive"], ["ebk young joc type beat", "piano", "808"], { isNew: true, duration: "0:45" }),
+  beat("no-faces", "No Faces", "beats/no-faces.mp3", "Drill", 100, "C# maj", ["Dark", "Aggressive"], ["ebk young joc type beat", "piano", "808"], { isNew: true, duration: "2:45" }),
 ];
 
 export const GENRES: Genre[] = ["Trap", "Drill", "Dark Trap", "R&B", "Boom Bap", "Afrobeats"];
