@@ -7,6 +7,7 @@ import { ArrowUpIcon, SearchIcon } from "@/components/ui/Icons";
 import { LineReveal, Magnetic, Rise, useOffscreenPause } from "@/components/ui/motion";
 import { usePlayer } from "@/components/player/GlobalPlayer";
 import { guitarVault } from "@/data/packs";
+import { LOOPS_LIVE } from "@/data/site";
 
 // shader background: client-only, never blocks first paint (CSS gradient shows underneath until it fades in)
 const HeroBackground = dynamic(() => import("@/components/hero/HeroBackground"), { ssr: false });
@@ -51,7 +52,7 @@ export function Hero() {
         <LineReveal
           id="hero-title"
           lines={[
-            "Loops and beats",
+            LOOPS_LIVE ? "Loops and beats" : "Beats",
             <>
               by <span className="text-grad-anim inline-block pr-[0.14em] italic">SLAPGOD</span>
             </>,
@@ -60,7 +61,9 @@ export function Hero() {
           delay={0.1}
         />
         <Rise delay={0.35} className="mt-5 max-w-md text-[16px] leading-relaxed text-stone-400 [text-wrap:balance] sm:text-[17px]">
-          SLAPGOD makes the beats slap — original loops, beats and sample packs, with licenses you can actually read.
+          {LOOPS_LIVE
+            ? "SLAPGOD makes the beats slap — original loops, beats and sample packs, with licenses you can actually read."
+            : "SLAPGOD makes the beats slap — original beats, made from scratch, with licenses you can actually read."}
         </Rise>
 
         <Rise delay={0.45} className="mt-8 w-full max-w-[480px]">
@@ -94,9 +97,15 @@ export function Hero() {
               Browse beats
             </Link>
           </Magnetic>
-          <Link href="/packs" className="btn btn-ghost">
-            Packs
-          </Link>
+          {LOOPS_LIVE ? (
+            <Link href="/packs" className="btn btn-ghost">
+              Packs
+            </Link>
+          ) : (
+            <Link href="/licenses" className="btn btn-ghost">
+              Licenses
+            </Link>
+          )}
         </Rise>
 
         <Rise delay={0.55} className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[13px] text-mute">
@@ -111,6 +120,7 @@ export function Hero() {
 
       {/* bottom corners */}
       <Rise delay={0.7} className="container-sg relative z-10 mt-auto flex items-end justify-between gap-3 pb-6">
+{LOOPS_LIVE && (
         <Link href={`/packs/${guitarVault.slug}`} className="btn btn-ghost btn-sm hidden sm:inline-flex">
           <span className={`eq ${playing ? "" : "is-paused"}`} aria-hidden>
             <i />
@@ -119,6 +129,7 @@ export function Hero() {
           </span>
           Now spinning: <span className="text-grad font-semibold">Guitar Vault Vol. 1</span>
         </Link>
+        )}
       </Rise>
     </section>
   );

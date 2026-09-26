@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/layout/PageHero";
 import { PacksGrid } from "@/components/packs/PacksGrid";
+import { redirect } from "next/navigation";
+import { LOOPS_LIVE } from "@/data/site";
 
 export const metadata: Metadata = { title: "Loops & Sample Packs" };
 
 export default function PacksPage() {
+  if (!LOOPS_LIVE) redirect("/beats");
   return (
     <>
       <PageHero eyebrow="Loops · Drum kits · Bundles" title={<>Sample <span className="text-grad pr-[0.06em] italic">packs</span></>}>

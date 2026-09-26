@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
+import { SITE_TAGLINE } from "@/data/site";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "SLAPGOD — Beats, Guitar Loops & Sample Packs",
+    name: `SLAPGOD — ${SITE_TAGLINE}`,
     short_name: "SLAPGOD",
     start_url: "/",
     display: "standalone",

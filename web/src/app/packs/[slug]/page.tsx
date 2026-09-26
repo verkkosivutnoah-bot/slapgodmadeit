@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { LOOPS_LIVE } from "@/data/site";
 import { PackDetail } from "@/components/packs/PackDetail";
 import { allPacks, getPack } from "@/data/packs";
 
@@ -14,6 +15,7 @@ export async function generateMetadata({ params }: PageProps<"/packs/[slug]">): 
 }
 
 export default async function PackPage({ params }: PageProps<"/packs/[slug]">) {
+  if (!LOOPS_LIVE) redirect("/beats");
   const { slug } = await params;
   const pack = getPack(slug);
   if (!pack) notFound();

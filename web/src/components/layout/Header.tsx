@@ -7,6 +7,7 @@ import { useCart } from "@/lib/cart";
 import { CurrencyToggle } from "@/lib/currency";
 import { CartIcon, CloseIcon, InstagramIcon, MenuIcon, TikTokIcon, YouTubeIcon } from "@/components/ui/Icons";
 import { socials } from "@/data/seller";
+import { LOOPS_LIVE } from "@/data/site";
 import { scrollLock } from "@/components/ui/SmoothScroll";
 
 const SOCIAL_ICON = { Instagram: InstagramIcon, TikTok: TikTokIcon, YouTube: YouTubeIcon } as const;
@@ -36,8 +37,12 @@ function SocialLinks({ className = "", size = 17 }: { className?: string; size?:
 
 export const NAV = [
   { href: "/beats", label: "Beats" },
-  { href: "/packs", label: "Packs" },
-  { href: "/free", label: "Free" },
+  ...(LOOPS_LIVE
+    ? [
+        { href: "/packs", label: "Packs" },
+        { href: "/free", label: "Free" },
+      ]
+    : [{ href: "/licenses", label: "Licenses" }]),
 ];
 
 const MORE = [
@@ -145,8 +150,8 @@ export function Header() {
                 <span className="grid h-5 min-w-5 place-items-center rounded-full bg-coral px-1 text-[11px] font-bold text-deep">{count}</span>
               )}
             </Link>
-            <Link href="/free" className="btn btn-primary hidden sm:inline-flex">
-              Free loops
+            <Link href={LOOPS_LIVE ? "/free" : "/beats"} className="btn btn-primary hidden sm:inline-flex">
+              {LOOPS_LIVE ? "Free loops" : "Browse beats"}
             </Link>
             <button
               type="button"
@@ -171,7 +176,7 @@ export function Header() {
           className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-ink px-6 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-24 md:hidden"
         >
           <nav aria-label="Mobile" className="flex flex-col">
-            {[{ href: "/", label: "Home" }, ...NAV, ...MORE, { href: "/cart", label: "Cart" }].map((n) => (
+            {[{ href: "/", label: "Home" }, ...NAV, ...MORE.filter((m) => !NAV.some((n) => n.href === m.href)), { href: "/cart", label: "Cart" }].map((n) => (
               <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className={`display block py-2 text-[34px] active:text-coral ${pathname === n.href ? "text-grad" : "text-bone"}`}>
                 {n.label}
               </Link>
@@ -180,8 +185,8 @@ export function Header() {
           <SocialLinks className="mt-8 -ml-3" size={20} />
           <div className="mt-auto flex items-center justify-between gap-4 pt-8">
             <CurrencyToggle />
-            <Link href="/free" className="btn btn-primary">
-              Free loops
+            <Link href={LOOPS_LIVE ? "/free" : "/beats"} className="btn btn-primary">
+              {LOOPS_LIVE ? "Free loops" : "Browse beats"}
             </Link>
           </div>
         </div>

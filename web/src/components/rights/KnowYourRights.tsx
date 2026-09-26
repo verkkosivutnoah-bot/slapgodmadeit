@@ -7,6 +7,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/ui/motion";
 import { ArrowIcon, CheckIcon, CloseIcon, DownloadIcon } from "@/components/ui/Icons";
 import { canDo, cantDo, faqs, leaseVsExclusive, registerSteps, SPLIT_SHEET_URL, splits, twoCopyrights } from "@/data/rights";
 import { CREDIT_FORMAT, licenseTiers } from "@/data/licenses";
+import { LOOPS_LIVE } from "@/data/site";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -265,10 +266,12 @@ function Splits() {
             <Donut share={splits.beats.share} color="var(--coral)" label={splits.beats.label} />
             <p className="mt-3 text-center text-[13px] text-mute">{splits.beats.text}</p>
           </div>
-          <div>
-            <Donut share={splits.loops.share} color="var(--lilac)" label={splits.loops.label} />
-            <p className="mt-3 text-center text-[13px] text-mute">{splits.loops.text}</p>
-          </div>
+          {LOOPS_LIVE && (
+            <div>
+              <Donut share={splits.loops.share} color="var(--lilac)" label={splits.loops.label} />
+              <p className="mt-3 text-center text-[13px] text-mute">{splits.loops.text}</p>
+            </div>
+          )}
         </div>
         <div className="rounded-[22px] border border-line p-6 sm:p-8">
           <p className="display text-[26px]">How to register your song</p>

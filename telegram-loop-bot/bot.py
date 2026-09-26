@@ -18,6 +18,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, Update
+from telegram.error import NetworkError, TimedOut
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
@@ -105,16 +106,24 @@ def cleanup(job: dict) -> None:
 
 
 async def post_to_channel(context: ContextTypes.DEFAULT_TYPE, job: dict, tags: list[str]) -> Message:
-    with open(job["path"], "rb") as fh:
-        return await context.bot.send_audio(
-            chat_id=job["chat_id"] if TEST_MODE else CHANNEL_ID,
-            audio=fh,
-            filename=job["filename"],
-            title=Path(job["filename"]).stem,  # else Telegram shows the file's old tags
-            caption=" ".join(tags),
-            write_timeout=120,
-            read_timeout=60,
-        )
+    last_error: Exception | None = None
+    for attempt in range(3):  # Wi-Fi drops mid-upload are common; just try again
+        try:
+            with open(job["path"], "rb") as fh:
+                return await context.bot.send_audio(
+                    chat_id=job["chat_id"] if TEST_MODE else CHANNEL_ID,
+                    audio=fh,
+                    filename=job["filename"],
+                    title=Path(job["filename"]).stem,  # else Telegram shows the file's old tags
+                    caption=" ".join(tags),
+                    write_timeout=180,
+                    read_timeout=60,
+                )
+        except (NetworkError, TimedOut) as exc:
+            last_error = exc
+            log.warning("upload attempt %d failed: %s", attempt + 1, exc)
+            await asyncio.sleep(3 * (attempt + 1))
+    raise last_error  # type: ignore[misc]
 
 
 async def publish(context: ContextTypes.DEFAULT_TYPE, job_id: str, tags: list[str]) -> str:
@@ -133,6 +142,7 @@ async def publish(context: ContextTypes.DEFAULT_TYPE, job_id: str, tags: list[st
         cleanup(job)
     LAST_TAGS_FILE.write_text(json.dumps({"tags": tags}))
     where = "here (test mode)" if TEST_MODE else (sent.link or "the channel")
+    log.info("posted %s %s", job["filename"], " ".join(tags))
     lines = [f"✅ Posted {job['filename']} {' '.join(tags)} → {where}"]
     try:
         lines += await asyncio.to_thread(rename_originals, job["original_name"], job["filename"], job["size"])
@@ -140,6 +150,30 @@ async def publish(context: ContextTypes.DEFAULT_TYPE, job_id: str, tags: list[st
         log.exception("local rename failed")
         lines.append(f"📁 Couldn't rename the file on your Mac: {exc}")
     return "\n".join(lines)
+
+
+async def on_error(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    log.error("handler error", exc_info=context.error)
+
+
+async def watchdog(app: Application) -> None:
+    """Polling can wedge after the Mac sleeps — quit so launchd restarts us clean."""
+    failures = 0
+    while True:
+        await asyncio.sleep(120)
+        try:
+            await app.bot.get_me(read_timeout=20, connect_timeout=20)
+            failures = 0
+        except Exception as exc:  # noqa: BLE001
+            failures += 1
+            log.warning("watchdog: Telegram unreachable (%d/5): %s", failures, exc)
+            if failures >= 5:  # ~10 minutes offline
+                log.error("watchdog: restarting the bot")
+                os._exit(1)
+
+
+async def on_start(app: Application) -> None:
+    app.create_task(watchdog(app))
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -166,6 +200,7 @@ async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         await msg.reply_text("File over 20 MB — Telegram bots can't download that. Export a smaller mp3.")
         return
 
+    log.info("loop received: %s (%s bytes)", filename, media.file_size)
     tmpdir = Path(tempfile.mkdtemp(prefix="loopbot_"))
     path = tmpdir / re.sub(r"[^\w.\-]", "_", filename)
     try:
@@ -240,12 +275,13 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 def main() -> None:
     if not OWNER_IDS:
         log.warning("OWNER_IDS not set — nobody can post. Send /id to the bot, then add it to .env.")
-    app = Application.builder().token(BOT_TOKEN).build()
+    app = Application.builder().token(BOT_TOKEN).post_init(on_start).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("id", whoami))
     app.add_handler(MessageHandler(filters.ChatType.PRIVATE & AUDIO_FILTER, handle_audio))
     app.add_handler(MessageHandler(filters.ChatType.PRIVATE & filters.TEXT & ~filters.COMMAND, handle_text))
     app.add_handler(CallbackQueryHandler(handle_button))
+    app.add_error_handler(on_error)
     log.info("Loop bot running. %s",
              "TEST MODE (replies in your chat, channel untouched)" if TEST_MODE else f"LIVE → channel {CHANNEL_ID}")
     app.run_polling(allowed_updates=Update.ALL_TYPES)

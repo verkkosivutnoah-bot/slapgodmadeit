@@ -1,4 +1,5 @@
 "use client";
+import { LOOPS_LIVE } from "@/data/site";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@/components/ui/Dialog";
@@ -27,6 +28,12 @@ function safeSet(k: string, v: string) {
 
 /** Email capture popup: after 15s, 50% scroll, or exit-intent (desktop). Once per visitor. */
 export function EmailPopup() {
+  // offers the free loop kit — pointless while loops are hidden
+  if (!LOOPS_LIVE) return null;
+  return <EmailPopupInner />;
+}
+
+function EmailPopupInner() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const fired = useRef(false);

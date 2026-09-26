@@ -9,6 +9,7 @@ import { useCurrency } from "@/lib/currency";
 import { licenseDeals } from "@/data/licenses";
 import { ArrowIcon, CloseIcon } from "@/components/ui/Icons";
 import { EASE, Reveal } from "@/components/ui/motion";
+import { LOOPS_LIVE } from "@/data/site";
 
 export function CartView() {
   const cart = useCart();
@@ -49,14 +50,18 @@ export function CartView() {
       <div className="container-sg">
         <Reveal className="mx-auto max-w-xl rounded-[24px] border border-line bg-[radial-gradient(70%_80%_at_50%_0%,rgb(var(--coral-rgb)/0.12),transparent_70%)] p-10 text-center sm:p-16">
           <p className="display text-[36px]">Your cart is empty</p>
-          <p className="mt-3 text-stone-400">Grab a beat lease or a pack — or start with 10 free guitar loops.</p>
+          <p className="mt-3 text-stone-400">
+            {LOOPS_LIVE ? "Grab a beat lease or a pack — or start with 10 free guitar loops." : "Grab a beat lease — or try any beat free with the tagged download."}
+          </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/beats" className="btn btn-primary">
               Browse beats
             </Link>
-            <Link href="/free" className="btn btn-ghost">
-              Free loops
-            </Link>
+            {LOOPS_LIVE && (
+              <Link href="/free" className="btn btn-ghost">
+                Free loops
+              </Link>
+            )}
           </div>
         </Reveal>
       </div>

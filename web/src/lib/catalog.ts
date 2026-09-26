@@ -10,6 +10,7 @@
 import { beats } from "@/data/beats";
 import { licenseTiers, type LicenseId } from "@/data/licenses";
 import { allPacks } from "@/data/packs";
+import { LOOPS_LIVE } from "@/data/site";
 
 export type FileKind = "mp3" | "wav" | "stems" | "zip";
 
@@ -44,6 +45,7 @@ export const FILE_LABEL: Record<FileKind, string> = {
 
 export function lookup(key: string): CatalogLine | null {
   if (key.startsWith("pack:")) {
+    if (!LOOPS_LIVE) return null; // packs are off the site for now
     const slug = key.slice("pack:".length);
     const p = allPacks.find((x) => x.slug === slug);
     if (!p || p.price <= 0 || p.comingSoon) return null; // free or unreleased packs aren't sold

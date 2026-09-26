@@ -8,6 +8,7 @@ import { ScrollRow } from "@/components/ui/ScrollRow";
 import { CheckIcon } from "@/components/ui/Icons";
 import { licenseDeals, leaseTerms, licenseTiers, loopLicenseSummary, TABLE_ROWS } from "@/data/licenses";
 import { useCurrency } from "@/lib/currency";
+import { LOOPS_LIVE } from "@/data/site";
 
 type Tab = "beats" | "loops";
 
@@ -19,7 +20,7 @@ export function LicenseCards({ ctaHref = "/beats", withTabs = true }: { ctaHref?
 
   return (
     <div ref={ref}>
-      {withTabs && (
+      {withTabs && LOOPS_LIVE && (
         <div className="mb-10 flex justify-center md:justify-start">
           <PillTabs<Tab> options={["beats", "loops"]} labels={{ beats: "Beat leases", loops: "Loops & packs" }} value={tab} onChange={setTab} label="License type" />
         </div>

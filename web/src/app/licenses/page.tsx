@@ -6,6 +6,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Reveal } from "@/components/ui/motion";
 import { CREDIT_FORMAT } from "@/data/licenses";
 import { splits } from "@/data/rights";
+import { LOOPS_LIVE } from "@/data/site";
 
 export const metadata: Metadata = { title: "License Agreements" };
 
@@ -13,7 +14,7 @@ export default function LicensesPage() {
   return (
     <>
       <PageHero eyebrow="Legal · Licensing" lines={["Licenses, in", <span key="2" className="text-grad pr-[0.06em] italic">plain language</span>]}>
-        Beat lease tiers, exclusive rights and the loop license — summarized. The full agreement text is delivered with every purchase.
+        {LOOPS_LIVE ? "Beat lease tiers, exclusive rights and the loop license — summarized." : "Beat lease tiers and exclusive rights — summarized."} The full agreement text is delivered with every purchase.
       </PageHero>
 
       <section className="container-sg pb-24" aria-label="License tiers">
@@ -34,7 +35,7 @@ export default function LicensesPage() {
         <Reveal className="grid grid-cols-1 border-y border-line sm:grid-cols-3">
           {[
             { k: `${splits.beats.share}%`, v: "Of the composition to SLAPGOD on songs made with a beat" },
-            { k: `${splits.loops.share}%`, v: "Of the composition on released songs that use the loops" },
+            ...(LOOPS_LIVE ? [{ k: `${splits.loops.share}%`, v: "Of the composition on released songs that use the loops" }] : []),
             { k: "Credit", v: `“${CREDIT_FORMAT}”` },
           ].map((x, i) => (
             <div key={x.k} className={`py-10 sm:px-8 ${i > 0 ? "border-t border-line sm:border-l sm:border-t-0" : "sm:pl-0"}`}>
@@ -52,7 +53,7 @@ export default function LicensesPage() {
             Full license text
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed text-stone-400">
-            Coming soon — full agreements for Basic MP3, Premium WAV, Trackout, Unlimited, Exclusive Rights and the loop/sample license.
+            Coming soon — full agreements for Basic MP3, Premium WAV, Trackout, Unlimited{LOOPS_LIVE ? ", Exclusive Rights and the loop/sample license" : " and Exclusive Rights"}.
           </p>
           <div className="mt-8 space-y-3" aria-hidden>
             {[94, 80, 88, 62, 90, 74].map((w, i) => (

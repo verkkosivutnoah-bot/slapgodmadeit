@@ -1,3 +1,4 @@
+import { LOOPS_LIVE } from "./site";
 // "Know your rights" education content. Plain-language summaries — NOT legal advice.
 // The license agreement delivered with each purchase is the binding document.
 
@@ -23,7 +24,7 @@ export const leaseVsExclusive: { label: string; lease: string; exclusive: string
   { label: "Master royalty", lease: "None", exclusive: "5% to SLAPGOD" },
 ];
 
-export const canDo = [
+const canDoAll = [
   "Release on Spotify, Apple Music & more via DistroKid, TuneCore, Amuse, etc.",
   "Monetize your song on YouTube (without Content ID)",
   "Perform it live (paid shows from Premium WAV up)",
@@ -32,7 +33,7 @@ export const canDo = [
   "Post it on TikTok, Reels and Shorts",
 ];
 
-export const cantDo = [
+const cantDoAll = [
   "Register the beat or loops in YouTube Content ID",
   "Resell, share or redistribute the beat or loops",
   "Claim the beat or loops as your own work",
@@ -57,7 +58,7 @@ export const registerSteps = [
 
 export const SPLIT_SHEET_URL = "/downloads/split-sheet.pdf"; // placeholder template
 
-export const faqs: { q: string; a: string }[] = [
+const faqsAll: { q: string; a: string }[] = [
   {
     q: "Can my song be used in a film, ad or game?",
     a: "Not under a lease on its own. Sync needs separate written permission and a fee split — ask through the contact form and it's usually quick to agree.",
@@ -111,3 +112,15 @@ export const faqs: { q: string; a: string }[] = [
     a: "Yes. Every guitar is played by SLAPGOD and every beat is built from original sounds — no uncleared samples.",
   },
 ];
+
+
+/* ---- beats-only mode (LOOPS_LIVE off): drop loop-only entries, trim "or loops" wording ---- */
+const LOOP_ONLY = /\bloops?\b|sample pack|sampler/i;
+const trim = (t: string) =>
+  LOOPS_LIVE ? t : t.replace(/ (?:or|and) loops\b/gi, "").replace(/ or the loops\b/gi, "").replace(/ \(25% for loops\)/gi, "");
+
+export const canDo = canDoAll.map(trim).filter((t) => LOOPS_LIVE || !LOOP_ONLY.test(t));
+export const cantDo = cantDoAll.map(trim).filter((t) => LOOPS_LIVE || !LOOP_ONLY.test(t));
+export const faqs = faqsAll
+  .map((f) => ({ q: trim(f.q), a: trim(f.a) }))
+  .filter((f) => LOOPS_LIVE || !LOOP_ONLY.test(f.q));

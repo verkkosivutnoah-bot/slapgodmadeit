@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { LOOPS_LIVE, SITE_TAGLINE } from "@/data/site";
 
 // Display: Newsreader (free, variable w/ optical size) as a heavy editorial serif. UI: system stack, Inter as fallback.
 const serif = Newsreader({ variable: "--font-serif", subsets: ["latin"], axes: ["opsz"], display: "swap" });
@@ -14,14 +15,14 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_URL ? `h
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "SLAPGOD — Beats, Guitar Loops & Sample Packs",
+    default: `SLAPGOD — ${SITE_TAGLINE}`,
     template: "%s · SLAPGOD",
   },
   description:
-    "Beats, live guitar loops and sample packs by SLAPGOD (@slapgodmadeit). 100% original sounds, clear licenses, instant delivery.",
+    LOOPS_LIVE ? "Beats, live guitar loops and sample packs by SLAPGOD (@slapgodmadeit). 100% original sounds, clear licenses, instant delivery." : "Original beats by SLAPGOD (@slapgodmadeit). Made from scratch, clear licenses, instant delivery.",
   openGraph: {
     title: "SLAPGOD",
-    description: "Beats, live guitar loops and sample packs. 100% original.",
+    description: LOOPS_LIVE ? "Beats, live guitar loops and sample packs. 100% original." : "Original beats by SLAPGOD. Clear licenses, instant download.",
     type: "website",
   },
 };
