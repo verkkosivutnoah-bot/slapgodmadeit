@@ -13,3 +13,8 @@ web/private/beats/*
 web/private/beats/*/*
 !web/private/beats/*/*-tagged.m4a
 !web/private/beats/*/meta.json
+
+# YouTube OAuth — never commit
+tools/youtube-client.json
+tools/youtube-token.json
+tools/bin/

@@ -59,3 +59,33 @@ export async function runIngest(args: string[]) {
     return { ok: false as const, error: `Couldn't parse output:\n${stdout.slice(-400)}` };
   }
 }
+
+/* ------------------------------------------------------------------ YouTube */
+
+export const YOUTUBE = join(REPO, "tools", "youtube.py");
+const RENDER_SRC = join(REPO, "tools", "render_video.swift");
+const RENDER_BIN = join(REPO, "tools", "bin", "render_video");
+
+/**
+ * Compile tools/render_video.swift once. The Command Line Tools on this Mac ship a newer SDK
+ * than the Swift compiler accepts, so fall back through the installed SDKs until one builds.
+ */
+export async function ensureRenderer(): Promise<{ ok: true; bin: string } | { ok: false; error: string }> {
+  const { existsSync, statSync, mkdirSync, readdirSync } = await import("node:fs");
+  if (existsSync(RENDER_BIN) && statSync(RENDER_BIN).mtimeMs >= statSync(RENDER_SRC).mtimeMs) {
+    return { ok: true, bin: RENDER_BIN };
+  }
+  mkdirSync(join(REPO, "tools", "bin"), { recursive: true });
+  const sdkDir = "/Library/Developer/CommandLineTools/SDKs";
+  const sdks = existsSync(sdkDir)
+    ? readdirSync(sdkDir).filter((d) => /^MacOSX\d/.test(d)).sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))
+    : [];
+  let last = "";
+  for (const sdk of ["", ...sdks.map((d) => join(sdkDir, d))]) {
+    const args = ["-O", RENDER_SRC, "-o", RENDER_BIN, ...(sdk ? ["-sdk", sdk] : [])];
+    const r = await run("swiftc", args, REPO, 300_000);
+    if (r.code === 0) return { ok: true, bin: RENDER_BIN };
+    last = r.stderr.split("\n").find((l) => l.includes("error")) ?? r.stderr.slice(-300);
+  }
+  return { ok: false, error: `Couldn't compile the video renderer: ${last}` };
+}

@@ -27,7 +27,15 @@ type Analysis = {
   caption: string;
 };
 
-type Published = { slug: string; title: string; deployed: boolean; caption: string; gitError?: string };
+type YouTubeResult = { ok: boolean; url?: string; title?: string; privacy?: string; thumbnail?: string; error?: string };
+type Published = {
+  slug: string;
+  title: string;
+  deployed: boolean;
+  caption: string;
+  gitError?: string;
+  youtube?: YouTubeResult;
+};
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const field = "w-full rounded-xl border border-line bg-surface px-4 py-3 text-[15px] text-bone outline-none focus:border-coral";
@@ -49,6 +57,9 @@ export function AdminUploader() {
   const [moods, setMoods] = useState<string[]>(["Dark"]);
   const [tags, setTags] = useState("");
   const [deploy, setDeploy] = useState(true);
+  const [youtube, setYoutube] = useState(true);
+  const [typeArtist, setTypeArtist] = useState("");
+  const [ytPrivacy, setYtPrivacy] = useState<"private" | "unlisted" | "public">("private");
   const [cover, setCover] = useState<{ name: string; url: string } | null>(null);
   const coverRef = useRef<HTMLInputElement>(null);
 
@@ -117,6 +128,9 @@ export function AdminUploader() {
           moods,
           tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
           deploy,
+          youtube,
+          typeBeatArtist: typeArtist,
+          youtubePrivacy: ytPrivacy,
         }),
       });
       const data = await res.json();
@@ -261,7 +275,7 @@ export function AdminUploader() {
             </label>
 
             <div className="mt-6">
-              <span className="mb-3 block text-[13px] text-mute">Cover art</span>
+              <span className="mb-3 block text-[13px] text-mute">Thumbnail — the YouTube video, its thumbnail and the cover on the site</span>
               <div className="flex items-center gap-4">
                 <button
                   type="button"
@@ -284,9 +298,9 @@ export function AdminUploader() {
                     </>
                   ) : (
                     <>
-                      Square JPG, 2000×2000 or larger.
+                      16:9 JPG, 1280×720 or larger (YouTube&apos;s thumbnail size).
                       <br />
-                      Without one, generated placeholder art is used.
+                      The site crops it square — keep the subject centred.
                     </>
                   )}
                 </div>
@@ -298,6 +312,50 @@ export function AdminUploader() {
                 className="hidden"
                 onChange={(e) => e.target.files?.[0] && void addCover(e.target.files[0])}
               />
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-line p-4 sm:p-5">
+              <label className="flex cursor-pointer items-center gap-3 text-[14px] text-stone-300">
+                <input
+                  type="checkbox"
+                  checked={youtube}
+                  onChange={(e) => setYoutube(e.target.checked)}
+                  className="h-[18px] w-[18px] accent-[var(--coral)]"
+                />
+                Post to YouTube
+              </label>
+              {youtube && (
+                <div className="mt-4 grid gap-4 sm:grid-cols-[1fr_auto]">
+                  <label className="block">
+                    <span className="mb-2 block text-[13px] text-mute">Type beat artist</span>
+                    <input
+                      className={field}
+                      placeholder="EBK Young Joc"
+                      value={typeArtist}
+                      onChange={(e) => setTypeArtist(e.target.value)}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mb-2 block text-[13px] text-mute">Visibility</span>
+                    <select
+                      className={`${field} sm:w-[150px]`}
+                      value={ytPrivacy}
+                      onChange={(e) => setYtPrivacy(e.target.value as typeof ytPrivacy)}
+                    >
+                      <option value="private">Private</option>
+                      <option value="unlisted">Unlisted</option>
+                      <option value="public">Public</option>
+                    </select>
+                  </label>
+                  <p className="text-[13px] text-mute sm:col-span-2">
+                    YouTube title:{" "}
+                    <span className="text-bone">
+                      {typeArtist.trim() ? `${typeArtist.trim()} Type Beat - "${title}"` : `"${title}" Type Beat`}
+                    </span>
+                    {!cover && <span className="text-amber"> · needs a thumbnail</span>}
+                  </p>
+                </div>
+              )}
             </div>
 
             <label className="mt-6 flex cursor-pointer items-center gap-3 text-[14px] text-stone-300">
@@ -312,7 +370,13 @@ export function AdminUploader() {
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <button type="button" onClick={publish} disabled={busy !== ""} className="btn btn-primary">
-                {busy === "publishing" ? "Publishing…" : deploy ? "Publish & deploy" : "Publish locally"}
+                {busy === "publishing"
+                  ? youtube
+                    ? "Publishing + rendering video…"
+                    : "Publishing…"
+                  : deploy
+                    ? "Publish & deploy"
+                    : "Publish locally"}
               </button>
               <button type="button" onClick={() => setA(null)} className="btn btn-ghost">
                 Discard
@@ -346,6 +410,21 @@ export function AdminUploader() {
                 {done.gitError}
               </p>
             )}
+            {done.youtube &&
+              (done.youtube.ok ? (
+                <p className="mt-3 text-[14px] text-stone-300">
+                  YouTube:{" "}
+                  <a href={done.youtube.url} target="_blank" rel="noreferrer" className="link-u text-bone">
+                    {done.youtube.title}
+                  </a>{" "}
+                  · {done.youtube.privacy}
+                  {done.youtube.thumbnail !== "set" && <span className="text-amber"> · thumbnail {done.youtube.thumbnail}</span>}
+                </p>
+              ) : (
+                <p className="mt-3 rounded-xl border border-amber/30 bg-amber/[0.07] p-3 text-[13px] text-amber">
+                  Beat is published, but YouTube failed: {done.youtube.error}
+                </p>
+              ))}
             <p className="mt-5 text-[13px] text-mute">Caption for socials:</p>
             <pre className="mt-2 overflow-x-auto whitespace-pre-wrap rounded-xl border border-line bg-deep p-4 text-[13px] text-stone-300">
               {done.caption}

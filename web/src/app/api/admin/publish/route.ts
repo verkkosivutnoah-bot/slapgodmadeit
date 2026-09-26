@@ -6,13 +6,14 @@
  * copies masters to web/private, appends the entry to beats.ts. Optionally commits + pushes,
  * which Vercel then deploys.
  */
-import { createReadStream, existsSync, readFileSync } from "node:fs";
+import { createReadStream, existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import type { FileKind } from "@/lib/catalog";
 import { blobConfigured, blobPath } from "@/lib/deliverables";
-import { REPO, devOnly, run, runIngest } from "../shared";
+import { PYTHON, REPO, YOUTUBE, devOnly, ensureRenderer, run, runIngest } from "../shared";
 
 /** Push the paid files (never the tagged one) to the private Blob store. */
 async function uploadMasters(slug: string) {
@@ -38,6 +39,71 @@ async function uploadMasters(slug: string) {
 }
 
 export const runtime = "nodejs";
+
+type YouTubeResult = { ok: boolean; id?: string; url?: string; title?: string; privacy?: string; thumbnail?: string; error?: string };
+
+/** Render thumbnail + tagged MP3 into an MP4 and upload it. Records the video on the beat's meta.json. */
+async function postToYouTube(opts: {
+  slug: string;
+  title: string;
+  artist: string;
+  bpm: number;
+  key: string;
+  genre: string;
+  privacy: string;
+}): Promise<YouTubeResult> {
+  const web = join(REPO, "web");
+  const audio = join(web, "public", "audio", "beats", `${opts.slug}.mp3`);
+  const coverDir = join(web, "public", "covers", "beats");
+  const cover = existsSync(coverDir)
+    ? readdirSync(coverDir).find((f) => f.startsWith(`${opts.slug}.`) && /\.(jpe?g|png|webp)$/i.test(f))
+    : undefined;
+  if (!cover) return { ok: false, error: "No thumbnail — add one so the video has a picture." };
+  if (!existsSync(audio)) return { ok: false, error: "Tagged MP3 missing — publish the beat first." };
+
+  const renderer = await ensureRenderer();
+  if (!renderer.ok) return { ok: false, error: renderer.error };
+
+  const mp4 = join(tmpdir(), `sg-yt-${opts.slug}-${Date.now()}.mp4`);
+  const thumb = join(coverDir, cover);
+  const rendered = await run(renderer.bin, [thumb, audio, mp4], REPO, 600_000);
+  if (rendered.code !== 0) return { ok: false, error: `Video render failed: ${rendered.stderr.slice(-300)}` };
+
+  const up = await run(
+    PYTHON,
+    [
+      YOUTUBE, "upload",
+      "--video", mp4,
+      "--thumbnail", thumb,
+      "--title", opts.title,
+      "--artist", opts.artist,
+      "--slug", opts.slug,
+      "--bpm", String(opts.bpm),
+      "--key", opts.key,
+      "--genre", opts.genre,
+      "--privacy", opts.privacy,
+    ],
+    REPO,
+    900_000
+  );
+  const line = up.stdout.split("\n").find((l) => l.trim().startsWith("{"));
+  let result: YouTubeResult;
+  try {
+    result = line ? (JSON.parse(line) as YouTubeResult) : { ok: false, error: up.stderr.slice(-300) || "upload failed" };
+  } catch {
+    result = { ok: false, error: up.stdout.slice(-300) };
+  }
+
+  if (result.ok) {
+    const metaPath = join(web, "private", "beats", opts.slug, "meta.json");
+    if (existsSync(metaPath)) {
+      const meta = JSON.parse(readFileSync(metaPath, "utf8"));
+      meta.youtube = { id: result.id, url: result.url, title: result.title, artist: opts.artist, privacy: result.privacy };
+      writeFileSync(metaPath, JSON.stringify(meta, null, 2));
+    }
+  }
+  return result;
+}
 export const maxDuration = 300;
 
 export async function POST(request: Request) {
@@ -54,6 +120,9 @@ export async function POST(request: Request) {
     key?: string;
     bpm?: number;
     deploy?: boolean;
+    youtube?: boolean;
+    typeBeatArtist?: string;
+    youtubePrivacy?: "private" | "unlisted" | "public";
   };
 
   if (!body.jobDir?.includes("sg-admin-")) {
@@ -84,6 +153,19 @@ export async function POST(request: Request) {
     }
   }
   Object.assign(result.data, { storage });
+
+  if (body.youtube) {
+    const youtube = await postToYouTube({
+      slug,
+      title: String(result.data.title ?? slug),
+      artist: (body.typeBeatArtist ?? "").trim(),
+      bpm: Number(result.data.bpm),
+      key: String(result.data.key ?? ""),
+      genre: String(result.data.genre ?? ""),
+      privacy: body.youtubePrivacy ?? "private",
+    });
+    Object.assign(result.data, { youtube });
+  }
 
   if (!body.deploy) {
     return NextResponse.json({ ok: true, deployed: false, ...result.data });
