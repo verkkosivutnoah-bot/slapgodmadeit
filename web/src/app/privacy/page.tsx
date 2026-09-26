@@ -40,8 +40,8 @@ export default function PrivacyPage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>You join the email list or download free sounds</td>
-                    <td>Email address; which form you used; the consent wording you agreed to, with time and IP address</td>
+                    <td>You join the email list or download a free tagged beat</td>
+                    <td>Email address; which form you used; the consent wording you agreed to, with time and IP address; which beats you downloaded</td>
                     <td>Sending you emails you asked for — your consent. The consent record proves it.</td>
                   </tr>
                   <tr>
@@ -132,8 +132,9 @@ export default function PrivacyPage() {
             <>
               <p>
                 The site uses no tracking or advertising cookies and no analytics that follow you around. Your browser
-                stores a few settings locally so the site works: your cart, your currency (EUR/USD), and whether
-                you&apos;ve already seen the email popup. These never leave your device.
+                stores a few settings locally so the site works: your cart, your currency (EUR/USD), whether
+                you&apos;ve already seen the email popup, and — after your first free download — your email address,
+                so you aren&apos;t asked again. These stay on your device; clearing your browser data removes them.
               </p>
               <p>
                 Stripe&apos;s checkout page sets its own cookies for fraud prevention while you pay. See{" "}

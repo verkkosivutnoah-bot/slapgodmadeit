@@ -82,7 +82,7 @@ export function BeatDetail({ slug }: { slug: string }) {
               </Rise>
               <Rise delay={0.3} className="mt-10">
                 <MusicPlayer id={`beat-${beat.slug}`} label={`${beat.title} preview`} tracks={tracks} />
-                <FreeTaggedDownload src={beat.src} title={beat.title} />
+                <FreeTaggedDownload slug={beat.slug} src={beat.src} title={beat.title} />
               </Rise>
             </div>
           </div>

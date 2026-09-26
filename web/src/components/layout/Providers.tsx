@@ -7,6 +7,7 @@ import { PlayerProvider } from "@/components/player/GlobalPlayer";
 import { LicenseModalProvider } from "@/components/beats/LicenseModal";
 import { SmoothScroll } from "@/components/ui/SmoothScroll";
 import { EmailPopup } from "@/components/email/EmailPopup";
+import { TaggedDownloadProvider } from "@/components/beats/TaggedDownload";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
@@ -15,9 +16,11 @@ export function Providers({ children }: { children: ReactNode }) {
       <CartProvider>
         <PlayerProvider>
           <LicenseModalProvider>
-            <SmoothScroll />
-            {children}
-            <EmailPopup />
+            <TaggedDownloadProvider>
+              <SmoothScroll />
+              {children}
+              <EmailPopup />
+            </TaggedDownloadProvider>
           </LicenseModalProvider>
         </PlayerProvider>
       </CartProvider>
